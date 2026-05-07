@@ -9,6 +9,21 @@
 
 ---
 
+## 文档定位
+
+本文件定义 `archsight-ai-os` 仓库本身如何组织和治理 AI 研发资产。
+
+它回答的问题是：
+
+- 目录应该怎么分层。
+- Agent、Workflow、Prompt、Skill、Runtime、Knowledge 等资产分别放在哪里。
+- 仓库如何支撑 Hermes / OpenClaw / 飞书机器人等运行实例。
+- 如何避免 prompt、agent、workflow 和 runtime 配置碎片化。
+
+本文件不负责详细定义每个 Agent 的角色分工。Agent 组织结构和角色职责以 [AI Engineering Squad 计划](ai-engineering-squad-plan.md) 为准。
+
+---
+
 ## 一、定位升级
 
 如果本仓库只是存放 prompt、agent 配置和一些技能包，长期价值会很有限。

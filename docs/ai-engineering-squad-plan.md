@@ -13,6 +13,21 @@
 
 ---
 
+## 文档定位
+
+本文件定义 ArchSightLabs 的 AI Engineering Squad 角色体系。
+
+它回答的问题是：
+
+- 应该有哪些核心 Agent。
+- 每个 Agent 负责什么、不负责什么。
+- Agent 之间如何分层协作。
+- 哪些角色属于第一阶段核心马队，哪些属于第二阶段扩展角色。
+
+本文件不负责规定仓库目录、runtime 配置、prompt 存放方式和治理目录结构。这些内容以 [AI Team OS 仓库架构](ai-team-os-repository-architecture.md) 为准。
+
+---
+
 ## 一、总体定位
 
 当前目标并不是构建“聊天机器人集合”。
@@ -417,29 +432,38 @@ Atlas 负责系统整体架构，Daedalus 负责 AI Runtime 体系。
 
 ---
 
-## 九、推荐 GitHub 仓库结构
+## 九、当前仓库落地结构
 
-建议单独建立：
+当前已采用 `archsight-ai-os` 作为 AI Team OS 仓库，不再建议为第一阶段核心马队另建一个只保存 prompt 的独立仓库。
+
+Agent 角色资产采用三层管理：
+
+| 层 | 内容 | 作用 |
+| --- | --- | --- |
+| Source | `role.md` / `responsibilities.md` / `constraints.md` / `workflow.md` | 长期维护、沉淀角色资产 |
+| Runtime | `system-prompt.md` | Hermes 创建 Agent 时直接使用 |
+| Instance | Hermes / 飞书机器人 | 实际对话入口 |
+
+第一阶段核心 Agent 在仓库中的结构为：
 
 ```text
-ai-engineering-squad/
-├── README.md
+archsight-ai-os/
 ├── agents/
-│   ├── atlas.md
-│   ├── mason.md
-│   ├── argus.md
-│   ├── vitruvius.md
-│   ├── daedalus.md
-│   └── hephaestus.md
+│   ├── atlas/
+│   │   ├── role.md
+│   │   ├── responsibilities.md
+│   │   ├── constraints.md
+│   │   ├── workflow.md
+│   │   └── system-prompt.md
+│   ├── mason/
+│   ├── argus/
+│   ├── vitruvius/
+│   ├── daedalus/
+│   └── hephaestus/
 ├── workflows/
-├── prompts/
-├── skills/
-├── memory/
-├── architecture/
-├── standards/
-├── rag/
-├── graph/
-├── experiments/
+├── runtime/
+├── governance/
+├── knowledge/
 └── docs/
 ```
 
