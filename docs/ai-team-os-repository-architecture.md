@@ -62,9 +62,10 @@
 ## 三、核心目录结构
 
 ```text
-archsight-ai-team/
+archsight-ai-os/
 │
 ├── README.md
+├── AI_CODING_RULES.md
 ├── vision/
 ├── agents/
 ├── workflows/
@@ -372,43 +373,50 @@ infra/
 
 ---
 
-## 五、当前最值得做的三件事
+## 五、当前最应该做的事情
 
-### 第一优先级：建立 Agent 治理体系
+### 第一优先级：明确 AI OS 核心治理结构
 
-包括：
+将仓库从 `archsight-ai-team` 升级为 `archsight-ai-os` 的内容结构，重点治理：
 
-- agent 边界
-- 模型路由
+- runtime
 - workflow
-- review 机制
+- governance
+- delivery
+- memory
 
-如果缺少这些，后续 Agent 数量一多，协作一定会混乱。
+这些是 AI 研发组织操作系统的骨架。
 
-### 第二优先级：建立行业知识层
-
-包括：
-
-- BIM
-- IFC
-- 规范
-- 结构知识
-- 审查规则
-
-这是 ArchSight 区别于普通 AI Coding 玩家的核心壁垒。
-
-### 第三优先级：建立受控交付体系
+### 第二优先级：建立统一 Workflow
 
 包括：
 
-- AI 生成
-- AI Review
-- 自动测试
-- 自动修复
-- 人工确认
-- 发布治理
+- feature 开发
+- bug 修复
+- review
+- release
+- frontend 生成
 
-这是企业级 AI 研发平台与普通 agent demo 的关键差异。
+每个 workflow 都应明确角色路由、输入、输出、验收标准和回滚策略。
+
+### 第三优先级：建立统一 Agent Routing
+
+示例：
+
+| Agent | 默认模型 |
+| --- | --- |
+| Atlas | GPT |
+| Mason | Gemini |
+| Argus | Claude |
+| Mercury | DeepSeek |
+
+如果没有统一路由，成本、上下文和执行权限会失控。
+
+### 边界说明：业务项目 `.ai/`
+
+`.ai/` 是具体业务项目的项目级 AI 治理目录，不属于 `archsight-ai-os` 根仓库自身的运行目录。
+
+本仓库当前不创建 `.ai/`，只维护可被其他项目继承的统一规范、workflow、routing、governance、delivery 和 memory 规则。
 
 ---
 
@@ -434,4 +442,3 @@ infra/
 - AI 治理层
 
 这个方向比单纯做一个 SaaS 更底层，也更有长期战略价值。
-

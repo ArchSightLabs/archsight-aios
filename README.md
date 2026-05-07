@@ -1,13 +1,25 @@
-# ArchSight AI Team
+# ArchSight AI OS
 
-ArchSight AI Team 是 ArchSightLabs 的 AI 研发组织操作系统（AI Team OS）仓库。
+ArchSight AI OS 是 ArchSightLabs 的 AI 研发组织操作系统仓库。
 
 本仓库不是 prompt、agent 配置和技能包的简单集合，而是用于治理多模型协同、多 Agent 协同、行业知识工程、AI Coding Workflow、GraphRAG、受控执行环境和企业级 AI 研发平台的长期基础设施。
 
 ## 核心文档
 
+- [AI 编码规范（公共）](AI_CODING_RULES.md)
 - [AI Engineering Squad 计划](docs/ai-engineering-squad-plan.md)
 - [AI Team OS 仓库架构](docs/ai-team-os-repository-architecture.md)
+
+## AI 工具入口
+
+`AI_CODING_RULES.md` 是唯一公共规范正文。各工具入口文件只做适配，不复制规范内容：
+
+- [AGENTS.md](AGENTS.md)：Codex 入口
+- [CLAUDE.md](CLAUDE.md)：Claude 入口
+- [GEMINI.md](GEMINI.md)：Gemini 入口
+- [OPENCODE.md](OPENCODE.md)：opencode 入口
+
+[governance/coding-rules.md](governance/coding-rules.md) 是治理目录中的登记入口，指向同一份公共规范。
 
 ## 初始定位
 
@@ -45,9 +57,10 @@ ArchSight AI Team 是 ArchSightLabs 的 AI 研发组织操作系统（AI Team OS
 ## 目录规划
 
 ```text
-archsight-ai-team/
+archsight-ai-os/
 │
 ├── README.md
+├── AI_CODING_RULES.md
 ├── vision/
 ├── agents/
 ├── workflows/
@@ -69,6 +82,8 @@ archsight-ai-team/
 
 ## 当前优先级
 
-1. 建立 Agent 治理体系：边界、模型路由、workflow、review 机制。
-2. 建立行业知识层：BIM、IFC、规范、结构知识、审查规则。
-3. 建立受控交付体系：AI 生成、AI Review、自动测试、自动修复、人工确认和发布治理。
+1. 将仓库治理对象明确为 `runtime`、`workflow`、`governance`、`delivery`、`memory`。
+2. 建立统一 workflow：feature 开发、bug 修复、review、release、frontend 生成。
+3. 建立统一 Agent Routing，控制模型成本、上下文和执行边界。
+
+边界说明：`.ai/` 是具体业务项目的项目级 AI 治理目录，不属于本仓库根结构。本仓库只维护 AI OS 的统一规范、流程、路由和治理资产。

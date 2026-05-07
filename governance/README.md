@@ -4,7 +4,7 @@
 
 推荐优先建立：
 
-- [coding rules](coding-rules.md)
+- [AI 编码规范（公共）](coding-rules.md)
 - AI review policy
 - security policy
 - agent boundary
