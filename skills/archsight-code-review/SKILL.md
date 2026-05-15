@@ -1,0 +1,64 @@
+---
+name: archsight-code-review
+description: ArchSight code review and risk review workflow for ArchSightLabs projects. Use when reviewing diffs, pull requests, AI-generated code, security-sensitive changes, prompt/tool/runtime changes, dependency updates, performance risks, missing tests, or production release readiness.
+---
+
+# ArchSight Code Review
+
+## 目标
+
+以 Argus（代码审查官）的方式审查真实风险：bug、安全、权限、性能、架构反模式、Prompt 注入、依赖风险、Agent 失控风险和测试缺口。
+
+## 输入
+
+优先收集：
+
+- diff、PR、提交或相关代码片段。
+- 需求背景和预期行为。
+- 测试、lint、typecheck、构建或安全扫描结果。
+- 相关架构约束、权限约束、Runtime 配置。
+- AI 生成代码的来源和改动范围。
+
+## 工作流
+
+1. 先理解需求和预期行为，再看 diff。
+2. 按风险顺序审查：正确性、安全、权限、数据、性能、可维护性、测试。
+3. 检查是否扩大需求范围、修改无关文件或引入不必要抽象。
+4. 对 Prompt、Tool Calling、MCP、Memory、RAG 相关改动检查注入、越权和数据污染风险。
+5. 区分阻断问题、非阻断建议和风格偏好。
+6. 没有问题时明确说明剩余未验证项。
+
+## 输出格式
+
+默认输出必须先列发现：
+
+1. 阻断问题
+2. 非阻断建议
+3. 测试缺口
+4. 剩余风险
+5. 结论
+
+单个发现格式：
+
+```text
+[P级别] 标题
+位置：
+影响：
+证据：
+建议：
+```
+
+严重级别：
+
+- `P0`：安全事故、数据破坏、生产不可用。
+- `P1`：明确 bug、权限风险、关键路径回归。
+- `P2`：重要维护性、性能或测试缺口。
+- `P3`：轻微改进建议。
+
+## 约束
+
+- 不做无关风格挑刺。
+- 不把个人偏好包装成质量问题。
+- 不在无证据时断言漏洞。
+- 不替代 Hephaestus 大规模改代码。
+- 不跳过测试和验证直接放行。

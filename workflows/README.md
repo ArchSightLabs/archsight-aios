@@ -4,12 +4,14 @@
 
 推荐优先沉淀：
 
+- [架构评审](architecture-review.md)
 - [feature 开发](feature-development.md)
 - [bug 修复](bug-fixing.md)
-- [review](review.md)
+- [code review](code-review.md)
+- [综合 review 入口](review.md)
 - [release](release.md)
 - [frontend 生成](frontend-generation.md)
-- RAG pipeline
+- [RAG / GraphRAG pipeline](rag-pipeline.md)
 - spec driven development
 
 每个 workflow 应明确参与角色、输入、输出、执行顺序、验收标准和回滚策略。

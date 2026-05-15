@@ -1,0 +1,4 @@
+interface:
+  display_name: "ArchSight Controlled Execution"
+  short_description: "Execute scoped ArchSight tasks"
+  default_prompt: "Use this skill to make scoped ArchSight code, documentation, script, test, build, and deployment-prep changes with verification."

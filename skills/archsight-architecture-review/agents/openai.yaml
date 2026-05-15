@@ -1,0 +1,4 @@
+interface:
+  display_name: "ArchSight Architecture Review"
+  short_description: "Review ArchSight architecture and boundaries"
+  default_prompt: "Use this skill to review ArchSight system architecture, service boundaries, technical tradeoffs, and long-term complexity risks."

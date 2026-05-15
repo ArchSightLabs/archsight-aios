@@ -10,4 +10,4 @@
 - Prompt 评估模板
 - Review 清单模板
 - 实验记录模板
-
+- [项目 AI 接入模板](project-ai/)

@@ -1,0 +1,4 @@
+interface:
+  display_name: "ArchSight Code Review"
+  short_description: "Review ArchSight code for quality and risk"
+  default_prompt: "Use this skill to review ArchSight diffs, pull requests, AI-generated code, security risks, and missing tests."

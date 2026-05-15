@@ -1,0 +1,4 @@
+interface:
+  display_name: "ArchSight Delivery Planning"
+  short_description: "Turn ArchSight goals into delivery plans"
+  default_prompt: "Use this skill to break an ArchSight product or engineering goal into tasks, dependencies, validation, and delivery order."

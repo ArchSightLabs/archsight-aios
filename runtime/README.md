@@ -5,6 +5,8 @@
 推荐内容：
 
 - [Agent Routing](agent-routing.md)
+- [Skill Routing](skill-routing.md)
+- [Hermes 运行线](hermes/)
 - 权限边界
 - 工具调用策略
 - 飞书集成

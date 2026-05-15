@@ -1,0 +1,4 @@
+interface:
+  display_name: "ArchSight AI Runtime Design"
+  short_description: "Design ArchSight AI runtime and RAG"
+  default_prompt: "Use this skill to design ArchSight prompts, context, memory, RAG, GraphRAG, MCP, tool calling, and multi-agent runtime workflows."

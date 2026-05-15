@@ -1,7 +1,2 @@
-.omx/metrics.json
-.omx/logs/tmux-hook-2026-05-07.jsonl
-.omx/logs/turns-2026-05-07.jsonl
-.omx/state/hud-state.json
-.omx/state/notify-hook-state.json
-.omx/state/skill-active-state.json
-.omx/state/tmux-hook-state.json
+.omx/
+.omx/logs/
