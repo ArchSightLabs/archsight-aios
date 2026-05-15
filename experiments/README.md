@@ -11,3 +11,6 @@
 - agent 协作实验
 - 成本和延迟记录
 
+## 当前实验
+
+- [Project AI 接入 Smoke Test](project-ai-smoke-test/SMOKE_TEST.md)：验证 `templates/project-ai/` 复制到业务项目后，项目级 `.ai/`、Skill 路由和 Workflow 选择是否可用。
