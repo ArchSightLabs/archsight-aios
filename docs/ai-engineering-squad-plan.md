@@ -434,7 +434,7 @@ Atlas 负责系统整体架构，Daedalus 负责 AI Runtime 体系。
 
 ## 九、当前仓库落地结构
 
-当前已采用 `archsight-ai-os` 作为 AI Team OS 仓库，不再建议为第一阶段核心马队另建一个只保存 prompt 的独立仓库。
+当前已采用 `archsight-aios` 作为 AI Team OS 仓库，不再建议为第一阶段核心马队另建一个只保存 prompt 的独立仓库。
 
 Agent 角色资产采用三层管理：
 
@@ -447,7 +447,7 @@ Agent 角色资产采用三层管理：
 第一阶段核心 Agent 在仓库中的结构为：
 
 ```text
-archsight-ai-os/
+archsight-aios/
 ├── agents/
 │   ├── atlas/
 │   │   ├── role.md

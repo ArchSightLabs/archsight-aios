@@ -14,7 +14,7 @@ Hermes Agent 是部署实例，不是角色资产源。
 | Runtime | Hermes 使用的系统提示词 | `agents/{agent}/system-prompt.md` |
 | Instance | Hermes Agent / 飞书机器人 | Hermes 控制台或运行配置 |
 
-## 第一阶段 Agent
+## 第一阶段核心 Agent
 
 | Hermes Agent | Source | Runtime Prompt |
 | --- | --- | --- |
@@ -24,6 +24,17 @@ Hermes Agent 是部署实例，不是角色资产源。
 | Vitruvius | `agents/vitruvius/` | `agents/vitruvius/system-prompt.md` |
 | Daedalus | `agents/daedalus/` | `agents/daedalus/system-prompt.md` |
 | Hephaestus | `agents/hephaestus/` | `agents/hephaestus/system-prompt.md` |
+
+## 第二阶段最小入口 Agent
+
+第二阶段 Agent 当前只登记 Source 和 Runtime Prompt，不自动进入执行链路；没有经过验证的 Skill 前，不为它们创建自动化 Skill。
+
+| Hermes Agent | Source | Runtime Prompt |
+| --- | --- | --- |
+| Euclid | `agents/euclid/` | `agents/euclid/system-prompt.md` |
+| Athena | `agents/athena/` | `agents/athena/system-prompt.md` |
+| Mercury | `agents/mercury/` | `agents/mercury/system-prompt.md` |
+| Janus | `agents/janus/` | `agents/janus/system-prompt.md` |
 
 ## 创建规则
 
@@ -45,4 +56,3 @@ Prompt path：
 变更摘要：
 回滚方式：
 ```
-

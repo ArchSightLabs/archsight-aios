@@ -4,10 +4,9 @@
 
 推荐内容：
 
-- chunk 策略
+- [chunk 策略](chunking-policy.md)
 - embedding 策略
 - rerank 策略
-- retrieval evaluation
+- [retrieval evaluation](evaluation-policy.md)
 - GraphRAG pipeline
 - 知识库更新流程
-

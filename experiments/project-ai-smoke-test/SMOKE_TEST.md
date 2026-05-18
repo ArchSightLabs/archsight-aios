@@ -2,7 +2,7 @@
 
 ## 测试任务
 
-使用 `archsight-architecture-review`，评审这个沙盒项目是否已正确接入 ArchSight AI OS。
+使用 `archsight-architecture-review`，评审这个沙盒项目是否已正确接入 ArchSight AIOS。
 
 ## 输入文件
 
@@ -17,7 +17,7 @@
 
 通过。
 
-该沙盒项目已具备项目级 ArchSight AI OS 接入的最小闭环：入口文件会要求读取 `.ai/` 上下文，`.ai/project-context.md` 提供了项目定位和边界，`.ai/skills.md` 明确启用 `archsight-architecture-review`，`.ai/workflows.md` 将 Review 路由到 `architecture-review`。
+该沙盒项目已具备项目级 ArchSight AIOS 接入的最小闭环：入口文件会要求读取 `.ai/` 上下文，`.ai/project-context.md` 提供了项目定位和边界，`.ai/skills.md` 明确启用 `archsight-architecture-review`，`.ai/workflows.md` 将 Review 路由到 `architecture-review`。
 
 ## 架构判断
 

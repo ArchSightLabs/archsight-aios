@@ -4,12 +4,10 @@
 
 推荐内容：
 
-- 发布清单
-- Review 流程
-- AI 生成代码检查
+- [发布清单](release-checklist.md)
+- [AI 生成代码检查](ai-generated-code-checklist.md)
+- [回滚策略](rollback-policy.md)
 - 自动测试
 - 自动修复
 - 人工确认
-- 回滚策略
 - 风险控制
-

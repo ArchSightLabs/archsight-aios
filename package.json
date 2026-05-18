@@ -1,0 +1,42 @@
+{
+  "name": "@archsight/aios",
+  "version": "0.1.0",
+  "description": "ArchSight AIOS user-level skill and workflow installer.",
+  "type": "module",
+  "bin": {
+    "archsight-aios": "./bin/archsight-aios.mjs"
+  },
+  "scripts": {
+    "doctor": "node ./bin/archsight-aios.mjs doctor",
+    "install:user": "node ./bin/archsight-aios.mjs install --target all --scope user",
+    "smoke:project": "node ./bin/archsight-aios.mjs validate-project-template",
+    "test": "node ./tests/cli.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "workflows/",
+    "templates/",
+    "runtime/",
+    "agents/",
+    "governance/",
+    "delivery/",
+    "memory/",
+    "knowledge/",
+    "rag/",
+    "graph/",
+    "standards/",
+    "infra/",
+    "prompts/",
+    "vision/",
+    "docs/",
+    "README.md",
+    "AI_CODING_RULES.md",
+    "AGENTS.md",
+    "GEMINI.md"
+  ],
+  "license": "UNLICENSED"
+}

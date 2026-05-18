@@ -11,7 +11,7 @@
 
 ## 文档定位
 
-本文件定义 `archsight-ai-os` 仓库本身如何组织和治理 AI 研发资产。
+本文件定义 `archsight-aios` 仓库本身如何组织和治理 AI 研发资产。
 
 它回答的问题是：
 
@@ -77,7 +77,7 @@
 ## 三、核心目录结构
 
 ```text
-archsight-ai-os/
+archsight-aios/
 │
 ├── README.md
 ├── AI_CODING_RULES.md
@@ -390,9 +390,9 @@ infra/
 
 ## 五、当前最应该做的事情
 
-### 第一优先级：明确 AI OS 核心治理结构
+### 第一优先级：明确 AIOS 核心治理结构
 
-将仓库从 `archsight-ai-team` 升级为 `archsight-ai-os` 的内容结构，重点治理：
+将仓库从 `archsight-ai-team` 升级为 `archsight-aios` 的内容结构，重点治理：
 
 - runtime
 - workflow
@@ -429,7 +429,7 @@ infra/
 
 ### 边界说明：业务项目 `.ai/`
 
-`.ai/` 是具体业务项目的项目级 AI 治理目录，不属于 `archsight-ai-os` 根仓库自身的运行目录。
+`.ai/` 是具体业务项目的项目级 AI 治理目录，不属于 `archsight-aios` 根仓库自身的运行目录。
 
 本仓库当前不创建 `.ai/`，只维护可被其他项目继承的统一规范、workflow、routing、governance、delivery 和 memory 规则。
 

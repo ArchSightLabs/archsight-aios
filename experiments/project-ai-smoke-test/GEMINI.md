@@ -1,6 +1,6 @@
 # GEMINI.md
 
-> 本文件供 Gemini 在具体业务项目中接入 ArchSight AI OS 时使用。
+> 本文件供 Gemini 在具体业务项目中接入 ArchSight AIOS 时使用。
 
 ## 必读入口
 

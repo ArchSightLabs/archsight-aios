@@ -16,6 +16,10 @@
 | Vitruvius | `agents/vitruvius/` | `agents/vitruvius/system-prompt.md` |
 | Daedalus | `agents/daedalus/` | `agents/daedalus/system-prompt.md` |
 | Hephaestus | `agents/hephaestus/` | `agents/hephaestus/system-prompt.md` |
+| Euclid | `agents/euclid/` | `agents/euclid/system-prompt.md` |
+| Athena | `agents/athena/` | `agents/athena/system-prompt.md` |
+| Mercury | `agents/mercury/` | `agents/mercury/system-prompt.md` |
+| Janus | `agents/janus/` | `agents/janus/system-prompt.md` |
 
 ## 同步步骤
 
@@ -42,4 +46,3 @@
 2. 回滚到上一版 `system-prompt.md`。
 3. 在仓库中记录失败原因。
 4. 必要时调整 Agent Source 或相关 Skill。
-

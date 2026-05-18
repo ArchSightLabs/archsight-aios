@@ -1,6 +1,6 @@
 # ArchSight AIOS
 
-ArchSight AIOS（AI Operating System）是 ArchSightLabs 的 AI 研发组织操作系统仓库。首次出现时展开为 AI Operating System；后续统一使用 `AIOS`，不再写作 `AI OS`。
+ArchSight AIOS（AI Operating System）是 ArchSightLabs 的 AI 研发组织操作系统仓库。首次出现时展开为 AI Operating System；后续统一使用 `AIOS`，不再写作 `AIOS`。
 
 本仓库不是 prompt、agent 配置和技能包的简单集合，而是用于治理多模型协同、多 Agent 协同、行业知识工程、AI Coding Workflow、GraphRAG、受控执行环境和企业级 AI 研发平台的长期基础设施。
 
@@ -22,7 +22,7 @@ ArchSight 产品与基础设施命名分层如下：
 - CLI 入口：`npx @archsight/aios ...`
 - 用户级共享资产目录：`~/.archsight-aios/`
 
-迁移期中，历史名称 `archsight-ai-os`、`@archsight/ai-os` 和 `~/.archsight-ai-os/` 仅作为兼容标识保留；新增文档、发布说明和安装指引应使用 `AIOS` / `archsight-aios`。
+本仓库尚未对外推广历史 CLI，因此不保留旧命名兼容层；新增文档、发布说明和安装指引统一使用 `AIOS` / `archsight-aios` / `@archsight/aios`。
 
 ## 核心文档
 
@@ -134,7 +134,7 @@ npx @archsight/aios validate-project-template
 - 通用 Agent：复制 `archsight-*` skills 到 `~/.agents/skills/`。
 - Gemini：写入 `~/.gemini/GEMINI.md` 的 ArchSight AIOS 托管说明块。
 - Antigravity：写入 `~/.antigravity/ARCHSIGHT_AIOS.md` 的 ArchSight AIOS 托管说明块。
-- 共享资产：同步到 `~/.archsight-aios/`，包含 `skills/`、`workflows/`、`runtime/`、`templates/` 和 `agents/`。
+- 共享资产：同步到 `~/.archsight-aios/`，包含 Agent、Skill、Workflow、Runtime、模板、治理、交付、记忆、知识、RAG、Graph、标准、Infra、Prompt 和 Vision 资产。
 
 业务项目接入可执行：
 

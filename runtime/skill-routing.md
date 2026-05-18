@@ -2,7 +2,7 @@
 
 ## 定位
 
-本文件定义 ArchSight AI OS 中任务到 Skill、Agent 和 Workflow 的路由关系。
+本文件定义 ArchSight AIOS 中任务到 Skill、Agent 和 Workflow 的路由关系。
 
 基本关系：
 
@@ -31,7 +31,7 @@
 - 优先按任务类型选择 Skill，而不是按 Agent 名称选择。
 - Skill 使用 `archsight-*` 前缀，避免与通用技能包混淆。
 - Agent 可以调用多个 Skill；Skill 也可以被多个 Agent 复用。
-- 项目工作目录中的事实优先于 AI OS 的通用模板。
+- 项目工作目录中的事实优先于 AIOS 的通用模板。
 - Hermes / 飞书只负责入口和调度，不替代本地验证。
 
 ## 升级规则

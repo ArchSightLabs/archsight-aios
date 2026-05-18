@@ -39,10 +39,9 @@ Lint：
 - 需要人工确认：
 - 已知风险：
 
-## 当前接入的 ArchSight AI OS 能力
+## 当前接入的 ArchSight AIOS 能力
 
 - Agent：
 - Skills：
 - Workflows：
 - Runtime：
-

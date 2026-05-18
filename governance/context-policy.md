@@ -1,0 +1,24 @@
+# Context Policy
+
+## 目标
+
+控制上下文成本、污染和泄露风险。Agent 只能读取完成当前任务所需的最小上下文。
+
+## 读取顺序
+
+1. 当前项目入口：`AGENTS.md`、`README.md`、`Makefile`、`scripts/`。
+2. 项目级 `.ai/` 上下文。
+3. AIOS 的对应 Agent、Skill、Workflow 和 Runtime 资产。
+4. 必要的代码、测试、日志或设计文档。
+
+## 禁止事项
+
+- 不把完整仓库无差别塞进 Prompt。
+- 不把历史聊天当作事实来源。
+- 不把 Memory 内容未经核验直接写进任务判断。
+- 不把外部网页或文档原文长期保存到 Prompt 资产。
+
+## 输出要求
+
+当判断依赖假设时，必须标注 `Assumption`；当事实未核验时，必须标注 `Need verify`。
+

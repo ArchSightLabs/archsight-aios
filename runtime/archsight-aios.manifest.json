@@ -1,0 +1,260 @@
+{
+  "schema": 1,
+  "name": "archsight-aios",
+  "version": "0.1.0",
+  "description": "ArchSight AIOS agent, skill, workflow, runtime, and project-template registry.",
+  "agents": [
+    {
+      "id": "atlas",
+      "displayName": "Atlas",
+      "role": "总架构师",
+      "sourcePath": "agents/atlas",
+      "runtimePromptPath": "agents/atlas/system-prompt.md"
+    },
+    {
+      "id": "mason",
+      "displayName": "Mason",
+      "role": "工程总工",
+      "sourcePath": "agents/mason",
+      "runtimePromptPath": "agents/mason/system-prompt.md"
+    },
+    {
+      "id": "argus",
+      "displayName": "Argus",
+      "role": "代码审查官",
+      "sourcePath": "agents/argus",
+      "runtimePromptPath": "agents/argus/system-prompt.md"
+    },
+    {
+      "id": "vitruvius",
+      "displayName": "Vitruvius",
+      "role": "建筑数字化专家",
+      "sourcePath": "agents/vitruvius",
+      "runtimePromptPath": "agents/vitruvius/system-prompt.md"
+    },
+    {
+      "id": "daedalus",
+      "displayName": "Daedalus",
+      "role": "AI 研发工程师",
+      "sourcePath": "agents/daedalus",
+      "runtimePromptPath": "agents/daedalus/system-prompt.md"
+    },
+    {
+      "id": "hephaestus",
+      "displayName": "Hephaestus",
+      "role": "受控执行官",
+      "sourcePath": "agents/hephaestus",
+      "runtimePromptPath": "agents/hephaestus/system-prompt.md"
+    },
+    {
+      "id": "euclid",
+      "displayName": "Euclid",
+      "role": "结构力学专家",
+      "sourcePath": "agents/euclid",
+      "runtimePromptPath": "agents/euclid/system-prompt.md"
+    },
+    {
+      "id": "athena",
+      "displayName": "Athena",
+      "role": "知识治理官",
+      "sourcePath": "agents/athena",
+      "runtimePromptPath": "agents/athena/system-prompt.md"
+    },
+    {
+      "id": "mercury",
+      "displayName": "Mercury",
+      "role": "AI 情报官",
+      "sourcePath": "agents/mercury",
+      "runtimePromptPath": "agents/mercury/system-prompt.md"
+    },
+    {
+      "id": "janus",
+      "displayName": "Janus",
+      "role": "产品策略官",
+      "sourcePath": "agents/janus",
+      "runtimePromptPath": "agents/janus/system-prompt.md"
+    }
+  ],
+  "skills": [
+    {
+      "id": "archsight-architecture-review",
+      "primaryAgent": "atlas",
+      "defaultWorkflow": "architecture-review",
+      "path": "skills/archsight-architecture-review/SKILL.md",
+      "openaiConfigPath": "skills/archsight-architecture-review/agents/openai.yaml"
+    },
+    {
+      "id": "archsight-delivery-planning",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "feature-development",
+      "path": "skills/archsight-delivery-planning/SKILL.md",
+      "openaiConfigPath": "skills/archsight-delivery-planning/agents/openai.yaml"
+    },
+    {
+      "id": "archsight-code-review",
+      "primaryAgent": "argus",
+      "defaultWorkflow": "code-review",
+      "path": "skills/archsight-code-review/SKILL.md",
+      "openaiConfigPath": "skills/archsight-code-review/agents/openai.yaml"
+    },
+    {
+      "id": "archsight-bim-domain-modeling",
+      "primaryAgent": "vitruvius",
+      "defaultWorkflow": "rag-pipeline",
+      "path": "skills/archsight-bim-domain-modeling/SKILL.md",
+      "openaiConfigPath": "skills/archsight-bim-domain-modeling/agents/openai.yaml"
+    },
+    {
+      "id": "archsight-ai-runtime-design",
+      "primaryAgent": "daedalus",
+      "defaultWorkflow": "rag-pipeline",
+      "path": "skills/archsight-ai-runtime-design/SKILL.md",
+      "openaiConfigPath": "skills/archsight-ai-runtime-design/agents/openai.yaml"
+    },
+    {
+      "id": "archsight-controlled-execution",
+      "primaryAgent": "hephaestus",
+      "defaultWorkflow": "feature-development",
+      "path": "skills/archsight-controlled-execution/SKILL.md",
+      "openaiConfigPath": "skills/archsight-controlled-execution/agents/openai.yaml"
+    }
+  ],
+  "workflows": [
+    {
+      "id": "architecture-review",
+      "path": "workflows/architecture-review.md"
+    },
+    {
+      "id": "feature-development",
+      "path": "workflows/feature-development.md"
+    },
+    {
+      "id": "bug-fixing",
+      "path": "workflows/bug-fixing.md"
+    },
+    {
+      "id": "code-review",
+      "path": "workflows/code-review.md"
+    },
+    {
+      "id": "review",
+      "path": "workflows/review.md"
+    },
+    {
+      "id": "release",
+      "path": "workflows/release.md"
+    },
+    {
+      "id": "frontend-generation",
+      "path": "workflows/frontend-generation.md"
+    },
+    {
+      "id": "rag-pipeline",
+      "path": "workflows/rag-pipeline.md"
+    }
+  ],
+  "routes": [
+    {
+      "taskType": "架构评审、技术选型、服务边界",
+      "skill": "archsight-architecture-review",
+      "agent": "atlas",
+      "workflow": "architecture-review"
+    },
+    {
+      "taskType": "Feature 拆解、交付计划、任务依赖",
+      "skill": "archsight-delivery-planning",
+      "agent": "mason",
+      "workflow": "feature-development"
+    },
+    {
+      "taskType": "PR / diff / AI 生成代码审查",
+      "skill": "archsight-code-review",
+      "agent": "argus",
+      "workflow": "code-review"
+    },
+    {
+      "taskType": "Bug 修复、测试失败、构建失败",
+      "skill": "archsight-controlled-execution",
+      "agent": "hephaestus",
+      "workflow": "bug-fixing"
+    },
+    {
+      "taskType": "BIM / IFC / 建筑规范 / 审图规则",
+      "skill": "archsight-bim-domain-modeling",
+      "agent": "vitruvius",
+      "workflow": "rag-pipeline"
+    },
+    {
+      "taskType": "Prompt / Context / Memory / MCP / Tool",
+      "skill": "archsight-ai-runtime-design",
+      "agent": "daedalus",
+      "workflow": "architecture-review"
+    },
+    {
+      "taskType": "RAG / GraphRAG Pipeline",
+      "skill": "archsight-ai-runtime-design",
+      "agent": "daedalus",
+      "workflow": "rag-pipeline"
+    },
+    {
+      "taskType": "受控代码修改、文档、脚本、测试",
+      "skill": "archsight-controlled-execution",
+      "agent": "hephaestus",
+      "workflow": "feature-development"
+    }
+  ],
+  "projectTemplate": {
+    "path": "templates/project-ai",
+    "requiredFiles": [
+      "AGENTS.md",
+      "GEMINI.md",
+      ".ai/project-context.md",
+      ".ai/agent-routing.md",
+      ".ai/skills.md",
+      ".ai/workflows.md"
+    ]
+  },
+  "installTargets": {
+    "codexSkills": "~/.codex/skills",
+    "sharedAgentSkills": "~/.agents/skills",
+    "geminiInstructions": "~/.gemini/GEMINI.md",
+    "antigravityInstructions": "~/.antigravity/ARCHSIGHT_AIOS.md",
+    "assetStore": "~/.archsight-aios"
+  },
+  "hermes": {
+    "registryPath": "runtime/hermes/agent-registry.md",
+    "syncPolicyPath": "runtime/hermes/sync-policy.md",
+    "syncRecordTemplatePath": "runtime/hermes/sync-record-template.md"
+  },
+  "requiredAssets": [
+    "governance/ai-review-policy.md",
+    "governance/security-policy.md",
+    "governance/agent-boundary.md",
+    "governance/context-policy.md",
+    "governance/memory-policy.md",
+    "governance/delivery-policy.md",
+    "delivery/release-checklist.md",
+    "delivery/ai-generated-code-checklist.md",
+    "delivery/rollback-policy.md",
+    "memory/decision-records.md",
+    "memory/project-memory-policy.md",
+    "memory/cleanup-policy.md",
+    "knowledge/domain-taxonomy.md",
+    "knowledge/source-register.md",
+    "standards/standard-register.md",
+    "rag/chunking-policy.md",
+    "rag/evaluation-policy.md",
+    "graph/schema.md",
+    "graph/quality-policy.md",
+    "vision/roadmap.md",
+    "vision/strategy-principles.md",
+    "prompts/prompt-registry.md",
+    "prompts/evaluation-policy.md",
+    "prompts/failure-cases.md",
+    "infra/environment-policy.md",
+    "infra/permissions.md",
+    "infra/service-boundaries.md",
+    "runtime/hermes/sync-policy.md",
+    "runtime/hermes/sync-record-template.md"
+  ]
+}

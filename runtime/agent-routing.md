@@ -1,7 +1,7 @@
 # Agent Routing
 
 状态：治理基线  
-适用范围：ArchSight AI OS 的多 Agent / 多模型调度
+适用范围：ArchSight AIOS 的多 Agent / 多模型调度
 
 ---
 
@@ -45,6 +45,7 @@
 - RAG、MCP、Agent Runtime 问题先走 Daedalus。
 - 具体代码执行和脚本执行先走 Hephaestus。
 - AI 行业情报和开源趋势先走 Mercury。
+- 产品范围、MVP 和商业化路径先走 Janus。
 
 ---
 
@@ -88,4 +89,3 @@
 - 涉及 CI/CD。
 - 涉及交付顺序。
 - 涉及团队 workflow。
-

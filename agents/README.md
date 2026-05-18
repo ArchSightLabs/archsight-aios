@@ -21,6 +21,13 @@
 - Daedalus：AI 研发工程师
 - Hephaestus：受控执行官
 
+第二阶段最小入口 Agent：
+
+- Euclid：结构力学专家
+- Athena：知识治理官
+- Mercury：AI 情报官
+- Janus：产品策略官
+
 每个核心 Agent 目录至少包含：
 
 - `role.md`

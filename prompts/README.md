@@ -6,3 +6,8 @@
 
 Prompt 会腐化，因此不能只保存文本本身，必须保存评估和维护规则。
 
+当前入口：
+
+- [Prompt Registry](prompt-registry.md)
+- [Prompt Evaluation Policy](evaluation-policy.md)
+- [Prompt Failure Cases](failure-cases.md)
