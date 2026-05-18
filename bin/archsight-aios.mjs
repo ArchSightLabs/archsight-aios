@@ -31,7 +31,7 @@ const assetDirs = [
   "vision",
   "docs"
 ];
-const assetFiles = ["README.md", "AI_CODING_RULES.md", "AGENTS.md", "GEMINI.md"];
+const assetFiles = ["README.md", "AI_CODING_RULES.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md"];
 
 function usage() {
   return [
@@ -40,7 +40,7 @@ function usage() {
     "Usage:",
     "  archsight-aios install --target <codex|gemini|antigravity|all> --scope user",
     "  archsight-aios doctor",
-    "  archsight-aios init-project [--cwd <path>]",
+    "  archsight-aios init-project [--cwd <path>] [--mode <full|linked|ai-only>]",
     "  archsight-aios validate-project-template [--cwd <path>]",
     "  archsight-aios hermes:validate",
     "  archsight-aios hermes:sync-dry-run",
@@ -58,6 +58,7 @@ function parseArgs(argv) {
     command: command === "--help" || command === "-h" ? undefined : command,
     target: "all",
     scope: "user",
+    mode: "full",
     cwd: process.cwd(),
     help: command === "--help" || command === "-h"
   };
@@ -70,6 +71,8 @@ function parseArgs(argv) {
       options.scope = rest[++i];
     } else if (arg === "--cwd") {
       options.cwd = path.resolve(rest[++i]);
+    } else if (arg === "--mode") {
+      options.mode = rest[++i];
     } else if (arg === "--help" || arg === "-h") {
       options.help = true;
     } else {
@@ -202,6 +205,26 @@ function userInstructionBlock(storeRoot) {
     "Use `archsight-*` skills for architecture review, delivery planning, code review, BIM domain modeling, AI runtime design, and controlled execution.",
     "Keep Agent, Skill, Workflow, and Runtime boundaries separate.",
     "Do not claim code changes, tests, builds, or deployments were completed unless verified in the bound project workspace.",
+    managedEnd,
+    ""
+  ].join("\n");
+}
+
+function projectInstructionBlock() {
+  return [
+    managedStart,
+    "## ArchSight AIOS",
+    "",
+    "本项目接入 ArchSight AIOS 作为补充治理层，不替代本项目已有通用 AI 编码规则。",
+    "",
+    "当任务涉及 Agent 路由、Skill 选择、Workflow、交付验证、BIM / IFC、AI Runtime 或 Code Review 时，先阅读：",
+    "",
+    "- `.ai/project-context.md`",
+    "- `.ai/agent-routing.md`",
+    "- `.ai/skills.md`",
+    "- `.ai/workflows.md`",
+    "",
+    "当前项目事实、根目录工具入口文件和 `AI_CODING_RULES.md` 优先；AIOS 只补充项目级路由和工作流。",
     managedEnd,
     ""
   ].join("\n");
@@ -384,14 +407,35 @@ async function doctor() {
 async function initProject(options) {
   const templateRoot = path.join(repoRoot, "templates", "project-ai");
   const targetRoot = path.resolve(options.cwd);
-  const files = [
+  const mode = options.mode ?? "full";
+  const rootInstructionFiles = [
     "AGENTS.md",
-    "GEMINI.md",
+    "AI_CODING_RULES.md",
+    "CLAUDE.md",
+    "GEMINI.md"
+  ];
+  const linkedInstructionFiles = [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md"
+  ];
+  const aiFiles = [
     path.join(".ai", "project-context.md"),
     path.join(".ai", "agent-routing.md"),
     path.join(".ai", "skills.md"),
     path.join(".ai", "workflows.md")
   ];
+  const files = mode === "ai-only"
+    ? aiFiles
+    : mode === "linked"
+      ? aiFiles
+    : mode === "full"
+      ? [...rootInstructionFiles, ...aiFiles]
+      : undefined;
+
+  if (!files) {
+    throw new Error(`Unsupported init-project mode: ${mode}`);
+  }
 
   await ensureDir(targetRoot);
 
@@ -406,6 +450,16 @@ async function initProject(options) {
     await ensureDir(path.dirname(dest));
     await fs.copyFile(src, dest);
     console.log(`CREATE ${dest}`);
+  }
+
+  if (mode === "linked") {
+    const block = projectInstructionBlock();
+    for (const fileName of linkedInstructionFiles) {
+      const dest = path.join(targetRoot, fileName);
+      assertInside(dest, targetRoot);
+      await upsertManagedBlock(dest, block);
+      console.log(`LINK ${dest}`);
+    }
   }
 }
 
@@ -456,6 +510,8 @@ async function validateProjectTemplate(options) {
 
   for (const [label, fileName] of [
     ["project AGENTS uses AIOS", "AGENTS.md"],
+    ["project coding rules uses AIOS", "AI_CODING_RULES.md"],
+    ["project CLAUDE uses AIOS", "CLAUDE.md"],
     ["project GEMINI uses AIOS", "GEMINI.md"],
     ["project context uses AIOS", path.join(".ai", "project-context.md")]
   ]) {

@@ -207,6 +207,8 @@
     "path": "templates/project-ai",
     "requiredFiles": [
       "AGENTS.md",
+      "AI_CODING_RULES.md",
+      "CLAUDE.md",
       "GEMINI.md",
       ".ai/project-context.md",
       ".ai/agent-routing.md",

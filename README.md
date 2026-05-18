@@ -142,6 +142,19 @@ npx @archsight/aios validate-project-template
 npx @archsight/aios init-project --cwd /path/to/project
 ```
 
-该命令只创建缺失的 `AGENTS.md`、`GEMINI.md` 和 `.ai/` 模板文件，不覆盖已有文件。
+该命令只创建缺失的 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md`、`GEMINI.md` 和 `.ai/` 模板文件，不覆盖已有文件。
+如果业务项目已经统一维护 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md` 和 `GEMINI.md`，可只初始化 `.ai/` 治理目录：
+
+```bash
+npx @archsight/aios init-project --cwd /path/to/project --mode ai-only
+```
+
+更推荐在已有工具入口文件中追加 AIOS 引用块，让 Codex、Claude 和 Gemini 能发现 `.ai/`：
+
+```bash
+npx @archsight/aios init-project --cwd /path/to/project --mode linked
+```
+
+`linked` 模式会创建 `.ai/` 模板文件，并在 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md` 中追加可替换的 ArchSight AIOS 托管块；不会修改 `AI_CODING_RULES.md`。
 
 `doctor` 会校验 `runtime/archsight-aios.manifest.json`、Agent、Skill、Workflow、路由表、用户级安装目录和 Gemini / Antigravity 托管说明块是否一致。`validate-project-template` 会在本地临时目录执行一次 `init-project`，验证业务项目 `.ai/` 接入模板可以生成并引用当前登记的 Skills 和 Workflows。

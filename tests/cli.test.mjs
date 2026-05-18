@@ -71,6 +71,52 @@ async function testInitProjectIsIdempotent() {
   await fs.rm(tempRoot, { recursive: true, force: true });
 }
 
+async function testInitProjectAiOnlyMode() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-init-ai-only-"));
+
+  const result = run(["init-project", "--cwd", tempRoot, "--mode", "ai-only"]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  await assert.rejects(fs.access(path.join(tempRoot, "AGENTS.md")));
+  await assert.rejects(fs.access(path.join(tempRoot, "AI_CODING_RULES.md")));
+  await assert.rejects(fs.access(path.join(tempRoot, "CLAUDE.md")));
+  await assert.rejects(fs.access(path.join(tempRoot, "GEMINI.md")));
+  await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
+  await fs.access(path.join(tempRoot, ".ai", "agent-routing.md"));
+  await fs.access(path.join(tempRoot, ".ai", "skills.md"));
+  await fs.access(path.join(tempRoot, ".ai", "workflows.md"));
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testInitProjectLinkedModeReferencesAiFiles() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-init-linked-"));
+  const rootFiles = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"];
+  const codingRulesPath = path.join(tempRoot, "AI_CODING_RULES.md");
+
+  for (const fileName of rootFiles) {
+    await fs.writeFile(path.join(tempRoot, fileName), `# Existing ${fileName}\n`, "utf8");
+  }
+  await fs.writeFile(codingRulesPath, "# Existing coding rules\n", "utf8");
+
+  const result = run(["init-project", "--cwd", tempRoot, "--mode", "linked"]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  for (const fileName of rootFiles) {
+    const content = await fs.readFile(path.join(tempRoot, fileName), "utf8");
+    assert.match(content, /Existing/);
+    assert.match(content, /ARCHSIGHT-AIOS:START/);
+    assert.match(content, /\.ai\/project-context\.md/);
+    assert.match(content, /AI_CODING_RULES\.md/);
+  }
+
+  const codingRules = await fs.readFile(codingRulesPath, "utf8");
+  assert.equal(codingRules, "# Existing coding rules\n");
+  await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
 async function testHermesCommands() {
   for (const command of ["hermes:validate", "hermes:sync-dry-run", "hermes:detect-drift"]) {
     const result = run([command]);
@@ -84,6 +130,8 @@ const tests = [
   testProductIdentity,
   testValidateProjectTemplate,
   testInitProjectIsIdempotent,
+  testInitProjectAiOnlyMode,
+  testInitProjectLinkedModeReferencesAiFiles,
   testHermesCommands
 ];
 
