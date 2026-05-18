@@ -1,8 +1,28 @@
-# ArchSight AI OS
+# ArchSight AIOS
 
-ArchSight AI OS 是 ArchSightLabs 的 AI 研发组织操作系统仓库。
+ArchSight AIOS（AI Operating System）是 ArchSightLabs 的 AI 研发组织操作系统仓库。首次出现时展开为 AI Operating System；后续统一使用 `AIOS`，不再写作 `AI OS`。
 
 本仓库不是 prompt、agent 配置和技能包的简单集合，而是用于治理多模型协同、多 Agent 协同、行业知识工程、AI Coding Workflow、GraphRAG、受控执行环境和企业级 AI 研发平台的长期基础设施。
+
+## 命名与入口
+
+本仓库统一命名为 `archsight-aios`，新的仓库地址为 [ArchSightLabs/archsight-aios](https://github.com/ArchSightLabs/archsight-aios)。
+
+ArchSight 产品与基础设施命名分层如下：
+
+| 名称 | 定位 |
+| --- | --- |
+| `archsight-cognition` | 认知资产层 |
+| `archsight-aios` | AI 研发组织操作系统 / 治理与运行层 |
+
+对外入口保持同一组产品词：
+
+- 域名：`aios.archsight.cn`
+- npm 包名：`@archsight/aios`
+- CLI 入口：`npx @archsight/aios ...`
+- 用户级共享资产目录：`~/.archsight-aios/`
+
+迁移期中，历史名称 `archsight-ai-os`、`@archsight/ai-os` 和 `~/.archsight-ai-os/` 仅作为兼容标识保留；新增文档、发布说明和安装指引应使用 `AIOS` / `archsight-aios`。
 
 ## 核心文档
 
@@ -57,7 +77,7 @@ ArchSight AI OS 是 ArchSightLabs 的 AI 研发组织操作系统仓库。
 ## 目录规划
 
 ```text
-archsight-ai-os/
+archsight-aios/
 │
 ├── README.md
 ├── AI_CODING_RULES.md
@@ -86,4 +106,42 @@ archsight-ai-os/
 2. 建立统一 workflow：feature 开发、bug 修复、review、release、frontend 生成。
 3. 建立统一 Agent Routing，控制模型成本、上下文和执行边界。
 
-边界说明：`.ai/` 是具体业务项目的项目级 AI 治理目录，不属于本仓库根结构。本仓库只维护 AI OS 的统一规范、流程、路由和治理资产。
+边界说明：`.ai/` 是具体业务项目的项目级 AI 治理目录，不属于本仓库根结构。本仓库只维护 AIOS 的统一规范、流程、路由和治理资产。
+
+## 用户级安装
+
+本仓库提供最小 npm CLI，用于把 ArchSight 专属 Skills、Workflows、Runtime 路由和项目模板安装到用户级 AI 助手环境。
+
+本地仓库内执行：
+
+```bash
+npm run install:user
+npm run doctor
+npm run smoke:project
+```
+
+等发布为 npm 包后，可使用：
+
+```bash
+npx @archsight/aios install --target all --scope user
+npx @archsight/aios doctor
+npx @archsight/aios validate-project-template
+```
+
+当前安装目标：
+
+- Codex：复制 `archsight-*` skills 到 `~/.codex/skills/`。
+- 通用 Agent：复制 `archsight-*` skills 到 `~/.agents/skills/`。
+- Gemini：写入 `~/.gemini/GEMINI.md` 的 ArchSight AIOS 托管说明块。
+- Antigravity：写入 `~/.antigravity/ARCHSIGHT_AIOS.md` 的 ArchSight AIOS 托管说明块。
+- 共享资产：同步到 `~/.archsight-aios/`，包含 `skills/`、`workflows/`、`runtime/`、`templates/` 和 `agents/`。
+
+业务项目接入可执行：
+
+```bash
+npx @archsight/aios init-project --cwd /path/to/project
+```
+
+该命令只创建缺失的 `AGENTS.md`、`GEMINI.md` 和 `.ai/` 模板文件，不覆盖已有文件。
+
+`doctor` 会校验 `runtime/archsight-aios.manifest.json`、Agent、Skill、Workflow、路由表、用户级安装目录和 Gemini / Antigravity 托管说明块是否一致。`validate-project-template` 会在本地临时目录执行一次 `init-project`，验证业务项目 `.ai/` 接入模板可以生成并引用当前登记的 Skills 和 Workflows。
