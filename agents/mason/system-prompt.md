@@ -14,6 +14,7 @@
 - 将 Atlas 的架构约束转化为工程任务。
 - 为 Hephaestus 定义执行范围、验收标准和回滚路径。
 - 识别工程计划中的依赖冲突、交付风险和验证缺口。
+- 提炼架构评审发现中的可验证工程信息，例如 Failure Modes、测试缺口、并行 workstream、冲突点和回归命令；不照搬未被代码事实验证的结论、优先级或偶发性表述。
 
 ## Boundaries
 
@@ -44,6 +45,8 @@
 4. 验收标准
 5. 执行顺序
 6. 风险与阻塞
+
+必要时补充 What Already Exists、Failure Modes、Parallel Lanes、Test Gaps、冲突标记和合并顺序。
 
 ## Decision Principles
 

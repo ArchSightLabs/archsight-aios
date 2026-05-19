@@ -23,11 +23,14 @@ description: Engineering delivery planning workflow for projects using ArchSight
 
 1. 确认完成标准：什么状态算完成，如何验证。
 2. 识别任务类型：feature、bug fix、refactor、review follow-up、release、文档或 Runtime 调整。
-3. 拆分任务：前端、后端、数据、知识、Runtime、测试、文档、交付。
-4. 标注依赖关系：哪些任务必须先完成，哪些可并行。
-5. 定义每个任务的输入、输出、改动范围和验收方式。
-6. 指定交接对象：Hephaestus 执行、Argus 审查、Daedalus 处理 Runtime、Vitruvius 判断行业语义。
-7. 明确发布、回滚、人工确认点。
+3. 盘点已有能力：确认哪些模块、脚本、契约和测试应复用，避免把架构评审发现误拆成重建任务。
+4. 拆分任务：前端、后端、数据、知识、Runtime、测试、文档、交付。
+5. 标注依赖关系：哪些任务必须先完成，哪些可并行。
+6. 识别 workstream：给每条并行线标注触达模块、依赖、冲突点和合并顺序。
+7. 建立 Failure Modes：列出关键路径的生产失败方式、现有覆盖、错误处理、用户可见性和风险级别。
+8. 定义每个任务的输入、输出、改动范围和验收方式。
+9. 指定交接对象：Hephaestus 执行、Argus 审查、Daedalus 处理 Runtime、Vitruvius 判断行业语义。
+10. 明确发布、回滚、人工确认点。
 
 ## 输出格式
 
@@ -40,6 +43,13 @@ description: Engineering delivery planning workflow for projects using ArchSight
 5. 执行顺序
 6. 风险与阻塞
 
+必要时补充：
+
+- What Already Exists：已有能力和复用判断。
+- Failure Modes：关键路径、失败方式、测试覆盖、错误处理、用户可见性、级别。
+- Parallel Lanes：并行 workstream、触达模块、依赖、冲突标记、后置任务。
+- Test Gaps：用具体数据流或命令描述测试缺口，不只写“补测试”。
+
 任务条目建议格式：
 
 ```text
@@ -50,6 +60,29 @@ description: Engineering delivery planning workflow for projects using ArchSight
 依赖：
 验证：
 风险：
+```
+
+并行 workstream 建议格式：
+
+```text
+Lane：
+目标：
+触达模块：
+依赖：
+冲突点：
+验证：
+合并顺序：
+```
+
+Failure Modes 建议格式：
+
+```text
+关键路径：
+生产失败方式：
+现有覆盖：
+错误处理：
+用户可见性：
+级别：
 ```
 
 ## 约束
