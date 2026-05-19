@@ -141,6 +141,10 @@
       "path": "workflows/review.md"
     },
     {
+      "id": "quality-readiness",
+      "path": "workflows/quality-readiness.md"
+    },
+    {
       "id": "release",
       "path": "workflows/release.md"
     },
