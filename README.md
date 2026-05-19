@@ -1,8 +1,8 @@
 # ArchSight AIOS
 
-ArchSight AIOS 是一套 AI 规则、Agent、Skill、Workflow 和项目接入工具包。它以建筑行业、工程软件、BIM / IFC、RAG / GraphRAG 和 AI Coding 治理为当前重点场景，但底座本身是通用的：让 Codex、Claude、Gemini、Antigravity 等 AI 工具在同一个项目里读取同一套规则、项目上下文和验收要求。
+ArchSight AIOS 是一套面向建筑 AI 研发的规则、Agent、Skill、Workflow 和项目接入工具包。它重点服务 BIM / IFC / Revit / CAD、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图和 AI Coding 治理，让 Codex、Claude、Gemini 等 AI 工具在同一个项目里读取同一套规则、项目上下文和验收要求。
 
-适用场景包括 BIM / IFC / Revit / CAD 平台、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图、AI Coding 工作流和企业级 AI 研发治理；非建筑项目也可以只使用通用编码规则、Agent 路由、Workflow、项目 `.ai/` 上下文和交付验证能力。
+AIOS 不是全行业项目模板集合。它保留通用的 AI 编码规则、Agent 路由、Workflow、项目 `.ai/` 上下文和交付验证能力，但真正的差异化能力集中在建筑行业语义、工程证据链、规范知识工程和可复核的 AI 研发流程。
 
 ## 适合谁
 
@@ -10,7 +10,7 @@ ArchSight AIOS 是一套 AI 规则、Agent、Skill、Workflow 和项目接入工
 | --- | --- |
 | 业务专家 | 沉淀规范条文、审查口径、工程术语、样例和人工复核点。 |
 | 产品 / 项目负责人 | 把业务目标、验收标准和 AI 协作流程写进项目规则。 |
-| AI / 软件工程师 | 给项目接入统一 AI 编码规则、Skills、Workflows 和行业 profile。 |
+| AI / 软件工程师 | 给建筑 AI 项目接入统一 AI 编码规则、Skills、Workflows 和行业 profile。 |
 | 团队负责人 | 统一多工具、多模型、多 Agent 的工作边界和交付检查方式。 |
 
 ## 解决什么问题
@@ -34,9 +34,9 @@ npx @archsight/aios init
 
 如果你不写代码，只参与业务判断，可以先看 [业务专家指南](docs/business-expert-guide.md)。如果你需要一步一步安装和验证，可以看 [快速上手](docs/quickstart.md)。
 
-## 行业 Profile
+## 行业能力 Profile
 
-可以按项目类型叠加行业规则：
+可以按建筑 AI 能力方向叠加行业规则：
 
 ```bash
 npx @archsight/aios init --profile bim-platform
@@ -46,9 +46,9 @@ npx @archsight/aios init --profile rag-knowledge
 
 | Profile | 适用项目 |
 | --- | --- |
-| `bim-platform` | BIM / IFC / Revit / CAD / 建模平台 / 模型质检。 |
-| `construction-vision` | YOLO、图像分割、Segment Anything、深度估计、焊缝 / 裂缝检测、施工巡检。 |
-| `rag-knowledge` | 建筑规范知识库、RAG、GraphRAG、知识图谱、审图规则。 |
+| `bim-platform` | 工程模型轴：BIM / IFC / Revit / CAD / 建模平台 / 模型质检。 |
+| `construction-vision` | 现场感知轴：YOLO、图像分割、Segment Anything、深度估计、焊缝 / 裂缝检测、施工巡检。 |
+| `rag-knowledge` | 知识规则轴：建筑规范知识库、RAG、GraphRAG、知识图谱、审图规则。 |
 
 ## 项目会生成什么
 
@@ -73,9 +73,6 @@ npx @archsight/aios init --profile rag-knowledge
 | `doctor` | 检查仓库资产、manifest、用户级安装、Skill 和 Workflow 是否一致。 |
 | `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录和可选行业 profile。 |
 | `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
-| `hermes:validate` | 校验可选 Hermes Adapter 的 agent registry 与本仓库 runtime prompt 是否一致。 |
-| `hermes:sync-dry-run` | 输出可选 Hermes Adapter 的同步计划，不调用外部 API。 |
-| `hermes:detect-drift` | 检查本地 runtime prompt 与 agent 源定义是否存在漂移。 |
 
 ## 安装位置
 
@@ -96,11 +93,11 @@ npx @archsight/aios init --profile rag-knowledge
 - 重复执行不会重复追加托管块，也不会覆盖已有项目规则。
 - 自动模式不修改已有 `AI_CODING_RULES.md` 正文。
 
-## Runtime 与行业边界
-
-ArchSight AIOS 不要求项目必须接入 Hermes、飞书或任何特定平台。Hermes / 飞书是可选企业协作适配器；本地 Codex、Claude、Gemini、CI 脚本和普通文件规则也可以独立使用 AIOS。
+## 行业边界
 
 建筑行业能力通过 `--profile` 或明确任务触发。未启用相关 profile 的项目，不应默认加载 BIM、IFC、GraphRAG、审图或建筑规范假设。
+
+前端应用、后端服务、CLI 工具、数据管道等工程形态优先由 Workflow / Skill / Agent 路由处理，不默认扩展为 profile。只有当某类项目存在稳定的行业语义、证据链、评估集或人工复核差异时，才应考虑新增 profile。
 
 如需强制指定模式：
 
@@ -132,7 +129,6 @@ npm test
 - [Workflows](workflows/README.md)
 - [Templates](templates/README.md)
 - [Runtime 路由](runtime/agent-routing.md)
-- [Hermes 集成](runtime/hermes/agent-registry.md)
 
 ## 开源协作
 
