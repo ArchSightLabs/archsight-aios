@@ -2,7 +2,7 @@
 
 ## 定位
 
-Workspace Binding 定义 Hermes / 飞书任务如何绑定到具体项目工作区。
+Workspace Binding 定义启用 Hermes / 飞书 Adapter 时，任务如何绑定到具体项目工作区。
 
 没有绑定工作区时，Hermes 只能做咨询、计划和摘要；不能执行代码修改、测试或部署。
 
@@ -53,4 +53,3 @@ templates/project-ai/
 - 不把 AIOS 仓库误当成业务项目仓库。
 - 不把飞书聊天记录当作完整项目上下文。
 - 不跳过项目本地测试和构建。
-

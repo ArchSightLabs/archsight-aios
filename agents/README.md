@@ -2,7 +2,9 @@
 
 `agents/` 保存 Agent 组织定义。
 
-普通使用者通常不需要记住这些 Agent 名字，也不需要手动指定某个 Agent。日常使用时，先执行 `archsight-aios init`，再按项目任务选择合适的 profile、Skill 或 Workflow 即可。Agent 名字主要是内部角色标签，用来帮助 AIOS 做任务路由、职责边界和运行时 prompt 管理。
+普通使用者通常不需要记住这些 Agent 名字，也不需要手动指定某个 Agent。日常使用时，先执行 `archsight-aios init`，再按项目任务选择合适的 profile、Skill 或 Workflow 即可。Agent 名字是角色契约标签，用来帮助 AIOS 做任务路由、职责边界和运行时 prompt 管理。
+
+这些角色不代表接入项目属于 ArchSightLabs，也不要求项目使用 Hermes、飞书或任何特定运行平台。建筑行业是当前重点覆盖方向，但只有项目启用相关 profile 或任务明确涉及 BIM / IFC / 规范 / 审图 / RAG 知识工程时，才应引入对应行业假设。
 
 例如：
 
@@ -21,8 +23,8 @@
 | 层 | 内容 | 作用 |
 | --- | --- | --- |
 | Source | `role.md` / `responsibilities.md` / `constraints.md` / `workflow.md` | 长期维护角色资产 |
-| Runtime | `system-prompt.md` | Hermes 创建 Agent 时直接使用 |
-| Instance | Hermes / 飞书机器人 | 实际对话入口 |
+| Runtime | `system-prompt.md` | 运行时可加载的最小提示词 |
+| Instance / Adapter | Codex、Claude、Gemini、Hermes、飞书等 | 实际对话或协作入口 |
 
 当前核心 Agent：
 

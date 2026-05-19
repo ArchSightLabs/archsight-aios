@@ -251,8 +251,9 @@ function userInstructionBlock(storeRoot) {
     `- Runtime routing: ${p(path.join(storeRoot, "runtime"))}`,
     `- Project template: ${p(path.join(storeRoot, "templates", "project-ai"))}`,
     "",
-    "Use `archsight-*` skills for architecture review, delivery planning, code review, BIM domain modeling, AI runtime design, and controlled execution.",
+    "Use enabled `archsight-*` skills for architecture review, delivery planning, code review, AI runtime design, controlled execution, and BIM domain modeling when the project profile or task requires it.",
     "Keep Agent, Skill, Workflow, and Runtime boundaries separate.",
+    "Hermes, Feishu, and other runtime adapters are optional; do not assume they are enabled unless the project says so.",
     "Do not claim code changes, tests, builds, or deployments were completed unless verified in the bound project workspace.",
     managedEnd,
     ""
@@ -266,7 +267,7 @@ function projectInstructionBlock() {
     "",
     "本项目接入 ArchSight AIOS 作为补充治理层，不替代本项目已有通用 AI 编码规则。",
     "",
-    "当任务涉及 Agent 路由、Skill 选择、Workflow、交付验证、BIM / IFC、AI Runtime 或 Code Review 时，先阅读：",
+    "当任务涉及 Agent 路由、Skill 选择、Workflow、交付验证、AI Runtime、Code Review，或项目明确启用的 BIM / IFC / 建筑行业 profile 时，先阅读：",
     "",
     "- `.ai/ARCHSIGHT_AIOS_RULES.md`",
     "- `.ai/project-context.md`",
@@ -275,7 +276,7 @@ function projectInstructionBlock() {
     "- `.ai/workflows.md`",
     "- `.ai/profiles/*.md`（如当前项目启用了 profile）",
     "",
-    "当前项目事实、根目录工具入口文件和 `AI_CODING_RULES.md` 优先；`.ai/ARCHSIGHT_AIOS_RULES.md` 只补充 AIOS 专属规则。",
+    "当前项目事实、根目录工具入口文件和 `AI_CODING_RULES.md` 优先；`.ai/ARCHSIGHT_AIOS_RULES.md` 只补充 AIOS 专属规则。接入 AIOS 不代表项目属于 ArchSightLabs，也不要求使用 Hermes、飞书或其他特定运行平台。",
     managedEnd,
     ""
   ].join("\n");

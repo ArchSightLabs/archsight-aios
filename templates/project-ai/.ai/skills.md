@@ -2,7 +2,9 @@
 
 ## 使用原则
 
-Skill 是“怎么做”，不是“谁来做”。本项目优先使用 ArchSight 专属 Skill，避免与通用技能包混淆。
+Skill 是“怎么做”，不是“谁来做”。本项目优先使用已启用的 ArchSight AIOS Skill，避免与通用技能包混淆。
+
+ArchSight AIOS 的 Skill 是通用治理能力；`archsight-*` 前缀表示来源和命名空间，不表示当前项目属于 ArchSightLabs。
 
 ## Skill 路由
 
@@ -24,7 +26,8 @@ Skill 是“怎么做”，不是“谁来做”。本项目优先使用 ArchSig
 - [ ] `archsight-ai-runtime-design`
 - [ ] `archsight-controlled-execution`
 
-## 备注
+## 启用规则
 
-复制本模板到业务项目后，应补充该项目实际可用的 Skill 来源路径或同步方式。
-
+- 只勾选当前项目真实安装或可访问的 Skill。
+- 只有启用建筑、BIM、IFC、规范知识库、GraphRAG 或智能审图 profile 时，才默认启用 `archsight-bim-domain-modeling`。
+- 如 Skill 来源、安装位置或同步方式无法确认，应标注待核验，不要假设已经启用。

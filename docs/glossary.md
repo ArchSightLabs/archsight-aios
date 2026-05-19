@@ -2,7 +2,7 @@
 
 ## AIOS
 
-ArchSight AIOS 是 ArchSightLabs 面向建筑行业项目的 AI 规则、Agent、Skill、Workflow 和运行治理工具包。
+ArchSight AIOS 是一套 AI 规则、Agent、Skill、Workflow 和运行治理工具包。它由 ArchSightLabs 提供，当前重点覆盖建筑行业和工程软件场景，但通用底座可用于其他项目。
 
 ## Agent
 
@@ -54,7 +54,7 @@ Retrieval-Augmented Generation，检索增强生成。模型回答前先检索�
 
 ## Hermes
 
-仓库中用于登记和同步运行时 Agent prompt 的集成边界。当前 CLI 只提供校验和 dry-run，不直接执行外部 API 同步。
+可选运行时 Adapter，用于登记和同步运行时 Agent prompt。当前 CLI 只提供校验和 dry-run，不直接执行外部 API 同步；未启用 Hermes 的项目不需要依赖它。
 
 ## 业务专家
 

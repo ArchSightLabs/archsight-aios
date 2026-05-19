@@ -15,7 +15,7 @@
 
 ## 文档定位
 
-本文件定义 ArchSightLabs 的 AI Engineering Squad 角色体系。
+本文件定义 ArchSight AIOS 的 AI Engineering Squad 角色体系。该体系由 ArchSightLabs 发起，但角色契约应能被其他接入项目复用。
 
 它回答的问题是：
 

@@ -2,9 +2,9 @@
 
 ## 定位
 
-本文件定义 Hermes 中应创建哪些 Agent，以及它们从仓库哪里同步运行时 System Prompt。
+本文件定义可选 Hermes Adapter 中应创建哪些 Agent，以及它们从仓库哪里同步运行时 System Prompt。
 
-Hermes Agent 是部署实例，不是角色资产源。
+Hermes Agent 是部署实例，不是角色资产源；未使用 Hermes 的项目仍可直接使用 AIOS 的规则、Skill、Workflow 和项目模板。
 
 ## Source / Runtime / Instance
 
@@ -12,7 +12,7 @@ Hermes Agent 是部署实例，不是角色资产源。
 | --- | --- | --- |
 | Source | 角色资产包 | `agents/{agent}/` |
 | Runtime | Hermes 使用的系统提示词 | `agents/{agent}/system-prompt.md` |
-| Instance | Hermes Agent / 飞书机器人 | Hermes 控制台或运行配置 |
+| Instance | Hermes Agent / 飞书机器人 | Hermes 控制台或运行配置，仅在项目启用该 Adapter 时需要 |
 
 ## 第一阶段核心 Agent
 

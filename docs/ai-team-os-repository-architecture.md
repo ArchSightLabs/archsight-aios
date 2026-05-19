@@ -40,7 +40,7 @@
 
 > AI 研发组织操作系统（AI Team OS）
 
-也就是 ArchSightLabs 的 AI 团队治理中心。
+也就是由 ArchSightLabs 发起、可被多项目复用的 AI 团队治理中心。
 
 它管理的不是单个聊天机器人，而是建筑行业 AI 研发基础设施：
 

@@ -4,6 +4,8 @@
 
 Workflow 定义“什么时候做、按什么顺序做”。当任务涉及多个 Agent 或多个 Skill 时，必须选择对应 Workflow。
 
+Workflow 是项目执行路径，不绑定某个运行平台。Hermes、飞书、Codex、Claude、Gemini 等只影响入口和执行方式，不改变项目事实、测试命令和验收标准。
+
 ## 推荐 Workflow
 
 | 场景 | Workflow |
@@ -22,6 +24,7 @@ Workflow 定义“什么时候做、按什么顺序做”。当任务涉及多�
 - 再选择 Workflow。
 - 再调用对应 Skill。
 - 最后用测试、构建、lint、typecheck 或人工检查验证。
+- 涉及建筑行业、BIM、IFC、规范、审图或 RAG / GraphRAG 时，先确认项目是否启用对应 profile。
 
 ## 本项目默认流程
 
@@ -32,4 +35,3 @@ Workflow 定义“什么时候做、按什么顺序做”。当任务涉及多�
 - Review：
 - Release：
 - RAG / GraphRAG：
-

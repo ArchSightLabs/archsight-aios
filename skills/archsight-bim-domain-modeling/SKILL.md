@@ -1,6 +1,6 @@
 ---
 name: archsight-bim-domain-modeling
-description: ArchSight BIM and building-domain knowledge modeling workflow for ArchSightLabs projects. Use when structuring BIM, IFC, building codes, construction terminology, procurement/delivery standards, review rules, domain entities, knowledge graph schemas, or GraphRAG inputs for architecture and engineering products.
+description: BIM and building-domain knowledge modeling workflow for projects using ArchSight AIOS. Use when structuring BIM, IFC, building codes, construction terminology, procurement/delivery standards, review rules, domain entities, knowledge graph schemas, or GraphRAG inputs for architecture and engineering products.
 ---
 
 # ArchSight BIM Domain Modeling

@@ -1,8 +1,8 @@
 # ArchSight AIOS
 
-ArchSight AIOS 是一套面向建筑行业项目的 AI 规则、Agent、Skill 和 Workflow 工具包。它的目标不是替你写一个聊天机器人，而是让 Codex、Claude、Gemini、Antigravity 等 AI 工具在同一个项目里读取同一套规则、行业上下文和验收要求。
+ArchSight AIOS 是一套 AI 规则、Agent、Skill、Workflow 和项目接入工具包。它以建筑行业、工程软件、BIM / IFC、RAG / GraphRAG 和 AI Coding 治理为当前重点场景，但底座本身是通用的：让 Codex、Claude、Gemini、Antigravity 等 AI 工具在同一个项目里读取同一套规则、项目上下文和验收要求。
 
-适用场景包括 BIM / IFC / Revit / CAD 平台、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图、AI Coding 工作流和企业级 AI 研发治理。
+适用场景包括 BIM / IFC / Revit / CAD 平台、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图、AI Coding 工作流和企业级 AI 研发治理；非建筑项目也可以只使用通用编码规则、Agent 路由、Workflow、项目 `.ai/` 上下文和交付验证能力。
 
 ## 适合谁
 
@@ -17,7 +17,7 @@ ArchSight AIOS 是一套面向建筑行业项目的 AI 规则、Agent、Skill �
 
 - 不同 AI 工具各读各的规则，导致输出风格和边界不一致。
 - 项目里缺少明确的 `.ai/` 上下文目录，AI 不知道行业知识、验收标准和人工复核点。
-- 建筑行业项目涉及规范、BIM、图纸、模型、施工现场、知识库和 AI 检测，容易把模型推断误当成工程结论。
+- 建筑行业项目涉及规范、BIM、图纸、模型、施工现场、知识库和 AI 检测，容易把模型推断误当成工程结论；AIOS 通过 profile 叠加这些行业规则，而不是把它们写成所有项目的默认事实。
 - AI 生成代码、文档或规则后，缺少统一的 review、验证和发布检查路径。
 
 ## 三步开始
@@ -73,8 +73,8 @@ npx @archsight/aios init --profile rag-knowledge
 | `doctor` | 检查仓库资产、manifest、用户级安装、Skill 和 Workflow 是否一致。 |
 | `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录和可选行业 profile。 |
 | `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
-| `hermes:validate` | 校验 Hermes agent registry 与本仓库 runtime prompt 是否一致。 |
-| `hermes:sync-dry-run` | 输出 Hermes 同步计划，不调用外部 API。 |
+| `hermes:validate` | 校验可选 Hermes Adapter 的 agent registry 与本仓库 runtime prompt 是否一致。 |
+| `hermes:sync-dry-run` | 输出可选 Hermes Adapter 的同步计划，不调用外部 API。 |
 | `hermes:detect-drift` | 检查本地 runtime prompt 与 agent 源定义是否存在漂移。 |
 
 ## 安装位置
@@ -95,6 +95,12 @@ npx @archsight/aios init --profile rag-knowledge
 - 已存在 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md` 或 `GEMINI.md` 时，创建缺失的 `.ai/` 文件，并在 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md` 中追加或刷新 ArchSight AIOS 托管引用块。
 - 重复执行不会重复追加托管块，也不会覆盖已有项目规则。
 - 自动模式不修改已有 `AI_CODING_RULES.md` 正文。
+
+## Runtime 与行业边界
+
+ArchSight AIOS 不要求项目必须接入 Hermes、飞书或任何特定平台。Hermes / 飞书是可选企业协作适配器；本地 Codex、Claude、Gemini、CI 脚本和普通文件规则也可以独立使用 AIOS。
+
+建筑行业能力通过 `--profile` 或明确任务触发。未启用相关 profile 的项目，不应默认加载 BIM、IFC、GraphRAG、审图或建筑规范假设。
 
 如需强制指定模式：
 

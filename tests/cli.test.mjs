@@ -185,6 +185,28 @@ async function testProjectProfiles() {
   }
 }
 
+async function testGenericProjectBoundaryText() {
+  const rules = await fs.readFile(
+    path.join(repoRoot, "templates", "project-ai", ".ai", "ARCHSIGHT_AIOS_RULES.md"),
+    "utf8"
+  );
+  assert.match(rules, /不代表当前项目属于 ArchSightLabs/);
+  assert.match(rules, /不要求使用 Hermes、飞书/);
+  assert.match(rules, /未启用时，不得把 BIM、IFC、GraphRAG 或审图场景当作项目默认事实/);
+
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-generic-boundary-"));
+  const agentsPath = path.join(tempRoot, "AGENTS.md");
+  await fs.writeFile(agentsPath, "# Existing project instructions\n", "utf8");
+
+  const result = run(["init", "--cwd", tempRoot]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  const agents = await fs.readFile(agentsPath, "utf8");
+  assert.match(agents, /不代表项目属于 ArchSightLabs/);
+  assert.match(agents, /不要求使用 Hermes、飞书/);
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
 async function testHermesCommands() {
   for (const command of ["hermes:validate", "hermes:sync-dry-run", "hermes:detect-drift"]) {
     const result = run([command]);
@@ -204,6 +226,7 @@ const tests = [
   testInitProjectLinkedModeReferencesAiFiles,
   testInitProjectLinkedModeCopiesMissingToolEntrypoints,
   testProjectProfiles,
+  testGenericProjectBoundaryText,
   testHermesCommands
 ];
 

@@ -1,6 +1,6 @@
 ---
 name: archsight-code-review
-description: ArchSight code review and risk review workflow for ArchSightLabs projects. Use when reviewing diffs, pull requests, AI-generated code, security-sensitive changes, prompt/tool/runtime changes, dependency updates, performance risks, missing tests, or production release readiness.
+description: Code review and risk review workflow for projects using ArchSight AIOS. Use when reviewing diffs, pull requests, AI-generated code, security-sensitive changes, prompt/tool/runtime changes, dependency updates, performance risks, missing tests, or production release readiness.
 ---
 
 # ArchSight Code Review

@@ -1,6 +1,6 @@
 ---
 name: archsight-ai-runtime-design
-description: ArchSight AI runtime and knowledge pipeline design workflow for ArchSightLabs projects. Use when designing prompts, context compression, memory strategy, Hermes/OpenClaw agents, tool calling, MCP permissions, RAG, GraphRAG, embeddings, evaluation, multi-agent orchestration, or agent state governance.
+description: AI runtime and knowledge pipeline design workflow for projects using ArchSight AIOS. Use when designing prompts, context compression, memory strategy, optional runtime adapters such as Hermes/OpenClaw, tool calling, MCP permissions, RAG, GraphRAG, embeddings, evaluation, multi-agent orchestration, or agent state governance.
 ---
 
 # ArchSight AI Runtime Design
@@ -14,7 +14,7 @@ description: ArchSight AI runtime and knowledge pipeline design workflow for Arc
 优先收集：
 
 - Agent 角色资产、system prompt 或 workflow。
-- Hermes / OpenClaw / 飞书机器人运行约束。
+- 目标运行时约束，例如本地 Agent、Hermes、OpenClaw、飞书机器人或其他协作入口。
 - 工具清单、权限、输入输出 schema。
 - RAG / GraphRAG 数据源、索引、评估需求。
 - 当前上下文、记忆、检索或工具调用失败案例。
