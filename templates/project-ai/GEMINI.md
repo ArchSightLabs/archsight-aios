@@ -1,6 +1,7 @@
 # GEMINI.md
 
-> 本文件供 Gemini 在具体业务项目中接入 ArchSight AIOS 时使用。
+> 本文件供 Gemini 在当前业务项目中读取项目 AI 规则。  
+> 通用编码规则只维护在 `AI_CODING_RULES.md`，本文件不复制规则正文。
 
 ## 必读入口
 
@@ -12,13 +13,12 @@
 - `.ai/agent-routing.md`
 - `.ai/skills.md`
 - `.ai/workflows.md`
+- `.ai/profiles/*.md`（如当前项目启用了 profile）
 - 项目自身的 `README.md`、`Makefile`、`scripts/` 或其他工程入口。
 
-## Gemini 特别说明
+## Gemini 入口适配
 
-- `AI_CODING_RULES.md` 是业务项目通用 AI 编码规则主体，本文件只做 Gemini 入口适配。
-- `.ai/ARCHSIGHT_AIOS_RULES.md` 是 AIOS 补充规则，只在 AIOS 相关任务中生效。
+- 本文件只负责让 Gemini 发现当前项目的公共规则和 `.ai/` 目录。
+- ArchSight AIOS 只在 Agent 路由、Skill 选择、Workflow、交付验证、BIM / IFC、AI Runtime 或 Code Review 等相关任务中作为补充治理层生效。
+- 任务适合 ArchSight 技能包时，按 `.ai/skills.md` 选择对应 `archsight-*` Skill；涉及流程协作时，按 `.ai/workflows.md` 选择 Workflow。
 - 使用浏览器或外部工具前，先说明目的；操作后汇报结果。
-- 任务适合 ArchSight 技能包时，读取 `.ai/skills.md` 中对应 `archsight-*` Skill 的说明，按输入、工作流、输出格式和约束执行。
-- 当前代码库事实优先于记忆和通用知识。
-- 无法确认的行业知识、规范条文或运行时配置必须标注待核验。
