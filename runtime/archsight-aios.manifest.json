@@ -210,12 +210,39 @@
       "AI_CODING_RULES.md",
       "CLAUDE.md",
       "GEMINI.md",
+      ".ai/ARCHSIGHT_AIOS_RULES.md",
       ".ai/project-context.md",
       ".ai/agent-routing.md",
       ".ai/skills.md",
       ".ai/workflows.md"
     ]
   },
+  "projectProfiles": [
+    {
+      "id": "bim-platform",
+      "path": "templates/project-bim-platform",
+      "description": "BIM / IFC / Revit / CAD / modeling platform project profile.",
+      "requiredFiles": [
+        ".ai/profiles/bim-platform.md"
+      ]
+    },
+    {
+      "id": "construction-vision",
+      "path": "templates/project-construction-vision",
+      "description": "Construction vision AI, detection, segmentation, and depth-estimation project profile.",
+      "requiredFiles": [
+        ".ai/profiles/construction-vision.md"
+      ]
+    },
+    {
+      "id": "rag-knowledge",
+      "path": "templates/project-rag-knowledge",
+      "description": "Building-code knowledge base, RAG, GraphRAG, and knowledge-graph project profile.",
+      "requiredFiles": [
+        ".ai/profiles/rag-knowledge.md"
+      ]
+    }
+  ],
   "installTargets": {
     "codexSkills": "~/.codex/skills",
     "sharedAgentSkills": "~/.agents/skills",

@@ -125,8 +125,21 @@ npm run smoke:project
 ```bash
 npx @archsight/aios install --target all --scope user
 npx @archsight/aios doctor
-npx @archsight/aios validate-project-template
+npx @archsight/aios validate
 ```
+
+当前有价值的 CLI 命令：
+
+| 命令 | 用途 |
+| --- | --- |
+| `help` | 查看 CLI 帮助、可用命令和示例。 |
+| `install` | 安装 ArchSight AIOS 用户级资产到 Codex、Gemini、Antigravity 和共享目录。 |
+| `doctor` | 检查仓库资产、manifest、用户级安装、Skill 和 Workflow 是否一致。 |
+| `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录和可选行业 profile。 |
+| `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
+| `hermes:validate` | 校验 Hermes agent registry 与本仓库 runtime prompt 是否一致。 |
+| `hermes:sync-dry-run` | 输出 Hermes 同步计划，不调用外部 API。 |
+| `hermes:detect-drift` | 检查本地 runtime prompt 与 agent 源定义是否存在漂移。 |
 
 当前安装目标：
 
@@ -139,22 +152,38 @@ npx @archsight/aios validate-project-template
 业务项目接入可执行：
 
 ```bash
-npx @archsight/aios init-project --cwd /path/to/project
+npx @archsight/aios init --cwd /path/to/project
 ```
 
-该命令只创建缺失的 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md`、`GEMINI.md` 和 `.ai/` 模板文件，不覆盖已有文件。
-如果业务项目已经统一维护 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md` 和 `GEMINI.md`，可只初始化 `.ai/` 治理目录：
+`--cwd` 不指定时，默认使用当前目录。默认 `--mode auto`，CLI 会按目标项目状态智能判断：
+
+- 新项目或没有 AI 工具入口文件时，创建 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md`、`GEMINI.md` 和 `.ai/` 模板文件。
+- 已存在 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md` 或 `GEMINI.md` 时，自动按 linked 方式处理：创建缺失的 `.ai/` 文件，并在 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md` 中追加或刷新 ArchSight AIOS 托管引用块。
+- 已存在 ArchSight AIOS 关键字、托管标记或 `.ai/ARCHSIGHT_AIOS_RULES.md` 时，重复执行会补缺失文件并替换既有托管块，不会重复追加。
+- 自动 linked 不修改已有 `AI_CODING_RULES.md` 正文。
+
+如需强制指定模式，可使用：
 
 ```bash
-npx @archsight/aios init-project --cwd /path/to/project --mode ai-only
+npx @archsight/aios init --cwd /path/to/project --mode full
+npx @archsight/aios init --cwd /path/to/project --mode linked
+npx @archsight/aios init --cwd /path/to/project --mode ai-only
 ```
 
-更推荐在已有工具入口文件中追加 AIOS 引用块，让 Codex、Claude 和 Gemini 能发现 `.ai/`：
+`full` 强制补齐根目录入口和 `.ai/` 文件但不覆盖已有文件；`linked` 强制让工具入口能发现 `.ai/`；`ai-only` 只初始化 `.ai/` 治理目录。
+
+可按项目类型叠加行业 profile：
 
 ```bash
-npx @archsight/aios init-project --cwd /path/to/project --mode linked
+npx @archsight/aios init --cwd /path/to/project --profile bim-platform
+npx @archsight/aios init --cwd /path/to/project --profile construction-vision
+npx @archsight/aios init --cwd /path/to/project --profile rag-knowledge
 ```
 
-`linked` 模式会创建 `.ai/` 模板文件，并在 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md` 中追加可替换的 ArchSight AIOS 托管块；不会修改 `AI_CODING_RULES.md`。
+当前 profile：
 
-`doctor` 会校验 `runtime/archsight-aios.manifest.json`、Agent、Skill、Workflow、路由表、用户级安装目录和 Gemini / Antigravity 托管说明块是否一致。`validate-project-template` 会在本地临时目录执行一次 `init-project`，验证业务项目 `.ai/` 接入模板可以生成并引用当前登记的 Skills 和 Workflows。
+- `bim-platform`：BIM / IFC / Revit / CAD / 建模平台项目。
+- `construction-vision`：施工视觉 AI、检测、分割、深度估计项目。
+- `rag-knowledge`：规范知识库、RAG、GraphRAG、知识图谱项目。
+
+`doctor` 会校验 `runtime/archsight-aios.manifest.json`、Agent、Skill、Workflow、路由表、用户级安装目录和 Gemini / Antigravity 托管说明块是否一致。`validate --temp` 会在本地临时目录执行一次 `init`，验证业务项目 `.ai/` 接入模板可以生成并引用当前登记的 Skills 和 Workflows。

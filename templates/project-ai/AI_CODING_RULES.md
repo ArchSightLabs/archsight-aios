@@ -2,6 +2,7 @@
 
 > 本文件是当前业务项目的通用 AI 编码规则主体。  
 > `AGENTS.md`、`CLAUDE.md` 和 `GEMINI.md` 是不同工具的入口适配器，不复制本规范正文。
+> ArchSight AIOS 的专属补充规则位于 `.ai/ARCHSIGHT_AIOS_RULES.md`。
 
 ## 核心原则
 
@@ -12,19 +13,7 @@
 - 不引入新依赖、不扩大功能范围，除非用户明确要求。
 - 修改后必须运行合适的验证；未经验证不得声称完成。
 
-## ArchSight AIOS 补充层
-
-当任务涉及 Agent 路由、Skill 选择、Workflow、交付验证、BIM / IFC、AI Runtime 或 Code Review 时，读取：
-
-- `.ai/project-context.md`
-- `.ai/agent-routing.md`
-- `.ai/skills.md`
-- `.ai/workflows.md`
-
-AIOS 只补充项目级路由和工作流，不替代当前项目代码、测试、构建和发布事实。
-
 ## 语言约束
 
 - 面向用户的文档、说明、UI 文案和最终报告默认使用中文。
 - 代码标识符、API、命令、环境变量、协议名和必要技术术语可以保留英文。
-

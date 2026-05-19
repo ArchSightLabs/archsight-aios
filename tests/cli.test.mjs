@@ -25,8 +25,19 @@ async function testHelp() {
   const result = run(["--help"]);
   assert.equal(result.status, 0);
   assert.match(result.stdout, /ArchSight AIOS/);
+  assert.match(result.stdout, /archsight-aios help/);
   assert.match(result.stdout, /archsight-aios doctor/);
+  assert.match(result.stdout, /archsight-aios init /);
+  assert.doesNotMatch(result.stdout, /init-project/);
+  assert.doesNotMatch(result.stdout, /validate-project-template/);
   assert.doesNotMatch(result.stdout, new RegExp(["ai", "os"].join("-")));
+}
+
+async function testHelpCommand() {
+  const result = run(["help"]);
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /Commands:/);
+  assert.match(result.stdout, /archsight-aios validate/);
 }
 
 async function testUnknownCommand() {
@@ -48,39 +59,57 @@ async function testProductIdentity() {
 }
 
 async function testValidateProjectTemplate() {
-  const result = run(["validate-project-template"]);
+  const result = run(["validate", "--temp"]);
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(result.stdout, /Project template validation passed/);
 }
 
-async function testInitProjectIsIdempotent() {
+async function testInitProjectDefaultsToCurrentDirectory() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-init-cwd-default-"));
+
+  const result = run(["init"], { cwd: tempRoot });
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  await fs.access(path.join(tempRoot, "AGENTS.md"));
+  await fs.access(path.join(tempRoot, "AI_CODING_RULES.md"));
+  await fs.access(path.join(tempRoot, "CLAUDE.md"));
+  await fs.access(path.join(tempRoot, "GEMINI.md"));
+  await fs.access(path.join(tempRoot, ".ai", "ARCHSIGHT_AIOS_RULES.md"));
+  await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testInitProjectAutoLinksExistingInstructionFiles() {
   const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-init-"));
   const agentsPath = path.join(tempRoot, "AGENTS.md");
   await fs.writeFile(agentsPath, "# Existing project instructions\n", "utf8");
 
-  const first = run(["init-project", "--cwd", tempRoot]);
+  const first = run(["init", "--cwd", tempRoot]);
   assert.equal(first.status, 0, `${first.stdout}\n${first.stderr}`);
-  assert.match(first.stdout, /SKIP existing/);
+  assert.match(first.stdout, /LINK/);
 
-  const second = run(["init-project", "--cwd", tempRoot]);
+  const second = run(["init", "--cwd", tempRoot]);
   assert.equal(second.status, 0, `${second.stdout}\n${second.stderr}`);
-  assert.match(second.stdout, /SKIP existing/);
+  assert.match(second.stdout, /LINK/);
 
   const agents = await fs.readFile(agentsPath, "utf8");
-  assert.equal(agents, "# Existing project instructions\n");
+  assert.match(agents, /Existing project instructions/);
+  assert.match(agents, /ARCHSIGHT-AIOS:START/);
+  assert.equal((agents.match(/ARCHSIGHT-AIOS:START/g) ?? []).length, 1);
   await fs.rm(tempRoot, { recursive: true, force: true });
 }
 
 async function testInitProjectAiOnlyMode() {
   const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-init-ai-only-"));
 
-  const result = run(["init-project", "--cwd", tempRoot, "--mode", "ai-only"]);
+  const result = run(["init", "--cwd", tempRoot, "--mode", "ai-only"]);
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
 
   await assert.rejects(fs.access(path.join(tempRoot, "AGENTS.md")));
   await assert.rejects(fs.access(path.join(tempRoot, "AI_CODING_RULES.md")));
   await assert.rejects(fs.access(path.join(tempRoot, "CLAUDE.md")));
   await assert.rejects(fs.access(path.join(tempRoot, "GEMINI.md")));
+  await fs.access(path.join(tempRoot, ".ai", "ARCHSIGHT_AIOS_RULES.md"));
   await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
   await fs.access(path.join(tempRoot, ".ai", "agent-routing.md"));
   await fs.access(path.join(tempRoot, ".ai", "skills.md"));
@@ -99,22 +128,61 @@ async function testInitProjectLinkedModeReferencesAiFiles() {
   }
   await fs.writeFile(codingRulesPath, "# Existing coding rules\n", "utf8");
 
-  const result = run(["init-project", "--cwd", tempRoot, "--mode", "linked"]);
+  const result = run(["init", "--cwd", tempRoot, "--mode", "linked"]);
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
 
   for (const fileName of rootFiles) {
     const content = await fs.readFile(path.join(tempRoot, fileName), "utf8");
     assert.match(content, /Existing/);
     assert.match(content, /ARCHSIGHT-AIOS:START/);
+    assert.match(content, /\.ai\/ARCHSIGHT_AIOS_RULES\.md/);
     assert.match(content, /\.ai\/project-context\.md/);
     assert.match(content, /AI_CODING_RULES\.md/);
   }
 
   const codingRules = await fs.readFile(codingRulesPath, "utf8");
   assert.equal(codingRules, "# Existing coding rules\n");
+  await fs.access(path.join(tempRoot, ".ai", "ARCHSIGHT_AIOS_RULES.md"));
   await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
 
   await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testInitProjectLinkedModeCopiesMissingToolEntrypoints() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-init-linked-missing-"));
+
+  const result = run(["init", "--cwd", tempRoot, "--mode", "linked"]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  await assert.rejects(fs.access(path.join(tempRoot, "AI_CODING_RULES.md")));
+  for (const fileName of ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]) {
+    const content = await fs.readFile(path.join(tempRoot, fileName), "utf8");
+    assert.match(content, /\.ai\/ARCHSIGHT_AIOS_RULES\.md/);
+    assert.doesNotMatch(content, /ARCHSIGHT-AIOS:START/);
+  }
+
+  await fs.access(path.join(tempRoot, ".ai", "ARCHSIGHT_AIOS_RULES.md"));
+  await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testProjectProfiles() {
+  const profiles = [
+    ["bim-platform", path.join(".ai", "profiles", "bim-platform.md"), /Revit|IFC|CAD/],
+    ["construction-vision", path.join(".ai", "profiles", "construction-vision.md"), /YOLO|Segment Anything|深度估计/],
+    ["rag-knowledge", path.join(".ai", "profiles", "rag-knowledge.md"), /GraphRAG|知识图谱|评估问题/]
+  ];
+
+  for (const [profile, outputFile, pattern] of profiles) {
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), `archsight-aios-profile-${profile}-`));
+    const result = run(["init", "--cwd", tempRoot, "--mode", "linked", "--profile", profile]);
+    assert.equal(result.status, 0, `${profile}\n${result.stdout}\n${result.stderr}`);
+    const content = await fs.readFile(path.join(tempRoot, outputFile), "utf8");
+    assert.match(content, pattern);
+    await fs.access(path.join(tempRoot, ".ai", "ARCHSIGHT_AIOS_RULES.md"));
+    await fs.rm(tempRoot, { recursive: true, force: true });
+  }
 }
 
 async function testHermesCommands() {
@@ -126,12 +194,16 @@ async function testHermesCommands() {
 
 const tests = [
   testHelp,
+  testHelpCommand,
   testUnknownCommand,
   testProductIdentity,
   testValidateProjectTemplate,
-  testInitProjectIsIdempotent,
+  testInitProjectDefaultsToCurrentDirectory,
+  testInitProjectAutoLinksExistingInstructionFiles,
   testInitProjectAiOnlyMode,
   testInitProjectLinkedModeReferencesAiFiles,
+  testInitProjectLinkedModeCopiesMissingToolEntrypoints,
+  testProjectProfiles,
   testHermesCommands
 ];
 

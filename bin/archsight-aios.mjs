@@ -38,29 +38,43 @@ function usage() {
     "ArchSight AIOS",
     "",
     "Usage:",
+    "  archsight-aios help",
     "  archsight-aios install --target <codex|gemini|antigravity|all> --scope user",
     "  archsight-aios doctor",
-    "  archsight-aios init-project [--cwd <path>] [--mode <full|linked|ai-only>]",
-    "  archsight-aios validate-project-template [--cwd <path>]",
+    "  archsight-aios init [--cwd <path>] [--mode <auto|full|linked|ai-only>] [--profile <name>]",
+    "  archsight-aios validate [--cwd <path>] [--profile <name>] [--temp]",
     "  archsight-aios hermes:validate",
     "  archsight-aios hermes:sync-dry-run",
     "  archsight-aios hermes:detect-drift",
     "",
+    "Commands:",
+    "  help                  Show this help.",
+    "  install               Install AIOS assets into user-level assistant locations.",
+    "  doctor                Check repository assets and user-level installation.",
+    "  init                  Add AI rules and .ai governance files to a project.",
+    "  validate              Validate the project AI template output.",
+    "  hermes:*              Validate or dry-run Hermes runtime prompt sync.",
+    "",
     "Examples:",
     "  npx @archsight/aios install --target codex --scope user",
+    "  npx @archsight/aios init",
+    "  npx @archsight/aios validate --temp",
     "  npx @archsight/aios doctor"
   ].join("\n");
 }
 
 function parseArgs(argv) {
   const [command, ...rest] = argv;
+  const help = command === "--help" || command === "-h" || command === "help";
   const options = {
-    command: command === "--help" || command === "-h" ? undefined : command,
+    command: help ? undefined : command,
     target: "all",
     scope: "user",
-    mode: "full",
+    mode: "auto",
+    profile: undefined,
     cwd: process.cwd(),
-    help: command === "--help" || command === "-h"
+    help,
+    temp: false
   };
 
   for (let i = 0; i < rest.length; i += 1) {
@@ -73,6 +87,10 @@ function parseArgs(argv) {
       options.cwd = path.resolve(rest[++i]);
     } else if (arg === "--mode") {
       options.mode = rest[++i];
+    } else if (arg === "--profile") {
+      options.profile = rest[++i];
+    } else if (arg === "--temp") {
+      options.temp = true;
     } else if (arg === "--help" || arg === "-h") {
       options.help = true;
     } else {
@@ -119,6 +137,30 @@ async function copyFileIfExists(src, dest) {
   }
 }
 
+async function copyTreeMissing(srcRoot, destRoot) {
+  if (!(await exists(srcRoot))) {
+    throw new Error(`Missing source directory: ${srcRoot}`);
+  }
+
+  const entries = await fs.readdir(srcRoot, { withFileTypes: true });
+  for (const entry of entries) {
+    const src = path.join(srcRoot, entry.name);
+    const dest = path.join(destRoot, entry.name);
+    assertInside(dest, destRoot);
+    if (entry.isDirectory()) {
+      await copyTreeMissing(src, dest);
+      continue;
+    }
+    if (await exists(dest)) {
+      console.log(`SKIP existing ${dest}`);
+      continue;
+    }
+    await ensureDir(path.dirname(dest));
+    await fs.copyFile(src, dest);
+    console.log(`CREATE ${dest}`);
+  }
+}
+
 async function listArchSightSkills() {
   const manifest = await readManifest();
   if (manifest?.skills?.length > 0) {
@@ -154,6 +196,13 @@ async function fileContains(filePath, needle) {
   }
   const content = await fs.readFile(filePath, "utf8");
   return content.includes(needle);
+}
+
+async function readTextIfExists(filePath) {
+  if (!(await exists(filePath))) {
+    return "";
+  }
+  return fs.readFile(filePath, "utf8");
 }
 
 function expectedSkillDir(skill) {
@@ -219,15 +268,58 @@ function projectInstructionBlock() {
     "",
     "当任务涉及 Agent 路由、Skill 选择、Workflow、交付验证、BIM / IFC、AI Runtime 或 Code Review 时，先阅读：",
     "",
+    "- `.ai/ARCHSIGHT_AIOS_RULES.md`",
     "- `.ai/project-context.md`",
     "- `.ai/agent-routing.md`",
     "- `.ai/skills.md`",
     "- `.ai/workflows.md`",
+    "- `.ai/profiles/*.md`（如当前项目启用了 profile）",
     "",
-    "当前项目事实、根目录工具入口文件和 `AI_CODING_RULES.md` 优先；AIOS 只补充项目级路由和工作流。",
+    "当前项目事实、根目录工具入口文件和 `AI_CODING_RULES.md` 优先；`.ai/ARCHSIGHT_AIOS_RULES.md` 只补充 AIOS 专属规则。",
     managedEnd,
     ""
   ].join("\n");
+}
+
+function containsAiosReference(content) {
+  return [
+    managedStart,
+    "ArchSight AIOS",
+    "archsight-aios",
+    "ARCHSIGHT_AIOS_RULES.md",
+    ".ai/ARCHSIGHT_AIOS_RULES.md"
+  ].some((needle) => content.includes(needle));
+}
+
+async function resolveInitProjectMode(requestedMode, targetRoot, rootInstructionFiles, aiFiles) {
+  if (requestedMode !== "auto") {
+    return requestedMode;
+  }
+
+  const existingRootFiles = [];
+  let hasAiosReference = false;
+
+  for (const fileName of rootInstructionFiles) {
+    const filePath = path.join(targetRoot, fileName);
+    if (await exists(filePath)) {
+      existingRootFiles.push(fileName);
+      hasAiosReference ||= containsAiosReference(await readTextIfExists(filePath));
+    }
+  }
+
+  for (const fileName of aiFiles) {
+    const filePath = path.join(targetRoot, fileName);
+    if (await exists(filePath)) {
+      hasAiosReference = true;
+      break;
+    }
+  }
+
+  if (existingRootFiles.length > 0 || hasAiosReference) {
+    return "linked";
+  }
+
+  return "full";
 }
 
 async function upsertManagedBlock(filePath, block) {
@@ -358,6 +450,13 @@ async function doctor() {
     await check(`project template ${fileName}`, path.join(repoRoot, manifest.projectTemplate.path, fileName));
   }
 
+  for (const profile of manifest.projectProfiles ?? []) {
+    await check(`project profile ${profile.id}`, path.join(repoRoot, profile.path));
+    for (const fileName of profile.requiredFiles ?? []) {
+      await check(`project profile ${profile.id}/${fileName}`, path.join(repoRoot, profile.path, fileName));
+    }
+  }
+
   for (const fileName of manifest.requiredAssets ?? []) {
     await check(`required asset ${fileName}`, path.join(repoRoot, fileName));
   }
@@ -407,7 +506,7 @@ async function doctor() {
 async function initProject(options) {
   const templateRoot = path.join(repoRoot, "templates", "project-ai");
   const targetRoot = path.resolve(options.cwd);
-  const mode = options.mode ?? "full";
+  const manifest = await readManifest();
   const rootInstructionFiles = [
     "AGENTS.md",
     "AI_CODING_RULES.md",
@@ -420,11 +519,13 @@ async function initProject(options) {
     "GEMINI.md"
   ];
   const aiFiles = [
+    path.join(".ai", "ARCHSIGHT_AIOS_RULES.md"),
     path.join(".ai", "project-context.md"),
     path.join(".ai", "agent-routing.md"),
     path.join(".ai", "skills.md"),
     path.join(".ai", "workflows.md")
   ];
+  const mode = await resolveInitProjectMode(options.mode ?? "auto", targetRoot, rootInstructionFiles, aiFiles);
   const files = mode === "ai-only"
     ? aiFiles
     : mode === "linked"
@@ -434,7 +535,7 @@ async function initProject(options) {
       : undefined;
 
   if (!files) {
-    throw new Error(`Unsupported init-project mode: ${mode}`);
+    throw new Error(`Unsupported init mode: ${mode}`);
   }
 
   await ensureDir(targetRoot);
@@ -455,17 +556,32 @@ async function initProject(options) {
   if (mode === "linked") {
     const block = projectInstructionBlock();
     for (const fileName of linkedInstructionFiles) {
+      const src = path.join(templateRoot, fileName);
       const dest = path.join(targetRoot, fileName);
       assertInside(dest, targetRoot);
+      if (!(await exists(dest))) {
+        await ensureDir(path.dirname(dest));
+        await fs.copyFile(src, dest);
+        console.log(`CREATE ${dest}`);
+        continue;
+      }
       await upsertManagedBlock(dest, block);
       console.log(`LINK ${dest}`);
     }
+  }
+
+  if (options.profile) {
+    const profile = manifest.projectProfiles?.find((item) => item.id === options.profile);
+    if (!profile) {
+      throw new Error(`Unsupported project profile: ${options.profile}`);
+    }
+    await copyTreeMissing(path.join(repoRoot, profile.path), targetRoot);
   }
 }
 
 async function validateProjectTemplate(options) {
   const manifest = await readManifest();
-  const createdTemp = !options.cwd || options.cwd === process.cwd();
+  const createdTemp = options.temp;
   const targetRoot = createdTemp
     ? await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-project-"))
     : path.resolve(options.cwd);
@@ -474,7 +590,7 @@ async function validateProjectTemplate(options) {
     await fs.writeFile(path.join(targetRoot, "README.md"), "# ArchSight AIOS local validation\n", "utf8");
   }
 
-  await initProject({ cwd: targetRoot });
+  await initProject({ cwd: targetRoot, profile: options.profile });
 
   const checks = [];
   async function check(label, targetPath) {
@@ -511,6 +627,7 @@ async function validateProjectTemplate(options) {
   for (const [label, fileName] of [
     ["project AGENTS uses AIOS", "AGENTS.md"],
     ["project coding rules uses AIOS", "AI_CODING_RULES.md"],
+    ["project AIOS rules uses AIOS", path.join(".ai", "ARCHSIGHT_AIOS_RULES.md")],
     ["project CLAUDE uses AIOS", "CLAUDE.md"],
     ["project GEMINI uses AIOS", "GEMINI.md"],
     ["project context uses AIOS", path.join(".ai", "project-context.md")]
@@ -522,6 +639,16 @@ async function validateProjectTemplate(options) {
       targetPath: fileName,
       ok: content.includes("AIOS") && !content.includes(legacyAiOsText)
     });
+  }
+
+  if (options.profile) {
+    const profile = manifest.projectProfiles?.find((item) => item.id === options.profile);
+    if (!profile) {
+      throw new Error(`Unsupported project profile: ${options.profile}`);
+    }
+    for (const fileName of profile.requiredFiles ?? []) {
+      await check(`profile output ${options.profile}/${fileName}`, path.join(targetRoot, fileName));
+    }
   }
 
   const failed = checks.filter((item) => !item.ok);
@@ -636,9 +763,9 @@ async function main() {
     await install(options);
   } else if (options.command === "doctor") {
     await doctor();
-  } else if (options.command === "init-project") {
+  } else if (options.command === "init") {
     await initProject(options);
-  } else if (options.command === "validate-project-template") {
+  } else if (options.command === "validate") {
     await validateProjectTemplate(options);
   } else if (options.command === "hermes:validate") {
     await validateHermesRegistry();
