@@ -1,8 +1,29 @@
 {
   "name": "@archsight/aios",
   "version": "0.1.0",
-  "description": "ArchSight AIOS user-level skill and workflow installer.",
+  "description": "AI rules, skills, workflows, and project onboarding for architecture, engineering, and construction projects.",
   "type": "module",
+  "homepage": "https://github.com/ArchSightLabs/archsight-aios#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArchSightLabs/archsight-aios.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ArchSightLabs/archsight-aios/issues"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "architecture",
+    "bim",
+    "ifc",
+    "rag",
+    "graphrag",
+    "construction",
+    "codex",
+    "gemini",
+    "claude"
+  ],
   "bin": {
     "archsight-aios": "./bin/archsight-aios.mjs"
   },
@@ -33,11 +54,16 @@
     "prompts/",
     "vision/",
     "docs/",
+    "LICENSE",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md",
     "README.md",
     "AI_CODING_RULES.md",
     "AGENTS.md",
     "CLAUDE.md",
     "GEMINI.md"
   ],
-  "license": "UNLICENSED"
+  "license": "MIT"
 }
