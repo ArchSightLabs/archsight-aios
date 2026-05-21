@@ -3,7 +3,7 @@
 ## Phase 1：治理骨架
 
 - 核心 Agent 角色资产。
-- `archsight-*` Skills。
+- `aios-*` Skills。
 - Workflow、Runtime routing、项目模板。
 - CLI 安装和 doctor。
 

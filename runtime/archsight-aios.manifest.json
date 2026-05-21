@@ -77,46 +77,46 @@
   ],
   "skills": [
     {
-      "id": "archsight-architecture-review",
+      "id": "aios-architecture-review",
       "primaryAgent": "atlas",
       "defaultWorkflow": "architecture-review",
-      "path": "skills/archsight-architecture-review/SKILL.md",
-      "openaiConfigPath": "skills/archsight-architecture-review/agents/openai.yaml"
+      "path": "skills/aios-architecture-review/SKILL.md",
+      "openaiConfigPath": "skills/aios-architecture-review/agents/openai.yaml"
     },
     {
-      "id": "archsight-delivery-planning",
+      "id": "aios-delivery-planning",
       "primaryAgent": "mason",
       "defaultWorkflow": "feature-development",
-      "path": "skills/archsight-delivery-planning/SKILL.md",
-      "openaiConfigPath": "skills/archsight-delivery-planning/agents/openai.yaml"
+      "path": "skills/aios-delivery-planning/SKILL.md",
+      "openaiConfigPath": "skills/aios-delivery-planning/agents/openai.yaml"
     },
     {
-      "id": "archsight-code-review",
+      "id": "aios-code-review",
       "primaryAgent": "argus",
       "defaultWorkflow": "code-review",
-      "path": "skills/archsight-code-review/SKILL.md",
-      "openaiConfigPath": "skills/archsight-code-review/agents/openai.yaml"
+      "path": "skills/aios-code-review/SKILL.md",
+      "openaiConfigPath": "skills/aios-code-review/agents/openai.yaml"
     },
     {
-      "id": "archsight-bim-domain-modeling",
+      "id": "aios-bim-domain-modeling",
       "primaryAgent": "vitruvius",
       "defaultWorkflow": "rag-pipeline",
-      "path": "skills/archsight-bim-domain-modeling/SKILL.md",
-      "openaiConfigPath": "skills/archsight-bim-domain-modeling/agents/openai.yaml"
+      "path": "skills/aios-bim-domain-modeling/SKILL.md",
+      "openaiConfigPath": "skills/aios-bim-domain-modeling/agents/openai.yaml"
     },
     {
-      "id": "archsight-ai-runtime-design",
+      "id": "aios-ai-runtime-design",
       "primaryAgent": "daedalus",
       "defaultWorkflow": "rag-pipeline",
-      "path": "skills/archsight-ai-runtime-design/SKILL.md",
-      "openaiConfigPath": "skills/archsight-ai-runtime-design/agents/openai.yaml"
+      "path": "skills/aios-ai-runtime-design/SKILL.md",
+      "openaiConfigPath": "skills/aios-ai-runtime-design/agents/openai.yaml"
     },
     {
-      "id": "archsight-controlled-execution",
+      "id": "aios-controlled-execution",
       "primaryAgent": "hephaestus",
       "defaultWorkflow": "feature-development",
-      "path": "skills/archsight-controlled-execution/SKILL.md",
-      "openaiConfigPath": "skills/archsight-controlled-execution/agents/openai.yaml"
+      "path": "skills/aios-controlled-execution/SKILL.md",
+      "openaiConfigPath": "skills/aios-controlled-execution/agents/openai.yaml"
     }
   ],
   "workflows": [
@@ -160,49 +160,49 @@
   "routes": [
     {
       "taskType": "架构评审、技术选型、服务边界",
-      "skill": "archsight-architecture-review",
+      "skill": "aios-architecture-review",
       "agent": "atlas",
       "workflow": "architecture-review"
     },
     {
       "taskType": "Feature 拆解、交付计划、任务依赖",
-      "skill": "archsight-delivery-planning",
+      "skill": "aios-delivery-planning",
       "agent": "mason",
       "workflow": "feature-development"
     },
     {
       "taskType": "PR / diff / AI 生成代码审查",
-      "skill": "archsight-code-review",
+      "skill": "aios-code-review",
       "agent": "argus",
       "workflow": "code-review"
     },
     {
       "taskType": "Bug 修复、测试失败、构建失败",
-      "skill": "archsight-controlled-execution",
+      "skill": "aios-controlled-execution",
       "agent": "hephaestus",
       "workflow": "bug-fixing"
     },
     {
       "taskType": "BIM / IFC / 建筑规范 / 审图规则",
-      "skill": "archsight-bim-domain-modeling",
+      "skill": "aios-bim-domain-modeling",
       "agent": "vitruvius",
       "workflow": "rag-pipeline"
     },
     {
       "taskType": "Prompt / Context / Memory / MCP / Tool",
-      "skill": "archsight-ai-runtime-design",
+      "skill": "aios-ai-runtime-design",
       "agent": "daedalus",
       "workflow": "architecture-review"
     },
     {
       "taskType": "RAG / GraphRAG Pipeline",
-      "skill": "archsight-ai-runtime-design",
+      "skill": "aios-ai-runtime-design",
       "agent": "daedalus",
       "workflow": "rag-pipeline"
     },
     {
       "taskType": "受控代码修改、文档、脚本、测试",
-      "skill": "archsight-controlled-execution",
+      "skill": "aios-controlled-execution",
       "agent": "hephaestus",
       "workflow": "feature-development"
     }
@@ -249,8 +249,12 @@
   ],
   "installTargets": {
     "codexSkills": "~/.codex/skills",
+    "codexWorkflows": "~/.codex/workflows/aios",
     "sharedAgentSkills": "~/.agents/skills",
+    "sharedAgentWorkflows": "~/.agents/workflows/aios",
     "geminiInstructions": "~/.gemini/GEMINI.md",
+    "antigravitySkills": "~/.antigravity/skills",
+    "antigravityWorkflows": "~/.antigravity/workflows/aios",
     "antigravityInstructions": "~/.antigravity/ARCHSIGHT_AIOS.md",
     "assetStore": "~/.archsight-aios"
   },

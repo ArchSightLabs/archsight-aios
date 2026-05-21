@@ -13,17 +13,17 @@
 
 `review.md` 是综合评审入口，适用于代码、架构、安全、AI 生成内容和交付完整性的总览审查。
 
-如果任务对象是 PR、diff、commit 或 AI 生成代码，应进入 [Code Review Workflow](code-review.md)，并使用 `archsight-code-review`。
+如果任务对象是 PR、diff、commit 或 AI 生成代码，应进入 [Code Review Workflow](code-review.md)，并使用 `aios-code-review`。
 
 ## 角色与 Skill 路由
 
 | 审查对象 | 主 Agent | Skill | 后续 Workflow |
 | --- | --- | --- | --- |
-| PR / diff / AI 生成代码 | Argus | `archsight-code-review` | `code-review` |
-| 架构边界 / 技术选型 | Atlas | `archsight-architecture-review` | `architecture-review` |
-| 交付计划 / 测试完整性 | Mason | `archsight-delivery-planning` | `feature-development` |
-| RAG / MCP / Memory / Tool | Daedalus | `archsight-ai-runtime-design` | `rag-pipeline` |
-| BIM / IFC / 规范语义 | Vitruvius | `archsight-bim-domain-modeling` | `rag-pipeline` |
+| PR / diff / AI 生成代码 | Argus | `aios-code-review` | `code-review` |
+| 架构边界 / 技术选型 | Atlas | `aios-architecture-review` | `architecture-review` |
+| 交付计划 / 测试完整性 | Mason | `aios-delivery-planning` | `feature-development` |
+| RAG / MCP / Memory / Tool | Daedalus | `aios-ai-runtime-design` | `rag-pipeline` |
+| BIM / IFC / 规范语义 | Vitruvius | `aios-bim-domain-modeling` | `rag-pipeline` |
 
 ## 输入
 

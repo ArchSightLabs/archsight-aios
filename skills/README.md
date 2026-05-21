@@ -22,9 +22,9 @@ skills/
 
 第一阶段核心技能包：
 
-- `archsight-architecture-review`
-- `archsight-delivery-planning`
-- `archsight-code-review`
-- `archsight-bim-domain-modeling`
-- `archsight-ai-runtime-design`
-- `archsight-controlled-execution`
+- `aios-architecture-review`
+- `aios-delivery-planning`
+- `aios-code-review`
+- `aios-bim-domain-modeling`
+- `aios-ai-runtime-design`
+- `aios-controlled-execution`

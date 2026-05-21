@@ -161,7 +161,7 @@ async function copyTreeMissing(srcRoot, destRoot) {
   }
 }
 
-async function listArchSightSkills() {
+async function listAiosSkills() {
   const manifest = await readManifest();
   if (manifest?.skills?.length > 0) {
     return manifest.skills.map((skill) => skill.id).sort();
@@ -170,8 +170,15 @@ async function listArchSightSkills() {
   const skillsRoot = path.join(repoRoot, "skills");
   const entries = await fs.readdir(skillsRoot, { withFileTypes: true });
   return entries
-    .filter((entry) => entry.isDirectory() && entry.name.startsWith("archsight-"))
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith("aios-"))
     .map((entry) => entry.name)
+    .sort();
+}
+
+async function listAiosWorkflowPaths() {
+  const manifest = await readManifest();
+  return (manifest.workflows ?? [])
+    .map((workflow) => workflow.path)
     .sort();
 }
 
@@ -234,6 +241,44 @@ async function installSkillsTo(targetRoot, skillNames) {
   }
 }
 
+async function removeLegacySkillDirs(targetRoot, skillNames) {
+  for (const skillName of skillNames) {
+    if (!skillName.startsWith("aios-")) {
+      continue;
+    }
+
+    const legacyName = `archsight-${skillName.slice("aios-".length)}`;
+    const legacyDir = path.join(targetRoot, legacyName);
+    const legacySkillFile = path.join(legacyDir, "SKILL.md");
+    if (!(await exists(legacySkillFile))) {
+      continue;
+    }
+
+    const legacySkill = await fs.readFile(legacySkillFile, "utf8");
+    if (!legacySkill.includes(`name: ${legacyName}`)) {
+      continue;
+    }
+
+    await fs.rm(legacyDir, { recursive: true, force: true });
+  }
+}
+
+async function installWorkflowsTo(targetRoot, workflowPaths) {
+  await ensureDir(targetRoot);
+
+  await copyFileIfExists(
+    path.join(repoRoot, "workflows", "README.md"),
+    path.join(targetRoot, "README.md")
+  );
+
+  for (const workflowPath of workflowPaths) {
+    await copyFileIfExists(
+      path.join(repoRoot, workflowPath),
+      path.join(targetRoot, path.basename(workflowPath))
+    );
+  }
+}
+
 function userInstructionBlock(storeRoot) {
   const p = (value) => value.replaceAll("\\", "/");
   return [
@@ -251,7 +296,7 @@ function userInstructionBlock(storeRoot) {
     `- Runtime routing: ${p(path.join(storeRoot, "runtime"))}`,
     `- Project template: ${p(path.join(storeRoot, "templates", "project-ai"))}`,
     "",
-    "Use enabled `archsight-*` skills for architecture review, delivery planning, code review, AI runtime design, controlled execution, and BIM domain modeling when the project profile or task requires it.",
+    "Use enabled `aios-*` skills for architecture review, delivery planning, code review, AI runtime design, controlled execution, and BIM domain modeling when the project profile or task requires it.",
     "Keep Agent, Skill, Workflow, and Runtime boundaries separate.",
     "Hermes, Feishu, and other runtime adapters are optional; do not assume they are enabled unless the project says so.",
     "Do not claim code changes, tests, builds, or deployments were completed unless verified in the bound project workspace.",
@@ -352,7 +397,8 @@ async function install(options) {
   }
 
   const storeRoot = await syncAssetStore();
-  const skillNames = await listArchSightSkills();
+  const skillNames = await listAiosSkills();
+  const workflowPaths = await listAiosWorkflowPaths();
   const targets = options.target === "all"
     ? ["codex", "gemini", "antigravity"]
     : [options.target];
@@ -360,9 +406,15 @@ async function install(options) {
   const installed = [];
 
   if (targets.includes("codex")) {
-    await installSkillsTo(path.join(home, ".codex", "skills"), skillNames);
-    await installSkillsTo(path.join(home, ".agents", "skills"), skillNames);
-    installed.push("codex skills", "shared agent skills");
+    const codexSkillsRoot = path.join(home, ".codex", "skills");
+    const sharedSkillsRoot = path.join(home, ".agents", "skills");
+    await removeLegacySkillDirs(codexSkillsRoot, skillNames);
+    await removeLegacySkillDirs(sharedSkillsRoot, skillNames);
+    await installSkillsTo(codexSkillsRoot, skillNames);
+    await installSkillsTo(sharedSkillsRoot, skillNames);
+    await installWorkflowsTo(path.join(home, ".codex", "workflows", "aios"), workflowPaths);
+    await installWorkflowsTo(path.join(home, ".agents", "workflows", "aios"), workflowPaths);
+    installed.push("codex skills", "codex workflows", "shared agent skills", "shared agent workflows");
   }
 
   if (targets.includes("gemini")) {
@@ -371,16 +423,21 @@ async function install(options) {
   }
 
   if (targets.includes("antigravity")) {
+    const antigravitySkillsRoot = path.join(home, ".antigravity", "skills");
+    await removeLegacySkillDirs(antigravitySkillsRoot, skillNames);
+    await installSkillsTo(antigravitySkillsRoot, skillNames);
+    await installWorkflowsTo(path.join(home, ".antigravity", "workflows", "aios"), workflowPaths);
     await upsertManagedBlock(
       path.join(home, ".antigravity", "ARCHSIGHT_AIOS.md"),
       userInstructionBlock(storeRoot)
     );
-    installed.push("antigravity user instructions");
+    installed.push("antigravity skills", "antigravity workflows", "antigravity user instructions");
   }
 
   console.log(`Installed ArchSight AIOS assets to ${storeRoot}`);
   console.log(`Installed: ${installed.join(", ")}`);
   console.log(`Skills: ${skillNames.join(", ")}`);
+  console.log(`Workflows: ${workflowPaths.map((workflowPath) => path.basename(workflowPath)).join(", ")}`);
 }
 
 async function doctor() {
@@ -414,6 +471,9 @@ async function doctor() {
   checkCondition("manifest name", manifest.name === "archsight-aios", "name === archsight-aios");
   checkCondition("package name", packageJson.name === "@archsight/aios", "name === @archsight/aios");
   checkCondition("package bin", packageJson.bin?.["archsight-aios"] === "./bin/archsight-aios.mjs", "bin.archsight-aios");
+  checkCondition("codex workflows target", manifest.installTargets?.codexWorkflows === "~/.codex/workflows/aios", "codexWorkflows");
+  checkCondition("antigravity skills target", manifest.installTargets?.antigravitySkills === "~/.antigravity/skills", "antigravitySkills");
+  checkCondition("antigravity workflows target", manifest.installTargets?.antigravityWorkflows === "~/.antigravity/workflows/aios", "antigravityWorkflows");
 
   for (const agent of manifest.agents) {
     await check(`agent source ${agent.id}`, path.join(repoRoot, agent.sourcePath));
@@ -476,7 +536,11 @@ async function doctor() {
   await check("asset delivery", path.join(storeRoot, "delivery"));
   await check("asset memory", path.join(storeRoot, "memory"));
   await check("codex skills root", path.join(home, ".codex", "skills"));
+  await check("codex workflows root", path.join(home, ".codex", "workflows", "aios"));
   await check("shared skills root", path.join(home, ".agents", "skills"));
+  await check("shared workflows root", path.join(home, ".agents", "workflows", "aios"));
+  await check("antigravity skills root", path.join(home, ".antigravity", "skills"));
+  await check("antigravity workflows root", path.join(home, ".antigravity", "workflows", "aios"));
   await check("gemini instructions", path.join(home, ".gemini", "GEMINI.md"));
   await check("antigravity instructions", path.join(home, ".antigravity", "ARCHSIGHT_AIOS.md"));
   await checkContains("gemini managed block", path.join(home, ".gemini", "GEMINI.md"), managedStart);
@@ -488,6 +552,14 @@ async function doctor() {
     await check(`asset skill ${skillName}`, path.join(storeRoot, sourceDir, "SKILL.md"));
     await check(`codex skill ${skillName}`, path.join(home, ".codex", "skills", skillName, "SKILL.md"));
     await check(`shared skill ${skillName}`, path.join(home, ".agents", "skills", skillName, "SKILL.md"));
+    await check(`antigravity skill ${skillName}`, path.join(home, ".antigravity", "skills", skillName, "SKILL.md"));
+  }
+
+  for (const workflow of manifest.workflows) {
+    const workflowFileName = path.basename(workflow.path);
+    await check(`codex workflow ${workflow.id}`, path.join(home, ".codex", "workflows", "aios", workflowFileName));
+    await check(`shared workflow ${workflow.id}`, path.join(home, ".agents", "workflows", "aios", workflowFileName));
+    await check(`antigravity workflow ${workflow.id}`, path.join(home, ".antigravity", "workflows", "aios", workflowFileName));
   }
 
   const failed = checks.filter((item) => !item.ok);

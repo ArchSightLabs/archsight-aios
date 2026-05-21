@@ -1,5 +1,5 @@
 ---
-name: archsight-ai-runtime-design
+name: aios-ai-runtime-design
 description: AI runtime and knowledge pipeline design workflow for projects using ArchSight AIOS. Use when designing prompts, context compression, memory strategy, optional runtime adapters such as Hermes/OpenClaw, tool calling, MCP permissions, RAG, GraphRAG, embeddings, evaluation, multi-agent orchestration, or agent state governance.
 ---
 

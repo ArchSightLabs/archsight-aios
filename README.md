@@ -78,10 +78,10 @@ npx @archsight/aios init --profile rag-knowledge
 
 `install --target all --scope user` 会写入当前用户目录：
 
-- Codex：`~/.codex/skills/`
-- 通用 Agent：`~/.agents/skills/`
+- Codex：`~/.codex/skills/`、`~/.codex/workflows/aios/`
+- 通用 Agent：`~/.agents/skills/`、`~/.agents/workflows/aios/`
 - Gemini：`~/.gemini/GEMINI.md`
-- Antigravity：`~/.antigravity/ARCHSIGHT_AIOS.md`
+- Antigravity：`~/.antigravity/skills/`、`~/.antigravity/workflows/aios/`、`~/.antigravity/ARCHSIGHT_AIOS.md`
 - 共享资产：`~/.archsight-aios/`
 
 ## init 默认行为

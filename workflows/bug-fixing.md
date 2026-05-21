@@ -15,12 +15,12 @@
 
 | 阶段 | 主 Agent | Skill |
 | --- | --- | --- |
-| 风险识别 | Argus | `archsight-code-review` |
-| 架构影响判断 | Atlas | `archsight-architecture-review` |
-| 修复计划 | Mason | `archsight-delivery-planning` |
-| 受控修复 | Hephaestus | `archsight-controlled-execution` |
-| Runtime 相关缺陷 | Daedalus | `archsight-ai-runtime-design` |
-| 行业语义缺陷 | Vitruvius | `archsight-bim-domain-modeling` |
+| 风险识别 | Argus | `aios-code-review` |
+| 架构影响判断 | Atlas | `aios-architecture-review` |
+| 修复计划 | Mason | `aios-delivery-planning` |
+| 受控修复 | Hephaestus | `aios-controlled-execution` |
+| Runtime 相关缺陷 | Daedalus | `aios-ai-runtime-design` |
+| 行业语义缺陷 | Vitruvius | `aios-bim-domain-modeling` |
 
 ## 输入
 

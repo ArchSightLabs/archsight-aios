@@ -1,5 +1,5 @@
 ---
-name: archsight-architecture-review
+name: aios-architecture-review
 description: Architecture review workflow for projects using ArchSight AIOS. Use when evaluating system architecture, service boundaries, technical tradeoffs, data/model/runtime boundaries, platform evolution, GraphRAG architecture, agent workflow governance, or long-term complexity risk before implementation.
 ---
 

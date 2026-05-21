@@ -15,11 +15,11 @@
 
 | 阶段 | 主 Agent | Skill |
 | --- | --- | --- |
-| 质量审查 | Argus | `archsight-code-review` |
-| 架构边界复核 | Atlas | `archsight-architecture-review` |
-| 修复执行 | Hephaestus | `archsight-controlled-execution` |
-| 交付协调 | Mason | `archsight-delivery-planning` |
-| Runtime 风险 | Daedalus | `archsight-ai-runtime-design` |
+| 质量审查 | Argus | `aios-code-review` |
+| 架构边界复核 | Atlas | `aios-architecture-review` |
+| 修复执行 | Hephaestus | `aios-controlled-execution` |
+| 交付协调 | Mason | `aios-delivery-planning` |
+| Runtime 风险 | Daedalus | `aios-ai-runtime-design` |
 
 ## 输入
 

@@ -34,6 +34,6 @@ Workflow 定义“什么时候做、按什么顺序做”。当任务涉及多�
 ## 本项目 smoke test 流程
 
 1. 读取 `.ai/project-context.md`，确认项目类型、边界和 Runtime。
-2. 读取 `.ai/skills.md`，确认架构评审任务选择 `archsight-architecture-review`，而不是选择 Agent。
+2. 读取 `.ai/skills.md`，确认架构评审任务选择 `aios-architecture-review`，而不是选择 Agent。
 3. 读取 `.ai/workflows.md`，确认 Review 使用 `architecture-review`。
-4. 按 `archsight-architecture-review` 的输出格式产出结论、风险和后续动作。
+4. 按 `aios-architecture-review` 的输出格式产出结论、风险和后续动作。

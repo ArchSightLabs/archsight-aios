@@ -8,21 +8,21 @@ Skill 是“怎么做”，不是“谁来做”。本项目优先使用 ArchSig
 
 | 任务 | Skill | 主 Agent |
 | --- | --- | --- |
-| 架构评审 | `archsight-architecture-review` | Atlas |
-| 交付计划 | `archsight-delivery-planning` | Mason |
-| 代码审查 | `archsight-code-review` | Argus |
-| BIM / IFC / 建筑知识建模 | `archsight-bim-domain-modeling` | Vitruvius |
-| AI Runtime / RAG / MCP / Memory | `archsight-ai-runtime-design` | Daedalus |
-| 受控实现 / 测试 / 文档 / 脚本 | `archsight-controlled-execution` | Hephaestus |
+| 架构评审 | `aios-architecture-review` | Atlas |
+| 交付计划 | `aios-delivery-planning` | Mason |
+| 代码审查 | `aios-code-review` | Argus |
+| BIM / IFC / 建筑知识建模 | `aios-bim-domain-modeling` | Vitruvius |
+| AI Runtime / RAG / MCP / Memory | `aios-ai-runtime-design` | Daedalus |
+| 受控实现 / 测试 / 文档 / 脚本 | `aios-controlled-execution` | Hephaestus |
 
 ## 本项目启用的 Skills
 
-- [x] `archsight-architecture-review`
-- [ ] `archsight-delivery-planning`
-- [ ] `archsight-code-review`
-- [ ] `archsight-bim-domain-modeling`
-- [ ] `archsight-ai-runtime-design`
-- [ ] `archsight-controlled-execution`
+- [x] `aios-architecture-review`
+- [ ] `aios-delivery-planning`
+- [ ] `aios-code-review`
+- [ ] `aios-bim-domain-modeling`
+- [ ] `aios-ai-runtime-design`
+- [ ] `aios-controlled-execution`
 
 ## 备注
 
@@ -30,4 +30,4 @@ Skill 是“怎么做”，不是“谁来做”。本项目优先使用 ArchSig
 
 Skill 来源：
 
-- `archsight-architecture-review`：来自 ArchSight AI OS 仓库的 `skills/archsight-architecture-review/SKILL.md`。
+- `aios-architecture-review`：来自 ArchSight AI OS 仓库的 `skills/aios-architecture-review/SKILL.md`。

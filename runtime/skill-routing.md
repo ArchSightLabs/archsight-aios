@@ -17,19 +17,19 @@
 
 | 任务类型 | 推荐 Skill | 主 Agent | 推荐 Workflow |
 | --- | --- | --- | --- |
-| 架构评审、技术选型、服务边界 | `archsight-architecture-review` | Atlas | `architecture-review` |
-| Feature 拆解、交付计划、任务依赖 | `archsight-delivery-planning` | Mason | `feature-development` |
-| PR / diff / AI 生成代码审查 | `archsight-code-review` | Argus | `code-review` |
-| Bug 修复、测试失败、构建失败 | `archsight-controlled-execution` | Hephaestus | `bug-fixing` |
-| BIM / IFC / 建筑规范 / 审图规则 | `archsight-bim-domain-modeling` | Vitruvius | `rag-pipeline` |
-| Prompt / Context / Memory / MCP / Tool | `archsight-ai-runtime-design` | Daedalus | `architecture-review` |
-| RAG / GraphRAG Pipeline | `archsight-ai-runtime-design` | Daedalus | `rag-pipeline` |
-| 受控代码修改、文档、脚本、测试 | `archsight-controlled-execution` | Hephaestus | `feature-development` |
+| 架构评审、技术选型、服务边界 | `aios-architecture-review` | Atlas | `architecture-review` |
+| Feature 拆解、交付计划、任务依赖 | `aios-delivery-planning` | Mason | `feature-development` |
+| PR / diff / AI 生成代码审查 | `aios-code-review` | Argus | `code-review` |
+| Bug 修复、测试失败、构建失败 | `aios-controlled-execution` | Hephaestus | `bug-fixing` |
+| BIM / IFC / 建筑规范 / 审图规则 | `aios-bim-domain-modeling` | Vitruvius | `rag-pipeline` |
+| Prompt / Context / Memory / MCP / Tool | `aios-ai-runtime-design` | Daedalus | `architecture-review` |
+| RAG / GraphRAG Pipeline | `aios-ai-runtime-design` | Daedalus | `rag-pipeline` |
+| 受控代码修改、文档、脚本、测试 | `aios-controlled-execution` | Hephaestus | `feature-development` |
 
 ## 路由原则
 
 - 优先按任务类型选择 Skill，而不是按 Agent 名称选择。
-- Skill 使用 `archsight-*` 前缀，避免与通用技能包混淆。
+- Skill 使用 `aios-*` 前缀，避免与通用技能包混淆。
 - Agent 可以调用多个 Skill；Skill 也可以被多个 Agent 复用。
 - 项目工作目录中的事实优先于 AIOS 的通用模板。
 - Hermes / 飞书只是可选入口和调度适配器，不替代本地验证，也不是 AIOS 的必要前提。

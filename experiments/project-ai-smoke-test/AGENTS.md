@@ -16,7 +16,7 @@
 
 - 本项目工作目录是主战场，所有代码、测试、构建和文档修改都应基于当前项目上下文。
 - ArchSight AIOS 提供 Agent、Skill、Workflow 和 Runtime 规范，不替代当前项目的真实代码和测试。
-- 任务适合 ArchSight 技能包时，按 `.ai/skills.md` 选择对应 `archsight-*` Skill。
+- 任务适合 ArchSight 技能包时，按 `.ai/skills.md` 选择对应 `aios-*` Skill。
 - 涉及多角色协作时，按 `.ai/workflows.md` 选择 Workflow。
 
 ## 边界

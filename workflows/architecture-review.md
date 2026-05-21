@@ -15,11 +15,11 @@
 
 | 阶段 | 主 Agent | Skill |
 | --- | --- | --- |
-| 架构判断 | Atlas | `archsight-architecture-review` |
-| 工程拆解 | Mason | `archsight-delivery-planning` |
-| Runtime 设计 | Daedalus | `archsight-ai-runtime-design` |
-| 行业语义 | Vitruvius | `archsight-bim-domain-modeling` |
-| 风险审查 | Argus | `archsight-code-review` |
+| 架构判断 | Atlas | `aios-architecture-review` |
+| 工程拆解 | Mason | `aios-delivery-planning` |
+| Runtime 设计 | Daedalus | `aios-ai-runtime-design` |
+| 行业语义 | Vitruvius | `aios-bim-domain-modeling` |
+| 风险审查 | Argus | `aios-code-review` |
 
 ## 输入
 

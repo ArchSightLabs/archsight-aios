@@ -25,11 +25,11 @@
 
 | 任务 | 首选 Agent / Skill |
 | --- | --- |
-| 规范语义、条文拆解、审查规则 | Vitruvius / `archsight-bim-domain-modeling` |
-| RAG / GraphRAG pipeline、Tool、Memory | Daedalus / `archsight-ai-runtime-design` |
-| 知识图谱边界和系统架构 | Atlas / `archsight-architecture-review` |
-| 数据处理脚本和评估执行 | Hephaestus / `archsight-controlled-execution` |
-| 引用、幻觉、安全和发布审查 | Argus / `archsight-code-review` |
+| 规范语义、条文拆解、审查规则 | Vitruvius / `aios-bim-domain-modeling` |
+| RAG / GraphRAG pipeline、Tool、Memory | Daedalus / `aios-ai-runtime-design` |
+| 知识图谱边界和系统架构 | Atlas / `aios-architecture-review` |
+| 数据处理脚本和评估执行 | Hephaestus / `aios-controlled-execution` |
+| 引用、幻觉、安全和发布审查 | Argus / `aios-code-review` |
 
 ## 验收要求
 

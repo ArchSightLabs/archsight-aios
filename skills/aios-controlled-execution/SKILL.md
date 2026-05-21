@@ -1,5 +1,5 @@
 ---
-name: archsight-controlled-execution
+name: aios-controlled-execution
 description: Controlled implementation workflow for projects using ArchSight AIOS. Use when making scoped code changes, fixing bugs, updating documentation, running scripts, tests, lint, typecheck, build checks, UI changes, deployment-prep automation, or implementing tasks handed off by Mason/Argus/Daedalus.
 ---
 

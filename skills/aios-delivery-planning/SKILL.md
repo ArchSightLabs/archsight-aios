@@ -1,5 +1,5 @@
 ---
-name: archsight-delivery-planning
+name: aios-delivery-planning
 description: Engineering delivery planning workflow for projects using ArchSight AIOS. Use when turning a feature, bug fix, architecture decision, or AI-generated proposal into executable tasks, dependencies, validation steps, PR/release order, CI/CD checks, and controlled handoff to implementation agents.
 ---
 
