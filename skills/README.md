@@ -25,6 +25,6 @@ skills/
 - `aios-architecture-review`
 - `aios-delivery-planning`
 - `aios-code-review`
-- `aios-bim-domain-modeling`
-- `aios-ai-runtime-design`
+- `aios-building-knowledge`
+- `aios-runtime-design`
 - `aios-controlled-execution`

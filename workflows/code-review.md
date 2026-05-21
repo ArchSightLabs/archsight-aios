@@ -19,7 +19,7 @@
 | 架构边界复核 | Atlas | `aios-architecture-review` |
 | 修复执行 | Hephaestus | `aios-controlled-execution` |
 | 交付协调 | Mason | `aios-delivery-planning` |
-| Runtime 风险 | Daedalus | `aios-ai-runtime-design` |
+| Runtime 风险 | Daedalus | `aios-runtime-design` |
 
 ## 输入
 

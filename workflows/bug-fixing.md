@@ -19,8 +19,8 @@
 | 架构影响判断 | Atlas | `aios-architecture-review` |
 | 修复计划 | Mason | `aios-delivery-planning` |
 | 受控修复 | Hephaestus | `aios-controlled-execution` |
-| Runtime 相关缺陷 | Daedalus | `aios-ai-runtime-design` |
-| 行业语义缺陷 | Vitruvius | `aios-bim-domain-modeling` |
+| Runtime 相关缺陷 | Daedalus | `aios-runtime-design` |
+| 行业语义缺陷 | Vitruvius | `aios-building-knowledge` |
 
 ## 输入
 

@@ -11,8 +11,8 @@ Skill 是“怎么做”，不是“谁来做”。本项目优先使用 ArchSig
 | 架构评审 | `aios-architecture-review` | Atlas |
 | 交付计划 | `aios-delivery-planning` | Mason |
 | 代码审查 | `aios-code-review` | Argus |
-| BIM / IFC / 建筑知识建模 | `aios-bim-domain-modeling` | Vitruvius |
-| AI Runtime / RAG / MCP / Memory | `aios-ai-runtime-design` | Daedalus |
+| BIM / IFC / 建筑知识建模 | `aios-building-knowledge` | Vitruvius |
+| AI Runtime / RAG / MCP / Memory | `aios-runtime-design` | Daedalus |
 | 受控实现 / 测试 / 文档 / 脚本 | `aios-controlled-execution` | Hephaestus |
 
 ## 本项目启用的 Skills
@@ -20,8 +20,8 @@ Skill 是“怎么做”，不是“谁来做”。本项目优先使用 ArchSig
 - [x] `aios-architecture-review`
 - [ ] `aios-delivery-planning`
 - [ ] `aios-code-review`
-- [ ] `aios-bim-domain-modeling`
-- [ ] `aios-ai-runtime-design`
+- [ ] `aios-building-knowledge`
+- [ ] `aios-runtime-design`
 - [ ] `aios-controlled-execution`
 
 ## 备注

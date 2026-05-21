@@ -15,8 +15,8 @@
 
 | 阶段 | 主 Agent | Skill |
 | --- | --- | --- |
-| 领域语义建模 | Vitruvius | `aios-bim-domain-modeling` |
-| Runtime / Pipeline 设计 | Daedalus | `aios-ai-runtime-design` |
+| 领域语义建模 | Vitruvius | `aios-building-knowledge` |
+| Runtime / Pipeline 设计 | Daedalus | `aios-runtime-design` |
 | 架构边界 | Atlas | `aios-architecture-review` |
 | 任务拆解 | Mason | `aios-delivery-planning` |
 | 实现执行 | Hephaestus | `aios-controlled-execution` |

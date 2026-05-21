@@ -22,8 +22,8 @@
 | PR / diff / AI 生成代码 | Argus | `aios-code-review` | `code-review` |
 | 架构边界 / 技术选型 | Atlas | `aios-architecture-review` | `architecture-review` |
 | 交付计划 / 测试完整性 | Mason | `aios-delivery-planning` | `feature-development` |
-| RAG / MCP / Memory / Tool | Daedalus | `aios-ai-runtime-design` | `rag-pipeline` |
-| BIM / IFC / 规范语义 | Vitruvius | `aios-bim-domain-modeling` | `rag-pipeline` |
+| RAG / MCP / Memory / Tool | Daedalus | `aios-runtime-design` | `rag-pipeline` |
+| BIM / IFC / 规范语义 | Vitruvius | `aios-building-knowledge` | `rag-pipeline` |
 
 ## 输入
 

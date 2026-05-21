@@ -17,8 +17,8 @@
 | --- | --- | --- |
 | 架构判断 | Atlas | `aios-architecture-review` |
 | 工程拆解 | Mason | `aios-delivery-planning` |
-| Runtime 设计 | Daedalus | `aios-ai-runtime-design` |
-| 行业语义 | Vitruvius | `aios-bim-domain-modeling` |
+| Runtime 设计 | Daedalus | `aios-runtime-design` |
+| 行业语义 | Vitruvius | `aios-building-knowledge` |
 | 风险审查 | Argus | `aios-code-review` |
 
 ## 输入

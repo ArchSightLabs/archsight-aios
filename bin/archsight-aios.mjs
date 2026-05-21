@@ -32,6 +32,10 @@ const assetDirs = [
   "docs"
 ];
 const assetFiles = ["README.md", "AI_CODING_RULES.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md"];
+const skillAliases = {
+  "aios-building-knowledge": ["aios-bim-domain-modeling", "archsight-bim-domain-modeling"],
+  "aios-runtime-design": ["aios-ai-runtime-design", "archsight-ai-runtime-design"]
+};
 
 function usage() {
   return [
@@ -247,19 +251,25 @@ async function removeLegacySkillDirs(targetRoot, skillNames) {
       continue;
     }
 
-    const legacyName = `archsight-${skillName.slice("aios-".length)}`;
-    const legacyDir = path.join(targetRoot, legacyName);
-    const legacySkillFile = path.join(legacyDir, "SKILL.md");
-    if (!(await exists(legacySkillFile))) {
-      continue;
-    }
+    const legacyNames = [
+      `archsight-${skillName.slice("aios-".length)}`,
+      ...(skillAliases[skillName] ?? [])
+    ];
 
-    const legacySkill = await fs.readFile(legacySkillFile, "utf8");
-    if (!legacySkill.includes(`name: ${legacyName}`)) {
-      continue;
-    }
+    for (const legacyName of legacyNames) {
+      const legacyDir = path.join(targetRoot, legacyName);
+      const legacySkillFile = path.join(legacyDir, "SKILL.md");
+      if (!(await exists(legacySkillFile))) {
+        continue;
+      }
 
-    await fs.rm(legacyDir, { recursive: true, force: true });
+      const legacySkill = await fs.readFile(legacySkillFile, "utf8");
+      if (!legacySkill.includes(`name: ${legacyName}`)) {
+        continue;
+      }
+
+      await fs.rm(legacyDir, { recursive: true, force: true });
+    }
   }
 }
 
@@ -296,7 +306,7 @@ function userInstructionBlock(storeRoot) {
     `- Runtime routing: ${p(path.join(storeRoot, "runtime"))}`,
     `- Project template: ${p(path.join(storeRoot, "templates", "project-ai"))}`,
     "",
-    "Use enabled `aios-*` skills for architecture review, delivery planning, code review, AI runtime design, controlled execution, and BIM domain modeling when the project profile or task requires it.",
+    "Use enabled `aios-*` skills for architecture review, delivery planning, code review, runtime design, controlled execution, and building knowledge when the project profile or task requires it.",
     "Keep Agent, Skill, Workflow, and Runtime boundaries separate.",
     "Hermes, Feishu, and other runtime adapters are optional; do not assume they are enabled unless the project says so.",
     "Do not claim code changes, tests, builds, or deployments were completed unless verified in the bound project workspace.",

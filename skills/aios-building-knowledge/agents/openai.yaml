@@ -1,4 +1,4 @@
 interface:
-  display_name: "ArchSight BIM Domain Modeling"
+  display_name: "ArchSight Building Knowledge"
   short_description: "Structure BIM, IFC, and building knowledge"
   default_prompt: "Use this skill to model BIM, IFC, building codes, review rules, and construction-domain knowledge for RAG or product work in a project using ArchSight AIOS."

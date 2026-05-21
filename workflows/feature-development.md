@@ -19,8 +19,8 @@
 | 任务拆解 | Mason | `aios-delivery-planning` |
 | 受控实现 | Hephaestus | `aios-controlled-execution` |
 | 质量审查 | Argus | `aios-code-review` |
-| AI Runtime 相关 | Daedalus | `aios-ai-runtime-design` |
-| BIM / IFC / 行业语义相关 | Vitruvius | `aios-bim-domain-modeling` |
+| AI Runtime 相关 | Daedalus | `aios-runtime-design` |
+| BIM / IFC / 行业语义相关 | Vitruvius | `aios-building-knowledge` |
 
 ## 输入
 

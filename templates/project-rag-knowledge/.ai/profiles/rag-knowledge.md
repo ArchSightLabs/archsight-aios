@@ -25,8 +25,8 @@
 
 | 任务 | 首选 Agent / Skill |
 | --- | --- |
-| 规范语义、条文拆解、审查规则 | Vitruvius / `aios-bim-domain-modeling` |
-| RAG / GraphRAG pipeline、Tool、Memory | Daedalus / `aios-ai-runtime-design` |
+| 规范语义、条文拆解、审查规则 | Vitruvius / `aios-building-knowledge` |
+| RAG / GraphRAG pipeline、Tool、Memory | Daedalus / `aios-runtime-design` |
 | 知识图谱边界和系统架构 | Atlas / `aios-architecture-review` |
 | 数据处理脚本和评估执行 | Hephaestus / `aios-controlled-execution` |
 | 引用、幻觉、安全和发布审查 | Argus / `aios-code-review` |

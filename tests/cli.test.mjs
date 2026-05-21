@@ -56,6 +56,8 @@ async function testProductIdentity() {
   assert.equal(pkg.bin["archsight-aios"], "./bin/archsight-aios.mjs");
   assert.ok(manifest.skills.every((skill) => skill.id.startsWith("aios-")));
   assert.ok(manifest.skills.every((skill) => skill.path.startsWith("skills/aios-")));
+  assert.ok(manifest.skills.every((skill) => skill.id.split("-").length <= 3));
+  assert.ok(manifest.workflows.every((workflow) => workflow.id.split("-").length <= 3));
   assert.equal(manifest.installTargets.codexWorkflows, "~/.codex/workflows/aios");
   assert.equal(manifest.installTargets.antigravitySkills, "~/.antigravity/skills");
   assert.equal(manifest.installTargets.antigravityWorkflows, "~/.antigravity/workflows/aios");

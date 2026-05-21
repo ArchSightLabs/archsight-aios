@@ -98,18 +98,18 @@
       "openaiConfigPath": "skills/aios-code-review/agents/openai.yaml"
     },
     {
-      "id": "aios-bim-domain-modeling",
+      "id": "aios-building-knowledge",
       "primaryAgent": "vitruvius",
       "defaultWorkflow": "rag-pipeline",
-      "path": "skills/aios-bim-domain-modeling/SKILL.md",
-      "openaiConfigPath": "skills/aios-bim-domain-modeling/agents/openai.yaml"
+      "path": "skills/aios-building-knowledge/SKILL.md",
+      "openaiConfigPath": "skills/aios-building-knowledge/agents/openai.yaml"
     },
     {
-      "id": "aios-ai-runtime-design",
+      "id": "aios-runtime-design",
       "primaryAgent": "daedalus",
       "defaultWorkflow": "rag-pipeline",
-      "path": "skills/aios-ai-runtime-design/SKILL.md",
-      "openaiConfigPath": "skills/aios-ai-runtime-design/agents/openai.yaml"
+      "path": "skills/aios-runtime-design/SKILL.md",
+      "openaiConfigPath": "skills/aios-runtime-design/agents/openai.yaml"
     },
     {
       "id": "aios-controlled-execution",
@@ -184,19 +184,19 @@
     },
     {
       "taskType": "BIM / IFC / 建筑规范 / 审图规则",
-      "skill": "aios-bim-domain-modeling",
+      "skill": "aios-building-knowledge",
       "agent": "vitruvius",
       "workflow": "rag-pipeline"
     },
     {
       "taskType": "Prompt / Context / Memory / MCP / Tool",
-      "skill": "aios-ai-runtime-design",
+      "skill": "aios-runtime-design",
       "agent": "daedalus",
       "workflow": "architecture-review"
     },
     {
       "taskType": "RAG / GraphRAG Pipeline",
-      "skill": "aios-ai-runtime-design",
+      "skill": "aios-runtime-design",
       "agent": "daedalus",
       "workflow": "rag-pipeline"
     },
