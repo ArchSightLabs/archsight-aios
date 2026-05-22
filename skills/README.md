@@ -4,6 +4,8 @@
 
 每个 skill 应沉淀为可重复执行、可验证、可治理的工作单元，而不是一句 prompt。Skill 是项目工作目录中的实际作业方法，Agent 是角色身份和职责边界。
 
+AIOS Skill 的差异化目标是让通用 AI Coding 工具在建筑行业平台研发中获得更专业的默认判断。尤其是 `aios-arch`、`aios-knowledge` 和 `aios-runtime`，应帮助建筑行业架构师、博士 / 研究型团队和后端开发处理 BIM / IFC、建筑规范、审图证据链、RAG / GraphRAG、任务编排、审计和长期平台演进问题。
+
 当前采用兼容 Codex 和 Gemini 的最小标准结构：
 
 ```text
@@ -27,6 +29,6 @@ skills/
 | `aios-plan` | 交付计划、任务拆解、依赖和验证顺序。 |
 | `aios-exec` | 有边界地改代码、修 bug、更新文档、运行验证。 |
 | `aios-review` | PR、diff、AI 生成代码、安全和测试缺口审查。 |
-| `aios-arch` | 架构边界、技术选型、长期复杂度和方案评审。 |
+| `aios-arch` | 建筑行业平台架构边界、技术选型、长期复杂度和方案评审。 |
 | `aios-knowledge` | BIM、IFC、建筑规范、审图规则和知识结构化。 |
 | `aios-runtime` | Prompt、Context、Memory、MCP/Tool、RAG/GraphRAG 和多 Agent Runtime 设计。 |

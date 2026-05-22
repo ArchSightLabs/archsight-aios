@@ -159,7 +159,7 @@
   ],
   "routes": [
     {
-      "taskType": "架构评审、技术选型、服务边界",
+      "taskType": "建筑行业平台架构评审、技术选型、服务边界",
       "skill": "aios-arch",
       "agent": "atlas",
       "workflow": "architecture-review"
