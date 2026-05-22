@@ -12,6 +12,7 @@ const home = os.homedir();
 
 const managedStart = "<!-- ARCHSIGHT-AIOS:START -->";
 const managedEnd = "<!-- ARCHSIGHT-AIOS:END -->";
+const antigravityPluginName = "archsight-aios";
 
 const assetDirs = [
   "skills",
@@ -43,7 +44,7 @@ function usage() {
     "",
     "Usage:",
     "  archsight-aios help",
-    "  archsight-aios install --target <codex|gemini|antigravity|all> --scope user",
+    "  archsight-aios install --target <codex|agents|gemini|antigravity|all> --scope user",
     "  archsight-aios doctor",
     "  archsight-aios init [--cwd <path>] [--mode <auto|full|linked|ai-only>] [--profile <name>]",
     "  archsight-aios validate [--cwd <path>] [--profile <name>] [--temp]",
@@ -61,6 +62,7 @@ function usage() {
     "",
     "Examples:",
     "  npx @archsight/aios install --target codex --scope user",
+    "  npx @archsight/aios install --target agents --scope user",
     "  npx @archsight/aios init",
     "  npx @archsight/aios validate --temp",
     "  npx @archsight/aios doctor"
@@ -245,6 +247,44 @@ async function installSkillsTo(targetRoot, skillNames) {
   }
 }
 
+async function writeJson(filePath, value) {
+  await ensureDir(path.dirname(filePath));
+  await fs.writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
+
+function antigravityLegacyRoot() {
+  return path.join(home, ".gemini", "antigravity");
+}
+
+function antigravityLegacySkillsRoot() {
+  return path.join(antigravityLegacyRoot(), "skills");
+}
+
+function antigravityPluginsRoot() {
+  return path.join(home, ".gemini", "config", "plugins");
+}
+
+function antigravityPluginRoot() {
+  return path.join(antigravityPluginsRoot(), antigravityPluginName);
+}
+
+async function installAntigravityPlugin(skillNames) {
+  const pluginRoot = antigravityPluginRoot();
+  assertInside(pluginRoot, antigravityPluginsRoot());
+  await fs.rm(pluginRoot, { recursive: true, force: true });
+  await ensureDir(pluginRoot);
+  await writeJson(path.join(pluginRoot, "plugin.json"), { name: antigravityPluginName });
+  await installSkillsTo(path.join(pluginRoot, "skills"), skillNames);
+  return pluginRoot;
+}
+
+async function installAntigravityLegacy(skillNames) {
+  const skillsRoot = antigravityLegacySkillsRoot();
+  await removeLegacySkillDirs(skillsRoot, skillNames);
+  await installSkillsTo(skillsRoot, skillNames);
+  return skillsRoot;
+}
+
 async function removeLegacySkillDirs(targetRoot, skillNames) {
   for (const skillName of skillNames) {
     if (!skillName.startsWith("aios-")) {
@@ -401,7 +441,7 @@ async function install(options) {
     throw new Error("Only --scope user is supported in this release.");
   }
 
-  const validTargets = new Set(["codex", "gemini", "antigravity", "all"]);
+  const validTargets = new Set(["codex", "agents", "gemini", "antigravity", "all"]);
   if (!validTargets.has(options.target)) {
     throw new Error(`Unsupported target: ${options.target}`);
   }
@@ -417,14 +457,18 @@ async function install(options) {
 
   if (targets.includes("codex")) {
     const codexSkillsRoot = path.join(home, ".codex", "skills");
-    const sharedSkillsRoot = path.join(home, ".agents", "skills");
     await removeLegacySkillDirs(codexSkillsRoot, skillNames);
-    await removeLegacySkillDirs(sharedSkillsRoot, skillNames);
     await installSkillsTo(codexSkillsRoot, skillNames);
-    await installSkillsTo(sharedSkillsRoot, skillNames);
     await installWorkflowsTo(path.join(home, ".codex", "workflows", "aios"), workflowPaths);
+    installed.push("codex skills", "codex workflows");
+  }
+
+  if (targets.includes("agents")) {
+    const sharedSkillsRoot = path.join(home, ".agents", "skills");
+    await removeLegacySkillDirs(sharedSkillsRoot, skillNames);
+    await installSkillsTo(sharedSkillsRoot, skillNames);
     await installWorkflowsTo(path.join(home, ".agents", "workflows", "aios"), workflowPaths);
-    installed.push("codex skills", "codex workflows", "shared agent skills", "shared agent workflows");
+    installed.push("shared agent skills", "shared agent workflows");
   }
 
   if (targets.includes("gemini")) {
@@ -433,15 +477,13 @@ async function install(options) {
   }
 
   if (targets.includes("antigravity")) {
-    const antigravitySkillsRoot = path.join(home, ".antigravity", "skills");
-    await removeLegacySkillDirs(antigravitySkillsRoot, skillNames);
-    await installSkillsTo(antigravitySkillsRoot, skillNames);
-    await installWorkflowsTo(path.join(home, ".antigravity", "workflows", "aios"), workflowPaths);
-    await upsertManagedBlock(
-      path.join(home, ".antigravity", "ARCHSIGHT_AIOS.md"),
-      userInstructionBlock(storeRoot)
-    );
-    installed.push("antigravity skills", "antigravity workflows", "antigravity user instructions");
+    if (await exists(antigravityLegacyRoot())) {
+      await installAntigravityLegacy(skillNames);
+      installed.push("antigravity 1.x legacy skills");
+    } else {
+      await installAntigravityPlugin(skillNames);
+      installed.push("antigravity 2.x plugin");
+    }
   }
 
   console.log(`Installed ArchSight AIOS assets to ${storeRoot}`);
@@ -482,8 +524,8 @@ async function doctor() {
   checkCondition("package name", packageJson.name === "@archsight/aios", "name === @archsight/aios");
   checkCondition("package bin", packageJson.bin?.["archsight-aios"] === "./bin/archsight-aios.mjs", "bin.archsight-aios");
   checkCondition("codex workflows target", manifest.installTargets?.codexWorkflows === "~/.codex/workflows/aios", "codexWorkflows");
-  checkCondition("antigravity skills target", manifest.installTargets?.antigravitySkills === "~/.antigravity/skills", "antigravitySkills");
-  checkCondition("antigravity workflows target", manifest.installTargets?.antigravityWorkflows === "~/.antigravity/workflows/aios", "antigravityWorkflows");
+  checkCondition("antigravity plugin target", manifest.installTargets?.antigravityPlugin === "~/.gemini/config/plugins/archsight-aios", "antigravityPlugin");
+  checkCondition("antigravity legacy skills target", manifest.installTargets?.antigravityLegacySkills === "~/.gemini/antigravity/skills", "antigravityLegacySkills");
 
   for (const agent of manifest.agents) {
     await check(`agent source ${agent.id}`, path.join(repoRoot, agent.sourcePath));
@@ -547,29 +589,32 @@ async function doctor() {
   await check("asset memory", path.join(storeRoot, "memory"));
   await check("codex skills root", path.join(home, ".codex", "skills"));
   await check("codex workflows root", path.join(home, ".codex", "workflows", "aios"));
-  await check("shared skills root", path.join(home, ".agents", "skills"));
-  await check("shared workflows root", path.join(home, ".agents", "workflows", "aios"));
-  await check("antigravity skills root", path.join(home, ".antigravity", "skills"));
-  await check("antigravity workflows root", path.join(home, ".antigravity", "workflows", "aios"));
   await check("gemini instructions", path.join(home, ".gemini", "GEMINI.md"));
-  await check("antigravity instructions", path.join(home, ".antigravity", "ARCHSIGHT_AIOS.md"));
   await checkContains("gemini managed block", path.join(home, ".gemini", "GEMINI.md"), managedStart);
-  await checkContains("antigravity managed block", path.join(home, ".antigravity", "ARCHSIGHT_AIOS.md"), managedStart);
+
+  const useAntigravityLegacy = await exists(antigravityLegacyRoot());
+  if (useAntigravityLegacy) {
+    await check("antigravity 1.x legacy skills root", antigravityLegacySkillsRoot());
+  } else {
+    await check("antigravity 2.x plugin root", antigravityPluginRoot());
+    await checkContains("antigravity 2.x plugin manifest", path.join(antigravityPluginRoot(), "plugin.json"), antigravityPluginName);
+  }
 
   for (const skill of manifest.skills) {
     const skillName = skill.id;
     const sourceDir = expectedSkillDir(skill);
     await check(`asset skill ${skillName}`, path.join(storeRoot, sourceDir, "SKILL.md"));
     await check(`codex skill ${skillName}`, path.join(home, ".codex", "skills", skillName, "SKILL.md"));
-    await check(`shared skill ${skillName}`, path.join(home, ".agents", "skills", skillName, "SKILL.md"));
-    await check(`antigravity skill ${skillName}`, path.join(home, ".antigravity", "skills", skillName, "SKILL.md"));
+    if (useAntigravityLegacy) {
+      await check(`antigravity 1.x legacy skill ${skillName}`, path.join(antigravityLegacySkillsRoot(), skillName, "SKILL.md"));
+    } else {
+      await check(`antigravity 2.x plugin skill ${skillName}`, path.join(antigravityPluginRoot(), "skills", skillName, "SKILL.md"));
+    }
   }
 
   for (const workflow of manifest.workflows) {
     const workflowFileName = path.basename(workflow.path);
     await check(`codex workflow ${workflow.id}`, path.join(home, ".codex", "workflows", "aios", workflowFileName));
-    await check(`shared workflow ${workflow.id}`, path.join(home, ".agents", "workflows", "aios", workflowFileName));
-    await check(`antigravity workflow ${workflow.id}`, path.join(home, ".antigravity", "workflows", "aios", workflowFileName));
   }
 
   const failed = checks.filter((item) => !item.ok);

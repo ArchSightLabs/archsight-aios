@@ -17,6 +17,16 @@ function run(args, options = {}) {
   });
 }
 
+function runWithHome(args, homeDir) {
+  return run(args, {
+    env: {
+      ...process.env,
+      HOME: homeDir,
+      USERPROFILE: homeDir
+    }
+  });
+}
+
 async function readJson(filePath) {
   return JSON.parse(await fs.readFile(filePath, "utf8"));
 }
@@ -26,6 +36,7 @@ async function testHelp() {
   assert.equal(result.status, 0);
   assert.match(result.stdout, /ArchSight AIOS/);
   assert.match(result.stdout, /archsight-aios help/);
+  assert.match(result.stdout, /codex\|agents\|gemini\|antigravity\|all/);
   assert.match(result.stdout, /archsight-aios doctor/);
   assert.match(result.stdout, /archsight-aios init /);
   assert.doesNotMatch(result.stdout, /init-project/);
@@ -58,11 +69,48 @@ async function testProductIdentity() {
   assert.ok(manifest.skills.every((skill) => skill.path.startsWith("skills/aios-")));
   assert.ok(manifest.skills.every((skill) => skill.id.split("-").length <= 3));
   assert.ok(manifest.workflows.every((workflow) => workflow.id.split("-").length <= 3));
+  assert.equal(manifest.installTargets.codexSkills, "~/.codex/skills");
   assert.equal(manifest.installTargets.codexWorkflows, "~/.codex/workflows/aios");
-  assert.equal(manifest.installTargets.antigravitySkills, "~/.antigravity/skills");
-  assert.equal(manifest.installTargets.antigravityWorkflows, "~/.antigravity/workflows/aios");
+  assert.equal(manifest.installTargets.sharedAgentSkills, "~/.agents/skills");
+  assert.equal(manifest.installTargets.sharedAgentWorkflows, "~/.agents/workflows/aios");
+  assert.equal(manifest.installTargets.antigravityPlugin, "~/.gemini/config/plugins/archsight-aios");
+  assert.equal(manifest.installTargets.antigravityLegacySkills, "~/.gemini/antigravity/skills");
 
   await assert.rejects(fs.access(legacyManifest));
+}
+
+async function testInstallAntigravityUsesPluginByDefault() {
+  const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-antigravity-2-"));
+  const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
+  const skillName = manifest.skills[0].id;
+
+  const result = runWithHome(["install", "--target", "antigravity", "--scope", "user"], tempHome);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /antigravity 2\.x plugin/);
+
+  const pluginRoot = path.join(tempHome, ".gemini", "config", "plugins", "archsight-aios");
+  const pluginJson = await readJson(path.join(pluginRoot, "plugin.json"));
+  assert.equal(pluginJson.name, "archsight-aios");
+  await fs.access(path.join(pluginRoot, "skills", skillName, "SKILL.md"));
+  await assert.rejects(fs.access(path.join(tempHome, ".gemini", "antigravity", "skills")));
+
+  await fs.rm(tempHome, { recursive: true, force: true });
+}
+
+async function testInstallAntigravityUsesLegacyWhenDetected() {
+  const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-antigravity-1-"));
+  const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
+  const skillName = manifest.skills[0].id;
+  await fs.mkdir(path.join(tempHome, ".gemini", "antigravity"), { recursive: true });
+
+  const result = runWithHome(["install", "--target", "antigravity", "--scope", "user"], tempHome);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /antigravity 1\.x legacy skills/);
+
+  await fs.access(path.join(tempHome, ".gemini", "antigravity", "skills", skillName, "SKILL.md"));
+  await assert.rejects(fs.access(path.join(tempHome, ".gemini", "config", "plugins", "archsight-aios")));
+
+  await fs.rm(tempHome, { recursive: true, force: true });
 }
 
 async function testValidateProjectTemplate() {
@@ -226,6 +274,8 @@ const tests = [
   testHelpCommand,
   testUnknownCommand,
   testProductIdentity,
+  testInstallAntigravityUsesPluginByDefault,
+  testInstallAntigravityUsesLegacyWhenDetected,
   testValidateProjectTemplate,
   testInitProjectDefaultsToCurrentDirectory,
   testInitProjectAutoLinksExistingInstructionFiles,

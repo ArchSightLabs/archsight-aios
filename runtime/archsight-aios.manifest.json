@@ -253,9 +253,8 @@
     "sharedAgentSkills": "~/.agents/skills",
     "sharedAgentWorkflows": "~/.agents/workflows/aios",
     "geminiInstructions": "~/.gemini/GEMINI.md",
-    "antigravitySkills": "~/.antigravity/skills",
-    "antigravityWorkflows": "~/.antigravity/workflows/aios",
-    "antigravityInstructions": "~/.antigravity/ARCHSIGHT_AIOS.md",
+    "antigravityPlugin": "~/.gemini/config/plugins/archsight-aios",
+    "antigravityLegacySkills": "~/.gemini/antigravity/skills",
     "assetStore": "~/.archsight-aios"
   },
   "hermes": {
