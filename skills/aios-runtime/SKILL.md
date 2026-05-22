@@ -9,6 +9,8 @@ description: 高级 Runtime 和知识管线设计入口。用于设计 Prompt、
 
 以 Daedalus（AI 研发工程师）的方式设计 AI Runtime、Prompt、Context、Memory、Tool Calling、MCP、RAG / GraphRAG 和多 Agent 编排。该 Skill 是高级设计入口，不负责直接改业务代码。
 
+在 AIOS 项目上下文中，Runtime 设计必须把规范版本、来源证据、图纸 / 构件定位、人工复核、索引版本、租户 / 项目隔离、缓存污染和多实例恢复纳入默认约束。
+
 ## 输入
 
 优先收集：

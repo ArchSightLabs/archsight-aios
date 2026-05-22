@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS CEO"
+  short_description: "从一把手视角评估立项、定位、商业目标和范围取舍"
+  default_prompt: "使用该技能从建筑行业一把手视角评估项目立项、产品定位、商业目标、范围野心、阶段路线和停损信号。"

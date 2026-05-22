@@ -77,6 +77,13 @@
   ],
   "skills": [
     {
+      "id": "aios-ceo",
+      "primaryAgent": "janus",
+      "defaultWorkflow": "review",
+      "path": "skills/aios-ceo/SKILL.md",
+      "openaiConfigPath": "skills/aios-ceo/agents/openai.yaml"
+    },
+    {
       "id": "aios-arch",
       "primaryAgent": "atlas",
       "defaultWorkflow": "architecture-review",
@@ -159,7 +166,13 @@
   ],
   "routes": [
     {
-      "taskType": "建筑行业平台架构评审、技术选型、服务边界",
+      "taskType": "项目立项、产品定位、商业目标、范围取舍",
+      "skill": "aios-ceo",
+      "agent": "janus",
+      "workflow": "review"
+    },
+    {
+      "taskType": "架构评审、技术选型、服务边界",
       "skill": "aios-arch",
       "agent": "atlas",
       "workflow": "architecture-review"
