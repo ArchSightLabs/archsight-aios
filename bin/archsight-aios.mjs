@@ -34,8 +34,22 @@ const assetDirs = [
 ];
 const assetFiles = ["README.md", "AI_CODING_RULES.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md"];
 const skillAliases = {
-  "aios-building-knowledge": ["aios-bim-domain-modeling", "archsight-bim-domain-modeling"],
-  "aios-runtime-design": ["aios-ai-runtime-design", "archsight-ai-runtime-design"]
+  "aios-arch": ["aios-architecture-review", "archsight-architecture-review"],
+  "aios-plan": ["aios-delivery-planning", "archsight-delivery-planning"],
+  "aios-review": ["aios-code-review", "archsight-code-review"],
+  "aios-knowledge": [
+    "aios-building-knowledge",
+    "archsight-building-knowledge",
+    "aios-bim-domain-modeling",
+    "archsight-bim-domain-modeling"
+  ],
+  "aios-runtime": [
+    "aios-runtime-design",
+    "archsight-runtime-design",
+    "aios-ai-runtime-design",
+    "archsight-ai-runtime-design"
+  ],
+  "aios-exec": ["aios-controlled-execution", "archsight-controlled-execution"]
 };
 
 function usage() {
@@ -292,11 +306,11 @@ async function removeLegacySkillDirs(targetRoot, skillNames) {
     }
 
     const legacyNames = [
-      `archsight-${skillName.slice("aios-".length)}`,
-      ...(skillAliases[skillName] ?? [])
+      { name: `archsight-${skillName.slice("aios-".length)}`, requireMatchingFrontmatter: true },
+      ...(skillAliases[skillName] ?? []).map((name) => ({ name, requireMatchingFrontmatter: false }))
     ];
 
-    for (const legacyName of legacyNames) {
+    for (const { name: legacyName, requireMatchingFrontmatter } of legacyNames) {
       const legacyDir = path.join(targetRoot, legacyName);
       const legacySkillFile = path.join(legacyDir, "SKILL.md");
       if (!(await exists(legacySkillFile))) {
@@ -304,7 +318,7 @@ async function removeLegacySkillDirs(targetRoot, skillNames) {
       }
 
       const legacySkill = await fs.readFile(legacySkillFile, "utf8");
-      if (!legacySkill.includes(`name: ${legacyName}`)) {
+      if (requireMatchingFrontmatter && !legacySkill.includes(`name: ${legacyName}`)) {
         continue;
       }
 

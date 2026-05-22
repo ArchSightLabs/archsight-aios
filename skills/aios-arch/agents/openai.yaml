@@ -1,4 +1,4 @@
 interface:
-  display_name: "AIOS Architecture Review"
+  display_name: "AIOS Arch"
   short_description: "评审 AIOS 架构、边界和长期复杂度风险"
   default_prompt: "使用该技能评审 AIOS 系统架构、服务边界、技术取舍和长期复杂度风险。"

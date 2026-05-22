@@ -15,12 +15,12 @@
 
 | 阶段 | 主 Agent | Skill |
 | --- | --- | --- |
-| 风险识别 | Argus | `aios-code-review` |
-| 架构影响判断 | Atlas | `aios-architecture-review` |
-| 修复计划 | Mason | `aios-delivery-planning` |
-| 受控修复 | Hephaestus | `aios-controlled-execution` |
-| Runtime 相关缺陷 | Daedalus | `aios-runtime-design` |
-| 行业语义缺陷 | Vitruvius | `aios-building-knowledge` |
+| 风险识别 | Argus | `aios-review` |
+| 架构影响判断 | Atlas | `aios-arch` |
+| 修复计划 | Mason | `aios-plan` |
+| 受控修复 | Hephaestus | `aios-exec` |
+| Runtime 相关缺陷 | Daedalus | `aios-runtime` |
+| 行业语义缺陷 | Vitruvius | `aios-knowledge` |
 
 ## 输入
 

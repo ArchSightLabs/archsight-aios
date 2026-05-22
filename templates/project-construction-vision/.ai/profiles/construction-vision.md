@@ -24,11 +24,11 @@
 
 | 任务 | 首选 Agent / Skill |
 | --- | --- |
-| 模型方案、数据闭环、评估指标 | Daedalus / `aios-runtime-design` |
-| 建筑构件、施工工艺、缺陷语义 | Vitruvius / `aios-building-knowledge` |
-| 训练脚本、推理服务、评估工具 | Hephaestus / `aios-controlled-execution` |
-| 系统边界、边缘部署、数据流 | Atlas / `aios-architecture-review` |
-| 代码、安全、依赖和发布风险 | Argus / `aios-code-review` |
+| 模型方案、数据闭环、评估指标 | Daedalus / `aios-runtime` |
+| 建筑构件、施工工艺、缺陷语义 | Vitruvius / `aios-knowledge` |
+| 训练脚本、推理服务、评估工具 | Hephaestus / `aios-exec` |
+| 系统边界、边缘部署、数据流 | Atlas / `aios-arch` |
+| 代码、安全、依赖和发布风险 | Argus / `aios-review` |
 
 ## 验收要求
 

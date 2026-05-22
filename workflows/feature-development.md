@@ -15,12 +15,12 @@
 
 | 阶段 | 主 Agent | Skill |
 | --- | --- | --- |
-| 架构边界 | Atlas | `aios-architecture-review` |
-| 任务拆解 | Mason | `aios-delivery-planning` |
-| 受控实现 | Hephaestus | `aios-controlled-execution` |
-| 质量审查 | Argus | `aios-code-review` |
-| AI Runtime 相关 | Daedalus | `aios-runtime-design` |
-| BIM / IFC / 行业语义相关 | Vitruvius | `aios-building-knowledge` |
+| 架构边界 | Atlas | `aios-arch` |
+| 任务拆解 | Mason | `aios-plan` |
+| 受控实现 | Hephaestus | `aios-exec` |
+| 质量审查 | Argus | `aios-review` |
+| AI Runtime 相关 | Daedalus | `aios-runtime` |
+| BIM / IFC / 行业语义相关 | Vitruvius | `aios-knowledge` |
 
 ## 输入
 

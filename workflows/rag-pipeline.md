@@ -15,12 +15,12 @@
 
 | 阶段 | 主 Agent | Skill |
 | --- | --- | --- |
-| 领域语义建模 | Vitruvius | `aios-building-knowledge` |
-| Runtime / Pipeline 设计 | Daedalus | `aios-runtime-design` |
-| 架构边界 | Atlas | `aios-architecture-review` |
-| 任务拆解 | Mason | `aios-delivery-planning` |
-| 实现执行 | Hephaestus | `aios-controlled-execution` |
-| 风险审查 | Argus | `aios-code-review` |
+| 领域语义建模 | Vitruvius | `aios-knowledge` |
+| Runtime / Pipeline 设计 | Daedalus | `aios-runtime` |
+| 架构边界 | Atlas | `aios-arch` |
+| 任务拆解 | Mason | `aios-plan` |
+| 实现执行 | Hephaestus | `aios-exec` |
+| 风险审查 | Argus | `aios-review` |
 
 ## 输入
 

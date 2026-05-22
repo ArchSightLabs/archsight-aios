@@ -1,4 +1,0 @@
-interface:
-  display_name: "AIOS Runtime Design"
-  short_description: "设计 AIOS Runtime、RAG 和多 Agent 编排"
-  default_prompt: "使用该技能为 ArchSight AIOS 项目设计 Prompt、Context、Memory、RAG、GraphRAG、MCP、Tool Calling 和多 Agent Runtime 工作流。"

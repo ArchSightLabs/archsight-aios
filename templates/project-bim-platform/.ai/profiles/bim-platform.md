@@ -24,11 +24,11 @@
 
 | 任务 | 首选 Agent / Skill |
 | --- | --- |
-| BIM / IFC / 建筑语义建模 | Vitruvius / `aios-building-knowledge` |
-| 平台边界、插件架构、服务拆分 | Atlas / `aios-architecture-review` |
-| Revit / CAD / IFC 工程实现 | Hephaestus / `aios-controlled-execution` |
-| AI Runtime、RAG、Tool Calling | Daedalus / `aios-runtime-design` |
-| 代码质量、安全、发布风险 | Argus / `aios-code-review` |
+| BIM / IFC / 建筑语义建模 | Vitruvius / `aios-knowledge` |
+| 平台边界、插件架构、服务拆分 | Atlas / `aios-arch` |
+| Revit / CAD / IFC 工程实现 | Hephaestus / `aios-exec` |
+| AI Runtime、RAG、Tool Calling | Daedalus / `aios-runtime` |
+| 代码质量、安全、发布风险 | Argus / `aios-review` |
 
 ## 验收要求
 

@@ -10,24 +10,24 @@ ArchSight AIOS 的 Skill 是通用治理能力；`aios-*` 前缀表示来源和�
 
 | 任务 | Skill | 主 Agent |
 | --- | --- | --- |
-| 架构评审 | `aios-architecture-review` | Atlas |
-| 交付计划 | `aios-delivery-planning` | Mason |
-| 代码审查 | `aios-code-review` | Argus |
-| BIM / IFC / 建筑知识建模 | `aios-building-knowledge` | Vitruvius |
-| AI Runtime / RAG / MCP / Memory | `aios-runtime-design` | Daedalus |
-| 受控实现 / 测试 / 文档 / 脚本 | `aios-controlled-execution` | Hephaestus |
+| 架构评审 | `aios-arch` | Atlas |
+| 交付计划 | `aios-plan` | Mason |
+| 代码审查 | `aios-review` | Argus |
+| BIM / IFC / 建筑知识建模 | `aios-knowledge` | Vitruvius |
+| AI Runtime / RAG / MCP / Memory | `aios-runtime` | Daedalus |
+| 受控实现 / 测试 / 文档 / 脚本 | `aios-exec` | Hephaestus |
 
 ## 本项目启用的 Skills
 
-- [ ] `aios-architecture-review`
-- [ ] `aios-delivery-planning`
-- [ ] `aios-code-review`
-- [ ] `aios-building-knowledge`
-- [ ] `aios-runtime-design`
-- [ ] `aios-controlled-execution`
+- [ ] `aios-arch`
+- [ ] `aios-plan`
+- [ ] `aios-review`
+- [ ] `aios-knowledge`
+- [ ] `aios-runtime`
+- [ ] `aios-exec`
 
 ## 启用规则
 
 - 只勾选当前项目真实安装或可访问的 Skill。
-- 只有启用建筑、BIM、IFC、规范知识库、GraphRAG 或智能审图 profile 时，才默认启用 `aios-building-knowledge`。
+- 只有启用建筑、BIM、IFC、规范知识库、GraphRAG 或智能审图 profile 时，才默认启用 `aios-knowledge`。
 - 如 Skill 来源、安装位置或同步方式无法确认，应标注待核验，不要假设已经启用。

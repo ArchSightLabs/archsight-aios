@@ -1,9 +1,9 @@
 ---
-name: aios-code-review
+name: aios-review
 description: 代码审查和风险评审工作流。用于审查 diff、PR、AI 生成代码、安全敏感改动、Prompt/Tool/Runtime 变更、依赖更新、性能风险、测试缺口和发布准备度。
 ---
 
-# AIOS Code Review
+# AIOS Review
 
 ## 目标
 

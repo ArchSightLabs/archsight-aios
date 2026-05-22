@@ -1,9 +1,9 @@
 ---
-name: aios-building-knowledge
+name: aios-knowledge
 description: 建筑知识结构化工作流。用于整理 BIM、IFC、建筑规范、施工术语、招采/交付标准、审查规则、领域实体、知识图谱 schema 和 GraphRAG 输入。
 ---
 
-# AIOS Building Knowledge
+# AIOS Knowledge
 
 ## 目标
 

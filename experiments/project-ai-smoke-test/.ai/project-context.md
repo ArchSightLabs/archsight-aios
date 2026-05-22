@@ -11,7 +11,7 @@ Project AI Smoke Test
 核心场景：
 
 - 验证项目级 `.ai/` 目录可以被 AI 助手读取。
-- 验证架构评审任务可以选择 `aios-architecture-review` Skill。
+- 验证架构评审任务可以选择 `aios-arch` Skill。
 - 验证接入不依赖 Hermes / 飞书 Runtime。
 - 验证 Agent 与 Skill 的职责没有混用。
 
@@ -55,6 +55,6 @@ Lint：无
 ## 当前接入的 ArchSight AI OS 能力
 
 - Agent：Atlas
-- Skills：`aios-architecture-review`
+- Skills：`aios-arch`
 - Workflows：`architecture-review`
 - Runtime：本地项目工作区；不要求 Hermes 才能完成本 smoke test。

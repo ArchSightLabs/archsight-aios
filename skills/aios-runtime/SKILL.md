@@ -1,13 +1,13 @@
 ---
-name: aios-runtime-design
-description: Runtime 和知识管线设计工作流。用于设计 Prompt、上下文压缩、Memory 策略、Hermes/OpenClaw 等适配器、Tool Calling、MCP 权限、RAG、GraphRAG、Embedding、评估、多 Agent 编排和状态治理。
+name: aios-runtime
+description: 高级 Runtime 和知识管线设计入口。用于设计 Prompt、上下文压缩、Memory 策略、Hermes/OpenClaw 等适配器、Tool Calling、MCP 权限、RAG、GraphRAG、Embedding、评估、多 Agent 编排和状态治理。
 ---
 
-# AIOS Runtime Design
+# AIOS Runtime
 
 ## 目标
 
-以 Daedalus（AI 研发工程师）的方式设计 AI Runtime、Prompt、Context、Memory、Tool Calling、MCP、RAG / GraphRAG 和多 Agent 编排。
+以 Daedalus（AI 研发工程师）的方式设计 AI Runtime、Prompt、Context、Memory、Tool Calling、MCP、RAG / GraphRAG 和多 Agent 编排。该 Skill 是高级设计入口，不负责直接改业务代码。
 
 ## 输入
 

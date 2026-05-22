@@ -1,9 +1,9 @@
 ---
-name: aios-controlled-execution
+name: aios-exec
 description: 受控执行工作流。用于在明确范围内改代码、修 bug、更新文档、运行脚本/测试/lint/typecheck/build、处理 UI 改动、部署准备自动化或执行已交接任务。
 ---
 
-# AIOS Controlled Execution
+# AIOS Exec
 
 ## 目标
 

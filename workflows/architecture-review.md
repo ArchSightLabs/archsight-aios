@@ -15,11 +15,11 @@
 
 | 阶段 | 主 Agent | Skill |
 | --- | --- | --- |
-| 架构判断 | Atlas | `aios-architecture-review` |
-| 工程拆解 | Mason | `aios-delivery-planning` |
-| Runtime 设计 | Daedalus | `aios-runtime-design` |
-| 行业语义 | Vitruvius | `aios-building-knowledge` |
-| 风险审查 | Argus | `aios-code-review` |
+| 架构判断 | Atlas | `aios-arch` |
+| 工程拆解 | Mason | `aios-plan` |
+| Runtime 设计 | Daedalus | `aios-runtime` |
+| 行业语义 | Vitruvius | `aios-knowledge` |
+| 风险审查 | Argus | `aios-review` |
 
 ## 输入
 

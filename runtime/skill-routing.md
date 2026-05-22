@@ -17,14 +17,14 @@
 
 | 任务类型 | 推荐 Skill | 主 Agent | 推荐 Workflow |
 | --- | --- | --- | --- |
-| 架构评审、技术选型、服务边界 | `aios-architecture-review` | Atlas | `architecture-review` |
-| Feature 拆解、交付计划、任务依赖 | `aios-delivery-planning` | Mason | `feature-development` |
-| PR / diff / AI 生成代码审查 | `aios-code-review` | Argus | `code-review` |
-| Bug 修复、测试失败、构建失败 | `aios-controlled-execution` | Hephaestus | `bug-fixing` |
-| BIM / IFC / 建筑规范 / 审图规则 | `aios-building-knowledge` | Vitruvius | `rag-pipeline` |
-| Prompt / Context / Memory / MCP / Tool | `aios-runtime-design` | Daedalus | `architecture-review` |
-| RAG / GraphRAG Pipeline | `aios-runtime-design` | Daedalus | `rag-pipeline` |
-| 受控代码修改、文档、脚本、测试 | `aios-controlled-execution` | Hephaestus | `feature-development` |
+| 架构评审、技术选型、服务边界 | `aios-arch` | Atlas | `architecture-review` |
+| Feature 拆解、交付计划、任务依赖 | `aios-plan` | Mason | `feature-development` |
+| PR / diff / AI 生成代码审查 | `aios-review` | Argus | `code-review` |
+| Bug 修复、测试失败、构建失败 | `aios-exec` | Hephaestus | `bug-fixing` |
+| BIM / IFC / 建筑规范 / 审图规则 | `aios-knowledge` | Vitruvius | `rag-pipeline` |
+| Prompt / Context / Memory / MCP / Tool | `aios-runtime` | Daedalus | `architecture-review` |
+| RAG / GraphRAG Pipeline | `aios-runtime` | Daedalus | `rag-pipeline` |
+| 受控代码修改、文档、脚本、测试 | `aios-exec` | Hephaestus | `feature-development` |
 
 ## 路由原则
 

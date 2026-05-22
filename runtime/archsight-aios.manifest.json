@@ -77,46 +77,46 @@
   ],
   "skills": [
     {
-      "id": "aios-architecture-review",
+      "id": "aios-arch",
       "primaryAgent": "atlas",
       "defaultWorkflow": "architecture-review",
-      "path": "skills/aios-architecture-review/SKILL.md",
-      "openaiConfigPath": "skills/aios-architecture-review/agents/openai.yaml"
+      "path": "skills/aios-arch/SKILL.md",
+      "openaiConfigPath": "skills/aios-arch/agents/openai.yaml"
     },
     {
-      "id": "aios-delivery-planning",
+      "id": "aios-plan",
       "primaryAgent": "mason",
       "defaultWorkflow": "feature-development",
-      "path": "skills/aios-delivery-planning/SKILL.md",
-      "openaiConfigPath": "skills/aios-delivery-planning/agents/openai.yaml"
+      "path": "skills/aios-plan/SKILL.md",
+      "openaiConfigPath": "skills/aios-plan/agents/openai.yaml"
     },
     {
-      "id": "aios-code-review",
+      "id": "aios-review",
       "primaryAgent": "argus",
       "defaultWorkflow": "code-review",
-      "path": "skills/aios-code-review/SKILL.md",
-      "openaiConfigPath": "skills/aios-code-review/agents/openai.yaml"
+      "path": "skills/aios-review/SKILL.md",
+      "openaiConfigPath": "skills/aios-review/agents/openai.yaml"
     },
     {
-      "id": "aios-building-knowledge",
+      "id": "aios-knowledge",
       "primaryAgent": "vitruvius",
       "defaultWorkflow": "rag-pipeline",
-      "path": "skills/aios-building-knowledge/SKILL.md",
-      "openaiConfigPath": "skills/aios-building-knowledge/agents/openai.yaml"
+      "path": "skills/aios-knowledge/SKILL.md",
+      "openaiConfigPath": "skills/aios-knowledge/agents/openai.yaml"
     },
     {
-      "id": "aios-runtime-design",
+      "id": "aios-runtime",
       "primaryAgent": "daedalus",
       "defaultWorkflow": "rag-pipeline",
-      "path": "skills/aios-runtime-design/SKILL.md",
-      "openaiConfigPath": "skills/aios-runtime-design/agents/openai.yaml"
+      "path": "skills/aios-runtime/SKILL.md",
+      "openaiConfigPath": "skills/aios-runtime/agents/openai.yaml"
     },
     {
-      "id": "aios-controlled-execution",
+      "id": "aios-exec",
       "primaryAgent": "hephaestus",
       "defaultWorkflow": "feature-development",
-      "path": "skills/aios-controlled-execution/SKILL.md",
-      "openaiConfigPath": "skills/aios-controlled-execution/agents/openai.yaml"
+      "path": "skills/aios-exec/SKILL.md",
+      "openaiConfigPath": "skills/aios-exec/agents/openai.yaml"
     }
   ],
   "workflows": [
@@ -160,49 +160,49 @@
   "routes": [
     {
       "taskType": "架构评审、技术选型、服务边界",
-      "skill": "aios-architecture-review",
+      "skill": "aios-arch",
       "agent": "atlas",
       "workflow": "architecture-review"
     },
     {
       "taskType": "Feature 拆解、交付计划、任务依赖",
-      "skill": "aios-delivery-planning",
+      "skill": "aios-plan",
       "agent": "mason",
       "workflow": "feature-development"
     },
     {
       "taskType": "PR / diff / AI 生成代码审查",
-      "skill": "aios-code-review",
+      "skill": "aios-review",
       "agent": "argus",
       "workflow": "code-review"
     },
     {
       "taskType": "Bug 修复、测试失败、构建失败",
-      "skill": "aios-controlled-execution",
+      "skill": "aios-exec",
       "agent": "hephaestus",
       "workflow": "bug-fixing"
     },
     {
       "taskType": "BIM / IFC / 建筑规范 / 审图规则",
-      "skill": "aios-building-knowledge",
+      "skill": "aios-knowledge",
       "agent": "vitruvius",
       "workflow": "rag-pipeline"
     },
     {
       "taskType": "Prompt / Context / Memory / MCP / Tool",
-      "skill": "aios-runtime-design",
+      "skill": "aios-runtime",
       "agent": "daedalus",
       "workflow": "architecture-review"
     },
     {
       "taskType": "RAG / GraphRAG Pipeline",
-      "skill": "aios-runtime-design",
+      "skill": "aios-runtime",
       "agent": "daedalus",
       "workflow": "rag-pipeline"
     },
     {
       "taskType": "受控代码修改、文档、脚本、测试",
-      "skill": "aios-controlled-execution",
+      "skill": "aios-exec",
       "agent": "hephaestus",
       "workflow": "feature-development"
     }
