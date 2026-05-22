@@ -236,8 +236,24 @@ function expectedSkillDir(skill) {
   return path.dirname(skill.path);
 }
 
+function userConfigRoot() {
+  if (process.env.ARCHSIGHT_AIOS_HOME) {
+    return path.resolve(process.env.ARCHSIGHT_AIOS_HOME);
+  }
+
+  if (process.platform === "win32") {
+    return path.join(process.env.APPDATA ?? path.join(home, "AppData", "Roaming"), "archsight-aios");
+  }
+
+  if (process.platform === "darwin") {
+    return path.join(home, "Library", "Application Support", "archsight-aios");
+  }
+
+  return path.join(process.env.XDG_CONFIG_HOME ?? path.join(home, ".config"), "archsight-aios");
+}
+
 async function syncAssetStore() {
-  const storeRoot = path.join(home, ".archsight-aios");
+  const storeRoot = userConfigRoot();
   await ensureDir(storeRoot);
 
   for (const dirName of assetDirs) {
@@ -508,7 +524,7 @@ async function install(options) {
 
 async function doctor() {
   const manifest = await readManifest();
-  const storeRoot = path.join(home, ".archsight-aios");
+  const storeRoot = userConfigRoot();
   const agentIds = new Set(manifest.agents.map((agent) => agent.id));
   const skillIds = new Set(manifest.skills.map((skill) => skill.id));
   const workflowIds = new Set(manifest.workflows.map((workflow) => workflow.id));

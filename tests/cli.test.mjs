@@ -22,13 +22,27 @@ function runWithHome(args, homeDir) {
     env: {
       ...process.env,
       HOME: homeDir,
-      USERPROFILE: homeDir
+      USERPROFILE: homeDir,
+      APPDATA: path.join(homeDir, "AppData", "Roaming"),
+      XDG_CONFIG_HOME: path.join(homeDir, ".config")
     }
   });
 }
 
 async function readJson(filePath) {
   return JSON.parse(await fs.readFile(filePath, "utf8"));
+}
+
+function expectedAssetStore(homeDir) {
+  if (process.platform === "win32") {
+    return path.join(homeDir, "AppData", "Roaming", "archsight-aios");
+  }
+
+  if (process.platform === "darwin") {
+    return path.join(homeDir, "Library", "Application Support", "archsight-aios");
+  }
+
+  return path.join(homeDir, ".config", "archsight-aios");
 }
 
 async function testHelp() {
@@ -75,6 +89,7 @@ async function testProductIdentity() {
   assert.equal(manifest.installTargets.sharedAgentWorkflows, "~/.agents/workflows/aios");
   assert.equal(manifest.installTargets.antigravityPlugin, "~/.gemini/config/plugins/archsight-aios");
   assert.equal(manifest.installTargets.antigravityLegacySkills, "~/.gemini/antigravity/skills");
+  assert.equal(manifest.installTargets.assetStore, "platform user config directory: archsight-aios");
 
   await assert.rejects(fs.access(legacyManifest));
 }
@@ -88,6 +103,8 @@ async function testInstallAntigravityUsesPluginByDefault() {
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(result.stdout, /antigravity 2\.x plugin/);
 
+  await fs.access(path.join(expectedAssetStore(tempHome), "runtime", "archsight-aios.manifest.json"));
+  await assert.rejects(fs.access(path.join(tempHome, ".archsight-aios")));
   const pluginRoot = path.join(tempHome, ".gemini", "config", "plugins", "archsight-aios");
   const pluginJson = await readJson(path.join(pluginRoot, "plugin.json"));
   assert.equal(pluginJson.name, "archsight-aios");
