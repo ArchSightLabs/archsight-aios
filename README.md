@@ -1,6 +1,6 @@
 # ArchSight AIOS
 
-ArchSight AIOS 是一套面向建筑 AI 研发的规则、Agent、Skill、Workflow 和项目接入工具包。它重点服务 BIM / IFC / Revit / CAD、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图和 AI Coding 治理，让 Codex、Claude、Gemini 等 AI 工具在同一个项目里读取同一套规则、项目上下文和验收要求。
+ArchSight AIOS 是一套面向建筑 AI 研发的规则、Agent、Skill、Workflow 和项目接入工具包。它重点服务 BIM / IFC / Revit / CAD、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图和 AI Coding 治理，让 Codex、Claude、Antigravity 2.0 等 AI 工具在同一个项目里读取同一套规则、项目上下文和验收要求。
 
 AIOS 不是全行业项目模板集合。它保留通用的 AI 编码规则、Agent 路由、Workflow、项目 `.ai/` 上下文和交付验证能力，但真正的差异化能力集中在建筑行业语义、工程证据链、规范知识工程和可复核的 AI 研发流程。
 
@@ -69,7 +69,7 @@ npx @archsight/aios init --profile rag-knowledge
 | 命令 | 用途 |
 | --- | --- |
 | `help` | 查看 CLI 帮助、可用命令和示例。 |
-| `install` | 安装 ArchSight AIOS 用户级资产到 Codex、Gemini、Antigravity 和共享目录。 |
+| `install` | 安装 ArchSight AIOS 用户级资产到 Codex、Antigravity 2.0、Gemini 和共享目录。 |
 | `doctor` | 检查仓库资产、manifest、用户级安装、Skill 和 Workflow 是否一致。 |
 | `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录和可选行业 profile。 |
 | `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
@@ -80,7 +80,7 @@ npx @archsight/aios init --profile rag-knowledge
 
 - Codex：`~/.codex/skills/`、`~/.codex/workflows/aios/`
 - Gemini：`~/.gemini/GEMINI.md`
-- Antigravity 2.x：`~/.gemini/config/plugins/archsight-aios/`
+- Antigravity 2.0：`~/.gemini/config/plugins/archsight-aios/`
 - Antigravity 1.x legacy：仅当已存在 `~/.gemini/antigravity/` 时，写入 `~/.gemini/antigravity/skills/`
 - 共享资产：`~/.archsight-aios/`
 

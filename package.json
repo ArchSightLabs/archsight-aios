@@ -1,7 +1,7 @@
 {
   "name": "@archsight/aios",
   "version": "0.1.0",
-  "description": "AI rules, skills, workflows, and project onboarding for architecture, engineering, and construction projects.",
+  "description": "面向建筑 AI 研发的规则、Skill、Workflow 与多 Agent 项目接入工具包。",
   "type": "module",
   "homepage": "https://github.com/ArchSightLabs/archsight-aios#readme",
   "repository": {
@@ -21,7 +21,7 @@
     "graphrag",
     "construction",
     "codex",
-    "gemini",
+    "antigravity",
     "claude"
   ],
   "bin": {
