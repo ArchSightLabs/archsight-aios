@@ -1,4 +1,4 @@
 interface:
-  display_name: "ArchSight Controlled Execution"
-  short_description: "Execute scoped ArchSight tasks"
-  default_prompt: "Use this skill to make scoped ArchSight code, documentation, script, test, build, and deployment-prep changes with verification."
+  display_name: "AIOS Controlled Execution"
+  short_description: "执行有边界的 AIOS 代码、文档和验证任务"
+  default_prompt: "使用该技能在明确范围内完成 AIOS 代码、文档、脚本、测试、构建和部署准备改动，并完成验证。"

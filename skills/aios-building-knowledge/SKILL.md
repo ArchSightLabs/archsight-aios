@@ -1,9 +1,9 @@
 ---
 name: aios-building-knowledge
-description: Building knowledge workflow for projects using ArchSight AIOS. Use when structuring BIM, IFC, building codes, construction terminology, procurement/delivery standards, review rules, domain entities, knowledge graph schemas, or GraphRAG inputs for architecture and engineering products.
+description: 建筑知识结构化工作流。用于整理 BIM、IFC、建筑规范、施工术语、招采/交付标准、审查规则、领域实体、知识图谱 schema 和 GraphRAG 输入。
 ---
 
-# ArchSight Building Knowledge
+# AIOS Building Knowledge
 
 ## 目标
 

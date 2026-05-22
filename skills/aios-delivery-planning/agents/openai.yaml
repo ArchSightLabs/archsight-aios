@@ -1,4 +1,4 @@
 interface:
-  display_name: "ArchSight Delivery Planning"
-  short_description: "Turn ArchSight goals into delivery plans"
-  default_prompt: "Use this skill to break an ArchSight product or engineering goal into tasks, dependencies, validation, and delivery order."
+  display_name: "AIOS Delivery Planning"
+  short_description: "把 AIOS 目标拆成任务、依赖和交付顺序"
+  default_prompt: "使用该技能把 AIOS 产品或工程目标拆解为任务、依赖、验证步骤和交付顺序。"

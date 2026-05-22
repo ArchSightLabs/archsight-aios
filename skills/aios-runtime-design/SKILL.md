@@ -1,9 +1,9 @@
 ---
 name: aios-runtime-design
-description: Runtime and knowledge pipeline design workflow for projects using ArchSight AIOS. Use when designing prompts, context compression, memory strategy, optional runtime adapters such as Hermes/OpenClaw, tool calling, MCP permissions, RAG, GraphRAG, embeddings, evaluation, multi-agent orchestration, or agent state governance.
+description: Runtime 和知识管线设计工作流。用于设计 Prompt、上下文压缩、Memory 策略、Hermes/OpenClaw 等适配器、Tool Calling、MCP 权限、RAG、GraphRAG、Embedding、评估、多 Agent 编排和状态治理。
 ---
 
-# ArchSight Runtime Design
+# AIOS Runtime Design
 
 ## 目标
 

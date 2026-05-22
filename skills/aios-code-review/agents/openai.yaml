@@ -1,4 +1,4 @@
 interface:
-  display_name: "ArchSight Code Review"
-  short_description: "Review ArchSight code for quality and risk"
-  default_prompt: "Use this skill to review ArchSight diffs, pull requests, AI-generated code, security risks, and missing tests."
+  display_name: "AIOS Code Review"
+  short_description: "审查 AIOS 代码质量、风险和测试缺口"
+  default_prompt: "使用该技能审查 AIOS diff、PR、AI 生成代码、安全风险和缺失测试。"
