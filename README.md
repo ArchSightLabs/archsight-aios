@@ -79,10 +79,9 @@ npx @archsight/aios init --profile rag-knowledge
 `install --target all --scope user` 会写入当前用户目录：
 
 - Codex：`~/.codex/skills/`、`~/.codex/workflows/aios/`
-- Gemini：`~/.gemini/GEMINI.md`
+- Gemini：`~/.gemini/GEMINI.md`、`~/.gemini/archsight-aios/`
 - Antigravity 2.0：`~/.gemini/config/plugins/archsight-aios/`
 - Antigravity 1.x legacy：仅当已存在 `~/.gemini/antigravity/` 时，写入 `~/.gemini/antigravity/skills/`
-- 共享资产：Windows 为 `%APPDATA%\archsight-aios\`，macOS 为 `~/Library/Application Support/archsight-aios/`，Linux 为 `${XDG_CONFIG_HOME:-~/.config}/archsight-aios/`
 
 `~/.agents/skills/` 和 `~/.agents/workflows/aios/` 是可选的通用 Agent 共享目录，不是所有 AI Agent 都会自动读取。需要这类兼容目录时，单独执行：
 

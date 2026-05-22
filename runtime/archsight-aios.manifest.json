@@ -255,7 +255,7 @@
     "geminiInstructions": "~/.gemini/GEMINI.md",
     "antigravityPlugin": "~/.gemini/config/plugins/archsight-aios",
     "antigravityLegacySkills": "~/.gemini/antigravity/skills",
-    "assetStore": "platform user config directory: archsight-aios"
+    "geminiSupportAssets": "~/.gemini/archsight-aios"
   },
   "hermes": {
     "registryPath": "runtime/hermes/agent-registry.md",

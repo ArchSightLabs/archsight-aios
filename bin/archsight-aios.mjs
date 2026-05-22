@@ -236,35 +236,23 @@ function expectedSkillDir(skill) {
   return path.dirname(skill.path);
 }
 
-function userConfigRoot() {
-  if (process.env.ARCHSIGHT_AIOS_HOME) {
-    return path.resolve(process.env.ARCHSIGHT_AIOS_HOME);
-  }
-
-  if (process.platform === "win32") {
-    return path.join(process.env.APPDATA ?? path.join(home, "AppData", "Roaming"), "archsight-aios");
-  }
-
-  if (process.platform === "darwin") {
-    return path.join(home, "Library", "Application Support", "archsight-aios");
-  }
-
-  return path.join(process.env.XDG_CONFIG_HOME ?? path.join(home, ".config"), "archsight-aios");
+function geminiContentRoot() {
+  return path.join(home, ".gemini", "archsight-aios");
 }
 
-async function syncAssetStore() {
-  const storeRoot = userConfigRoot();
-  await ensureDir(storeRoot);
+async function syncGeminiContent() {
+  const contentRoot = geminiContentRoot();
+  await ensureDir(contentRoot);
 
   for (const dirName of assetDirs) {
-    await copyDir(path.join(repoRoot, dirName), path.join(storeRoot, dirName));
+    await copyDir(path.join(repoRoot, dirName), path.join(contentRoot, dirName));
   }
 
   for (const fileName of assetFiles) {
-    await copyFileIfExists(path.join(repoRoot, fileName), path.join(storeRoot, fileName));
+    await copyFileIfExists(path.join(repoRoot, fileName), path.join(contentRoot, fileName));
   }
 
-  return storeRoot;
+  return contentRoot;
 }
 
 async function installSkillsTo(targetRoot, skillNames) {
@@ -359,22 +347,22 @@ async function installWorkflowsTo(targetRoot, workflowPaths) {
   }
 }
 
-function userInstructionBlock(storeRoot) {
+function userInstructionBlock(contentRoot) {
   const p = (value) => value.replaceAll("\\", "/");
   return [
     managedStart,
     "# ArchSight AIOS",
     "",
-    "ArchSight AIOS is installed at:",
+    "ArchSight AIOS Gemini support assets are installed at:",
     "",
-    `- ${p(storeRoot)}`,
+    `- ${p(contentRoot)}`,
     "",
     "When a task matches ArchSight AIOS, read the relevant installed assets before answering:",
     "",
-    `- Skills: ${p(path.join(storeRoot, "skills"))}`,
-    `- Workflows: ${p(path.join(storeRoot, "workflows"))}`,
-    `- Runtime routing: ${p(path.join(storeRoot, "runtime"))}`,
-    `- Project template: ${p(path.join(storeRoot, "templates", "project-ai"))}`,
+    `- Skills: ${p(path.join(contentRoot, "skills"))}`,
+    `- Workflows: ${p(path.join(contentRoot, "workflows"))}`,
+    `- Runtime routing: ${p(path.join(contentRoot, "runtime"))}`,
+    `- Project template: ${p(path.join(contentRoot, "templates", "project-ai"))}`,
     "",
     "Use enabled `aios-*` skills for architecture review, delivery planning, code review, runtime design, controlled execution, and building knowledge when the project profile or task requires it.",
     "Keep Agent, Skill, Workflow, and Runtime boundaries separate.",
@@ -476,7 +464,6 @@ async function install(options) {
     throw new Error(`Unsupported target: ${options.target}`);
   }
 
-  const storeRoot = await syncAssetStore();
   const skillNames = await listAiosSkills();
   const workflowPaths = await listAiosWorkflowPaths();
   const targets = options.target === "all"
@@ -502,8 +489,9 @@ async function install(options) {
   }
 
   if (targets.includes("gemini")) {
-    await upsertManagedBlock(path.join(home, ".gemini", "GEMINI.md"), userInstructionBlock(storeRoot));
-    installed.push("gemini user instructions");
+    const contentRoot = await syncGeminiContent();
+    await upsertManagedBlock(path.join(home, ".gemini", "GEMINI.md"), userInstructionBlock(contentRoot));
+    installed.push("gemini user instructions", "gemini support assets");
   }
 
   if (targets.includes("antigravity")) {
@@ -516,7 +504,6 @@ async function install(options) {
     }
   }
 
-  console.log(`Installed ArchSight AIOS assets to ${storeRoot}`);
   console.log(`Installed: ${installed.join(", ")}`);
   console.log(`Skills: ${skillNames.join(", ")}`);
   console.log(`Workflows: ${workflowPaths.map((workflowPath) => path.basename(workflowPath)).join(", ")}`);
@@ -524,7 +511,7 @@ async function install(options) {
 
 async function doctor() {
   const manifest = await readManifest();
-  const storeRoot = userConfigRoot();
+  const geminiRoot = geminiContentRoot();
   const agentIds = new Set(manifest.agents.map((agent) => agent.id));
   const skillIds = new Set(manifest.skills.map((skill) => skill.id));
   const workflowIds = new Set(manifest.workflows.map((workflow) => workflow.id));
@@ -610,13 +597,13 @@ async function doctor() {
     await check("hermes sync record template", path.join(repoRoot, manifest.hermes.syncRecordTemplatePath));
   }
 
-  await check("asset store", storeRoot);
-  await check("asset skills", path.join(storeRoot, "skills"));
-  await check("asset workflows", path.join(storeRoot, "workflows"));
-  await check("asset manifest", path.join(storeRoot, "runtime", "archsight-aios.manifest.json"));
-  await check("asset governance", path.join(storeRoot, "governance"));
-  await check("asset delivery", path.join(storeRoot, "delivery"));
-  await check("asset memory", path.join(storeRoot, "memory"));
+  await check("gemini support assets", geminiRoot);
+  await check("gemini support skills", path.join(geminiRoot, "skills"));
+  await check("gemini support workflows", path.join(geminiRoot, "workflows"));
+  await check("gemini support manifest", path.join(geminiRoot, "runtime", "archsight-aios.manifest.json"));
+  await check("gemini support governance", path.join(geminiRoot, "governance"));
+  await check("gemini support delivery", path.join(geminiRoot, "delivery"));
+  await check("gemini support memory", path.join(geminiRoot, "memory"));
   await check("codex skills root", path.join(home, ".codex", "skills"));
   await check("codex workflows root", path.join(home, ".codex", "workflows", "aios"));
   await check("gemini instructions", path.join(home, ".gemini", "GEMINI.md"));
@@ -633,7 +620,7 @@ async function doctor() {
   for (const skill of manifest.skills) {
     const skillName = skill.id;
     const sourceDir = expectedSkillDir(skill);
-    await check(`asset skill ${skillName}`, path.join(storeRoot, sourceDir, "SKILL.md"));
+    await check(`gemini support skill ${skillName}`, path.join(geminiRoot, sourceDir, "SKILL.md"));
     await check(`codex skill ${skillName}`, path.join(home, ".codex", "skills", skillName, "SKILL.md"));
     if (useAntigravityLegacy) {
       await check(`antigravity 1.x legacy skill ${skillName}`, path.join(antigravityLegacySkillsRoot(), skillName, "SKILL.md"));
