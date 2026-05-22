@@ -1,6 +1,6 @@
 # Runtime
 
-`runtime/` 保存运行治理配置与说明。AIOS 的核心能力不依赖某个具体运行平台；Hermes、OpenClaw、飞书、Gateway、Codex、Claude、Gemini 等都只是可选 Runtime / Adapter。
+`runtime/` 保存运行治理配置与说明。AIOS 的核心能力不依赖某个具体运行平台；Hermes、OpenClaw、飞书、Gateway、Codex、Claude Code、Gemini 等都只是可选 Runtime / Adapter。
 
 推荐内容：
 

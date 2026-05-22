@@ -34,7 +34,7 @@ Codex 等 Agent 工具读取的项目入口文件。它告诉 AI 在当前项目
 
 ## `CLAUDE.md`
 
-Claude 读取的项目入口文件。
+Claude Code 读取的项目入口文件。
 
 ## `GEMINI.md`
 

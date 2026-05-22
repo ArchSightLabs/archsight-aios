@@ -24,7 +24,7 @@
 | --- | --- | --- |
 | Source | `role.md` / `responsibilities.md` / `constraints.md` / `workflow.md` | 长期维护角色资产 |
 | Runtime | `system-prompt.md` | 运行时可加载的最小提示词 |
-| Instance / Adapter | Codex、Claude、Gemini、Hermes、飞书等 | 实际对话或协作入口 |
+| Instance / Adapter | Codex、Claude Code、Gemini、Hermes、飞书等 | 实际对话或协作入口 |
 
 当前与规划 Agent：
 

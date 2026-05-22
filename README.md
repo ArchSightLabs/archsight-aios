@@ -1,6 +1,6 @@
 # ArchSight AIOS
 
-ArchSight AIOS 是一套面向建筑 AI 研发的规则、Agent、Skill、Workflow 和项目接入工具包。它重点服务 BIM / IFC / Revit / CAD、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图和 AI Coding 治理，让 Codex、Claude、Antigravity 2.0 等 AI 工具在同一个项目里读取同一套规则、项目上下文和验收要求。
+ArchSight AIOS 是一套面向建筑 AI 研发的规则、Agent、Skill、Workflow 和项目接入工具包。它重点服务 BIM / IFC / Revit / CAD、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图和 AI Coding 治理，让 Codex、Claude Code、Antigravity 2.0 等 AI Coding 工具在同一个项目里读取同一套规则、项目上下文和验收要求。
 
 AIOS 不是全行业项目模板集合。它保留通用的 AI 编码规则、Agent 路由、Workflow、项目 `.ai/` 上下文和交付验证能力，但真正的差异化能力集中在建筑行业语义、工程证据链、规范知识工程和可复核的 AI 研发流程。
 
@@ -55,7 +55,7 @@ npx @archsight/aios init --profile rag-knowledge
 | 文件 / 目录 | 作用 |
 | --- | --- |
 | `AGENTS.md` | Codex 等 Agent 工具读取的项目入口。 |
-| `CLAUDE.md` | Claude 读取的项目入口。 |
+| `CLAUDE.md` | Claude Code 读取的项目入口。 |
 | `GEMINI.md` | Gemini 读取的项目入口。 |
 | `AI_CODING_RULES.md` | 项目通用 AI 编码规则。 |
 | `.ai/ARCHSIGHT_AIOS_RULES.md` | ArchSight AIOS 补充规则。 |

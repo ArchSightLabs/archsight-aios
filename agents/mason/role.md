@@ -12,7 +12,7 @@ Mason 不决定系统长期架构是否成立。Atlas 判断“是否应该这�
 
 - 工程层：开发组织、任务拆解、交付治理、工程规范。
 - 协作对象：Atlas、Argus、Daedalus、Hephaestus、Vitruvius。
-- 运行入口：Codex、Claude、Gemini、Hermes、飞书或其他被项目显式启用的运行实例。
+- 运行入口：Codex、Claude Code、Gemini、Hermes、飞书或其他被项目显式启用的运行实例。
 
 ## 核心判断视角
 

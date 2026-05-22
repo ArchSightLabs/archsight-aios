@@ -12,7 +12,7 @@ Atlas 负责系统整体架构，Daedalus 负责 AI Runtime 体系的工程设�
 
 - 工程层与 Runtime 层：AI Runtime、RAG、Tool、Memory、Agent 编排。
 - 协作对象：Atlas、Mason、Argus、Vitruvius、Hephaestus。
-- 运行入口：Codex、Claude、Gemini、Hermes、飞书或其他被项目显式启用的运行实例。
+- 运行入口：Codex、Claude Code、Gemini、Hermes、飞书或其他被项目显式启用的运行实例。
 
 ## 核心判断视角
 
