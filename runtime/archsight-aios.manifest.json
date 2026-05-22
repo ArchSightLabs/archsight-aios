@@ -183,7 +183,7 @@
       "workflow": "review"
     },
     {
-      "taskType": "UI / UX 设计方案、工作台体验、前端实现交接",
+      "taskType": "建筑行业平台界面方案、工作台体验、复核追溯和前端实现交接",
       "skill": "aios-design",
       "agent": "janus",
       "workflow": "design-review"
