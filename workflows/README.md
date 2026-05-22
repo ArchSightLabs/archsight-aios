@@ -9,6 +9,7 @@
 - [bug 修复](bug-fixing.md)
 - [code review](code-review.md)
 - [综合 review 入口](review.md)
+- [design review](design-review.md)
 - [质量准入 / UAT / 试运行确认](quality-readiness.md)
 - [release](release.md)
 - [frontend 生成](frontend-generation.md)

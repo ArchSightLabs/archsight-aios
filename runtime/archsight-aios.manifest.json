@@ -84,6 +84,13 @@
       "openaiConfigPath": "skills/aios-ceo/agents/openai.yaml"
     },
     {
+      "id": "aios-design",
+      "primaryAgent": "janus",
+      "defaultWorkflow": "design-review",
+      "path": "skills/aios-design/SKILL.md",
+      "openaiConfigPath": "skills/aios-design/agents/openai.yaml"
+    },
+    {
       "id": "aios-arch",
       "primaryAgent": "atlas",
       "defaultWorkflow": "architecture-review",
@@ -148,6 +155,10 @@
       "path": "workflows/review.md"
     },
     {
+      "id": "design-review",
+      "path": "workflows/design-review.md"
+    },
+    {
       "id": "quality-readiness",
       "path": "workflows/quality-readiness.md"
     },
@@ -170,6 +181,12 @@
       "skill": "aios-ceo",
       "agent": "janus",
       "workflow": "review"
+    },
+    {
+      "taskType": "UI / UX 设计方案、工作台体验、前端实现交接",
+      "skill": "aios-design",
+      "agent": "janus",
+      "workflow": "design-review"
     },
     {
       "taskType": "架构评审、技术选型、服务边界",

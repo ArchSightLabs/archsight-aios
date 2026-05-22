@@ -18,6 +18,7 @@
 | 任务类型 | 推荐 Skill | 主 Agent | 推荐 Workflow |
 | --- | --- | --- | --- |
 | 项目立项、产品定位、商业目标、范围取舍 | `aios-ceo` | Janus | `review` |
+| UI / UX 设计方案、工作台体验、前端实现交接 | `aios-design` | Janus | `design-review` |
 | 架构评审、技术选型、服务边界 | `aios-arch` | Atlas | `architecture-review` |
 | Feature 拆解、交付计划、任务依赖 | `aios-plan` | Mason | `feature-development` |
 | PR / diff / AI 生成代码审查 | `aios-review` | Argus | `code-review` |
@@ -33,6 +34,7 @@
 - Skill 使用 `aios-*` 前缀，避免与通用技能包混淆。
 - 所有 `aios-*` Skill 都服务建筑行业平台研发；差异在任务分工，而不是行业归属。
 - `aios-ceo` 用于一把手视角的立项、定位、商业目标和范围取舍，不替代 `aios-arch` 的架构评审。
+- `aios-design` 用于实现前的 UI / UX 方案评审和前端交接，不替代 `frontend-generation` 的实现和视觉验证。
 - `aios-arch` 应补足通用架构评审缺失的建筑行业平台视角，包括 BIM / IFC、规范知识链路、审图证据链、RAG / GraphRAG、任务编排、审计和后端运行可靠性。
 - Agent 可以调用多个 Skill；Skill 也可以被多个 Agent 复用。
 - 项目工作目录中的事实优先于 AIOS 的通用模板。
@@ -42,6 +44,7 @@
 
 - 涉及服务边界、数据模型、长期架构：升级给 Atlas。
 - 涉及立项、定位、商业目标和范围取舍：升级给 Janus。
+- 涉及页面方案、工作台体验、交互状态和前端实现交接：升级给 Janus，并使用 `aios-design`。
 - 涉及任务依赖、交付顺序、CI/CD：升级给 Mason。
 - 涉及安全、权限、Prompt 注入、生产发布：升级给 Argus。
 - 涉及 BIM、IFC、规范条文和审图语义：升级给 Vitruvius。

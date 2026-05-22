@@ -14,6 +14,7 @@ Workflow 是项目执行路径，不绑定某个运行平台。Hermes、飞书�
 | 修复缺陷 | `bug-fixing` |
 | 架构评审 | `architecture-review` |
 | 代码审查 | `code-review` |
+| UI / UX 方案评审 | `design-review` |
 | UAT / 试运行确认 / 演示前质量门禁 | `quality-readiness` |
 | RAG / GraphRAG 知识链路 | `rag-pipeline` |
 | 发布前检查 | `release` |

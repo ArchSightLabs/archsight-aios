@@ -386,7 +386,7 @@ function userInstructionBlock(contentRoot) {
     `- Runtime routing: ${p(path.join(contentRoot, "runtime"))}`,
     `- Project template: ${p(path.join(contentRoot, "templates", "project-ai"))}`,
     "",
-    "Use enabled `aios-*` skills for architecture review, delivery planning, code review, runtime design, controlled execution, and building knowledge when the project profile or task requires it.",
+    "Use enabled `aios-*` skills for architecture review, design review, delivery planning, code review, runtime design, controlled execution, and building knowledge when the project profile or task requires it.",
     "Keep Agent, Skill, Workflow, and Runtime boundaries separate.",
     "Hermes, Feishu, and other runtime adapters are optional; do not assume they are enabled unless the project says so.",
     "Do not claim code changes, tests, builds, or deployments were completed unless verified in the bound project workspace.",

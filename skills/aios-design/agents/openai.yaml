@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Design"
+  short_description: "评审建筑行业平台 UI/UX 设计方案和实现交接"
+  default_prompt: "使用该技能评审建筑行业平台页面、工作台、BIM Viewer、审图界面、管理后台和数据看板的 UI/UX 计划，补齐信息架构、交互状态、中文文案、响应式、可访问性和实现验收。"

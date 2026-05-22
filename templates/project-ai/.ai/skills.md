@@ -11,6 +11,7 @@ ArchSight AIOS 的 Skill 是面向建筑行业平台研发的治理能力；`aio
 | 任务 | Skill | 主 Agent |
 | --- | --- | --- |
 | 项目立项 / 产品定位 / 商业目标 | `aios-ceo` | Janus |
+| UI / UX 设计方案 / 工作台体验 | `aios-design` | Janus |
 | 架构评审 | `aios-arch` | Atlas |
 | 交付计划 | `aios-plan` | Mason |
 | 代码审查 | `aios-review` | Argus |
@@ -22,6 +23,7 @@ ArchSight AIOS 的 Skill 是面向建筑行业平台研发的治理能力；`aio
 
 - [ ] `aios-arch`
 - [ ] `aios-ceo`
+- [ ] `aios-design`
 - [ ] `aios-plan`
 - [ ] `aios-review`
 - [ ] `aios-knowledge`
@@ -32,5 +34,6 @@ ArchSight AIOS 的 Skill 是面向建筑行业平台研发的治理能力；`aio
 
 - 只勾选当前项目真实安装或可访问的 Skill。
 - 涉及项目立项、产品定位、商业目标、范围取舍或阶段路线时，优先启用 `aios-ceo`。
+- 涉及 UI / UX 方案、工作台体验、交互状态、响应式或前端实现交接时，优先启用 `aios-design`。
 - 只有启用建筑、BIM、IFC、规范知识库、GraphRAG 或智能审图 profile 时，才默认启用 `aios-knowledge`。
 - 如 Skill 来源、安装位置或同步方式无法确认，应标注待核验，不要假设已经启用。
