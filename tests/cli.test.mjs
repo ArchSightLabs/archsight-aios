@@ -130,6 +130,25 @@ async function testInstallAntigravityUsesLegacyWhenDetected() {
   await fs.rm(tempHome, { recursive: true, force: true });
 }
 
+async function testInstallAntigravityInstallsPluginWhen2ConfigDetected() {
+  const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-antigravity-both-"));
+  const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
+  const skillName = manifest.skills[0].id;
+  await fs.mkdir(path.join(tempHome, ".gemini", "antigravity"), { recursive: true });
+  await fs.mkdir(path.join(tempHome, ".gemini", "antigravity-ide"), { recursive: true });
+  await fs.mkdir(path.join(tempHome, ".gemini", "config"), { recursive: true });
+
+  const result = runWithHome(["install", "--target", "antigravity", "--scope", "user"], tempHome);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /antigravity 1\.x legacy skills/);
+  assert.match(result.stdout, /antigravity 2\.x plugin/);
+
+  await fs.access(path.join(tempHome, ".gemini", "antigravity", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".gemini", "config", "plugins", "archsight-aios", "skills", skillName, "SKILL.md"));
+
+  await fs.rm(tempHome, { recursive: true, force: true });
+}
+
 async function testValidateProjectTemplate() {
   const result = run(["validate", "--temp"]);
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
@@ -294,6 +313,7 @@ const tests = [
   testInstallAntigravityUsesPluginByDefault,
   testInstallGeminiWritesGeminiSupportAssets,
   testInstallAntigravityUsesLegacyWhenDetected,
+  testInstallAntigravityInstallsPluginWhen2ConfigDetected,
   testValidateProjectTemplate,
   testInitProjectDefaultsToCurrentDirectory,
   testInitProjectAutoLinksExistingInstructionFiles,

@@ -81,7 +81,7 @@ npx @archsight/aios init --profile rag-knowledge
 - Codex：`~/.codex/skills/`、`~/.codex/workflows/aios/`
 - Gemini：`~/.gemini/GEMINI.md`、`~/.gemini/archsight-aios/`
 - Antigravity 2.0：`~/.gemini/config/plugins/archsight-aios/`
-- Antigravity 1.x legacy：仅当已存在 `~/.gemini/antigravity/` 时，写入 `~/.gemini/antigravity/skills/`
+- Antigravity 1.x legacy：仅当已存在 `~/.gemini/antigravity/` 时，写入 `~/.gemini/antigravity/skills/`；如果同时检测到 Antigravity 2.0 配置，也会额外写入 2.0 plugin 目录。
 
 `~/.agents/skills/` 和 `~/.agents/workflows/aios/` 是可选的通用 Agent 共享目录，不是所有 AI Agent 都会自动读取。需要这类兼容目录时，单独执行：
 

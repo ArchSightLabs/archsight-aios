@@ -286,6 +286,28 @@ function antigravityPluginRoot() {
   return path.join(antigravityPluginsRoot(), antigravityPluginName);
 }
 
+async function hasAntigravity2Config() {
+  if (!(await exists(path.join(home, ".gemini", "config")))) {
+    return false;
+  }
+
+  const installMarkers = [
+    path.join(home, ".gemini", "antigravity-ide"),
+    path.join(home, ".gemini", "antigravity-cli"),
+    path.join(home, ".antigravity-ide"),
+    path.join(home, ".antigravity-cli"),
+    path.join(home, ".antigravitycli")
+  ];
+
+  for (const marker of installMarkers) {
+    if (await exists(marker)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 async function installAntigravityPlugin(skillNames) {
   const pluginRoot = antigravityPluginRoot();
   assertInside(pluginRoot, antigravityPluginsRoot());
@@ -495,10 +517,15 @@ async function install(options) {
   }
 
   if (targets.includes("antigravity")) {
-    if (await exists(antigravityLegacyRoot())) {
+    const installLegacy = await exists(antigravityLegacyRoot());
+    const installPlugin = !installLegacy || await hasAntigravity2Config();
+
+    if (installLegacy) {
       await installAntigravityLegacy(skillNames);
       installed.push("antigravity 1.x legacy skills");
-    } else {
+    }
+
+    if (installPlugin) {
       await installAntigravityPlugin(skillNames);
       installed.push("antigravity 2.x plugin");
     }
@@ -610,9 +637,11 @@ async function doctor() {
   await checkContains("gemini managed block", path.join(home, ".gemini", "GEMINI.md"), managedStart);
 
   const useAntigravityLegacy = await exists(antigravityLegacyRoot());
+  const useAntigravityPlugin = !useAntigravityLegacy || await hasAntigravity2Config();
   if (useAntigravityLegacy) {
     await check("antigravity 1.x legacy skills root", antigravityLegacySkillsRoot());
-  } else {
+  }
+  if (useAntigravityPlugin) {
     await check("antigravity 2.x plugin root", antigravityPluginRoot());
     await checkContains("antigravity 2.x plugin manifest", path.join(antigravityPluginRoot(), "plugin.json"), antigravityPluginName);
   }
@@ -624,7 +653,8 @@ async function doctor() {
     await check(`codex skill ${skillName}`, path.join(home, ".codex", "skills", skillName, "SKILL.md"));
     if (useAntigravityLegacy) {
       await check(`antigravity 1.x legacy skill ${skillName}`, path.join(antigravityLegacySkillsRoot(), skillName, "SKILL.md"));
-    } else {
+    }
+    if (useAntigravityPlugin) {
       await check(`antigravity 2.x plugin skill ${skillName}`, path.join(antigravityPluginRoot(), "skills", skillName, "SKILL.md"));
     }
   }
