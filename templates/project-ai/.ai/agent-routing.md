@@ -24,19 +24,20 @@
 - 当前项目事实优先于 AIOS 通用角色说明。
 - Hermes、飞书、OpenClaw、Codex、Claude、Gemini 等都是可选运行入口；未启用时不得写入项目假设。
 - 建筑、BIM、IFC、规范、审图和 RAG / GraphRAG 知识工程能力通过 profile 或明确任务触发；普通项目不默认启用这些语义。
+- AIOS 是建筑行业增强层；普通非建筑任务优先使用宿主工具的通用能力，不因为安装了 AIOS 就强制套用 `aios-*` Skill。
 
 ## 默认任务路由
 
 | 任务 | 内部路由 | 说明 |
 | --- | --- | --- |
-| 项目立项、产品定位、商业目标、范围取舍 | Janus | 产品策略官 |
-| UI / UX 设计方案、工作台体验、前端实现交接 | Janus | 产品策略官 |
-| 架构评审、技术选型、服务边界 | Atlas | 总架构师 |
-| 任务拆解、交付顺序、CI/CD | Mason | 工程总工 |
-| Code Review、安全、性能、技术债 | Argus | 代码审查官 |
+| 建筑行业软件 / 系统深度评价、项目立项、产品定位、商业目标、范围取舍 | Janus | 产品策略官 |
+| 建筑行业平台 UI / UX 设计方案、工作台体验、前端实现交接 | Janus | 产品策略官 |
+| 建筑行业项目架构评审、技术选型、服务边界 | Atlas | 总架构师 |
+| 建筑行业项目任务拆解、交付顺序、CI/CD | Mason | 工程总工 |
+| 建筑行业项目 Code Review、安全、性能、技术债 | Argus | 代码审查官 |
 | BIM、IFC、建筑规范、审图逻辑 | Vitruvius | 建筑数字化专家 |
-| RAG、GraphRAG、MCP、Memory、Tool Calling | Daedalus | AI 研发工程师 |
-| 代码修改、脚本执行、测试、文档生成 | Hephaestus | 受控执行官 |
+| 建筑行业 RAG、GraphRAG、MCP、Memory、Tool Calling | Daedalus | AI 研发工程师 |
+| 建筑行业项目代码修改、脚本执行、测试、文档生成 | Hephaestus | 受控执行官 |
 
 ## 升级规则
 

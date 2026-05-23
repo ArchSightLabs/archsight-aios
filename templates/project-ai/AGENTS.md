@@ -19,7 +19,7 @@
 ## Codex 入口适配
 
 - 本文件只负责让 Codex 发现当前项目的公共规则和 `.ai/` 目录。
-- ArchSight AIOS 只在 Agent 路由、Skill 选择、Workflow、交付验证、AI Runtime、Code Review，以及项目明确启用的 BIM / IFC / 建筑行业 profile 等相关任务中作为补充治理层生效。
+- ArchSight AIOS 只在 Agent 路由、Skill 选择、Workflow、交付验证、AI Runtime、Code Review，以及项目明确启用的 BIM / IFC / 建筑行业 profile 等相关任务中作为补充治理层生效；普通非建筑任务不强制使用 `aios-*` Skill。
 - 接入本模板不代表当前项目属于 ArchSightLabs，也不要求使用 Hermes、飞书或其他特定运行平台。
 - 任务适合 ArchSight 技能包时，按 `.ai/skills.md` 选择对应 `aios-*` Skill；涉及流程协作时，按 `.ai/workflows.md` 选择 Workflow。
 - 不把 ArchSight AIOS 仓库内容无差别复制进当前项目。

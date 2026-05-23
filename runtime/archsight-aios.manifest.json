@@ -177,7 +177,7 @@
   ],
   "routes": [
     {
-      "taskType": "项目立项、产品定位、商业目标、范围取舍",
+      "taskType": "建筑行业软件 / 系统深度评价、项目立项、产品定位、商业目标、范围取舍",
       "skill": "aios-ceo",
       "agent": "janus",
       "workflow": "review"
@@ -189,25 +189,25 @@
       "workflow": "design-review"
     },
     {
-      "taskType": "架构评审、技术选型、服务边界",
+      "taskType": "建筑行业项目中的架构评审、技术选型、服务边界",
       "skill": "aios-arch",
       "agent": "atlas",
       "workflow": "architecture-review"
     },
     {
-      "taskType": "Feature 拆解、交付计划、任务依赖",
+      "taskType": "建筑行业项目中的 Feature 拆解、交付计划、任务依赖",
       "skill": "aios-plan",
       "agent": "mason",
       "workflow": "feature-development"
     },
     {
-      "taskType": "PR / diff / AI 生成代码审查",
+      "taskType": "建筑行业项目中的 PR / diff / AI 生成代码审查",
       "skill": "aios-review",
       "agent": "argus",
       "workflow": "code-review"
     },
     {
-      "taskType": "Bug 修复、测试失败、构建失败",
+      "taskType": "建筑行业项目中的 Bug 修复、测试失败、构建失败",
       "skill": "aios-exec",
       "agent": "hephaestus",
       "workflow": "bug-fixing"
@@ -219,19 +219,19 @@
       "workflow": "rag-pipeline"
     },
     {
-      "taskType": "Prompt / Context / Memory / MCP / Tool",
+      "taskType": "建筑行业项目中的 Prompt / Context / Memory / MCP / Tool",
       "skill": "aios-runtime",
       "agent": "daedalus",
       "workflow": "architecture-review"
     },
     {
-      "taskType": "RAG / GraphRAG Pipeline",
+      "taskType": "建筑行业知识库 / 工程知识 RAG / GraphRAG Pipeline",
       "skill": "aios-runtime",
       "agent": "daedalus",
       "workflow": "rag-pipeline"
     },
     {
-      "taskType": "受控代码修改、文档、脚本、测试",
+      "taskType": "建筑行业项目中的受控代码修改、文档、脚本、测试",
       "skill": "aios-exec",
       "agent": "hephaestus",
       "workflow": "feature-development"

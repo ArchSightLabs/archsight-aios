@@ -9,6 +9,10 @@
 
 在合并或交付前发现真实风险，优先阻止缺陷、越界修改、过度设计和安全问题。
 
+## AIOS 适用性
+
+本 Workflow 面向建筑行业项目的综合评审增强。普通非建筑 PR、diff、架构或安全审查优先使用宿主工具的通用 review 能力；只有项目 profile、上下文或任务事实涉及建筑行业语义、工程知识、RAG / GraphRAG、审图、证据链、人工复核或审计留痕时，才启用 `aios-*` 行业增强。
+
 ## 与 `code-review` 的关系
 
 `review.md` 是综合评审入口，适用于代码、架构、安全、AI 生成内容和交付完整性的总览审查。
@@ -19,10 +23,10 @@
 
 | 审查对象 | 主 Agent | Skill | 后续 Workflow |
 | --- | --- | --- | --- |
-| PR / diff / AI 生成代码 | Argus | `aios-review` | `code-review` |
-| 架构边界 / 技术选型 | Atlas | `aios-arch` | `architecture-review` |
-| 交付计划 / 测试完整性 | Mason | `aios-plan` | `feature-development` |
-| RAG / MCP / Memory / Tool | Daedalus | `aios-runtime` | `rag-pipeline` |
+| 建筑行业项目中的 PR / diff / AI 生成代码 | Argus | `aios-review` | `code-review` |
+| 建筑行业项目中的架构边界 / 技术选型 | Atlas | `aios-arch` | `architecture-review` |
+| 建筑行业项目中的交付计划 / 测试完整性 | Mason | `aios-plan` | `feature-development` |
+| 建筑行业项目中的 RAG / MCP / Memory / Tool | Daedalus | `aios-runtime` | `rag-pipeline` |
 | BIM / IFC / 规范语义 | Vitruvius | `aios-knowledge` | `rag-pipeline` |
 
 ## 输入

@@ -6,15 +6,17 @@ Workflow 定义“什么时候做、按什么顺序做”。当任务涉及多�
 
 Workflow 是项目执行路径，不绑定某个运行平台。Hermes、飞书、Codex、Claude、Gemini 等只影响入口和执行方式，不改变项目事实、测试命令和验收标准。
 
+AIOS Workflow 是建筑行业项目的增强路径，不是普通工程任务的强制替代。当前任务不涉及建筑行业语义、工程知识、RAG / GraphRAG、审图、证据链、人工复核或审计留痕时，可以使用宿主工具的通用流程。
+
 ## 推荐 Workflow
 
 | 场景 | Workflow |
 | --- | --- |
-| 实现新功能 | `feature-development` |
-| 修复缺陷 | `bug-fixing` |
-| 架构评审 | `architecture-review` |
-| 代码审查 | `code-review` |
-| UI / UX 方案评审 | `design-review` |
+| 建筑行业项目实现新功能 | `feature-development` |
+| 建筑行业项目修复缺陷 | `bug-fixing` |
+| 建筑行业项目架构评审 | `architecture-review` |
+| 建筑行业项目代码审查 | `code-review` |
+| 建筑行业平台 UI / UX 方案评审 | `design-review` |
 | UAT / 试运行确认 / 演示前质量门禁 | `quality-readiness` |
 | RAG / GraphRAG 知识链路 | `rag-pipeline` |
 | 发布前检查 | `release` |

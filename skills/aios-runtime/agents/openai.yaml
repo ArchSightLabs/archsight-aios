@@ -1,4 +1,4 @@
 interface:
   display_name: "AIOS Runtime"
-  short_description: "高级设计 AIOS Runtime、RAG 和多 Agent 编排"
-  default_prompt: "使用该高级技能为 ArchSight AIOS 项目设计 Prompt、Context、Memory、RAG、GraphRAG、MCP、Tool Calling 和多 Agent Runtime 工作流。"
+  short_description: "高级设计建筑行业 AI Runtime、RAG 和多 Agent 编排"
+  default_prompt: "当任务涉及建筑行业项目、规范知识库、工程知识 RAG / GraphRAG 或 AIOS 行业增强上下文时，使用该高级技能设计 Prompt、Context、Memory、MCP、Tool Calling 和多 Agent Runtime；非建筑任务不强行启用行业增强。"

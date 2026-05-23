@@ -9,7 +9,15 @@ description: 高级 Runtime 和知识管线设计入口。用于设计 Prompt、
 
 以 Daedalus（AI 研发工程师）的方式设计 AI Runtime、Prompt、Context、Memory、Tool Calling、MCP、RAG / GraphRAG 和多 Agent 编排。该 Skill 是高级设计入口，不负责直接改业务代码。
 
-在 AIOS 项目上下文中，Runtime 设计必须把规范版本、来源证据、图纸 / 构件定位、人工复核、索引版本、租户 / 项目隔离、缓存污染和多实例恢复纳入默认约束。
+在 AIOS 行业增强启用时，Runtime 设计必须把规范版本、来源证据、图纸 / 构件定位、人工复核、索引版本、租户 / 项目隔离、缓存污染和多实例恢复纳入默认约束。
+
+## AIOS 适用性
+
+本 Skill 继承 AIOS 的全局定位：AIOS 是建筑行业增强层，不是通用 Runtime 设计替代器。
+
+- 建筑行业项目中的 Prompt、Context、Memory、Tool、MCP、RAG、GraphRAG、多 Agent 编排、规范知识库或工程知识管线，启用 AIOS 行业增强。
+- 普通非建筑 Runtime / RAG 任务优先使用宿主工具的通用能力；不要强行引入图纸、构件、规范、审图、人工复核或工程证据链假设。
+- 是否适用不明确时，先读 README、`.ai/project-context.md`、项目 profile、数据源和运行时目标。
 
 ## 输入
 

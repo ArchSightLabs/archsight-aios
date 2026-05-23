@@ -1,4 +1,4 @@
 interface:
   display_name: "AIOS Knowledge"
   short_description: "结构化 BIM、IFC、规范和建筑行业知识"
-  default_prompt: "使用该技能为 ArchSight AIOS 项目整理 BIM、IFC、建筑规范、审查规则和工程领域知识，用于 RAG、GraphRAG 或产品设计。"
+  default_prompt: "当任务明确涉及建筑、BIM、IFC、建筑规范、审查规则或工程领域知识时，使用该技能整理结构化知识，用于 RAG、GraphRAG 或产品设计；非建筑知识任务不强行使用本 Skill。"

@@ -1,4 +1,4 @@
 interface:
   display_name: "AIOS Review"
-  short_description: "审查 AIOS 代码质量、风险和测试缺口"
-  default_prompt: "使用该技能审查 AIOS diff、PR、AI 生成代码、安全风险和缺失测试。"
+  short_description: "审查建筑行业项目代码质量、风险和测试缺口"
+  default_prompt: "当任务涉及建筑行业项目或 AIOS 行业增强上下文时，使用该技能审查 diff、PR、AI 生成代码、安全风险、证据链风险和缺失测试；非建筑任务不强行启用行业增强。"
