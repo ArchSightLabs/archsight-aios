@@ -1,5 +1,24 @@
 # 变更记录
 
+## 1.0.1
+
+### 发布说明
+
+本版本优化 AIOS 的适用性边界：AIOS 明确作为建筑行业增强层，而不是通用任务替代器。安装 AIOS 后，建筑行业相关任务应获得更专业的证据链、工程边界、验证路径和行业判断；普通非建筑任务不再被强制套用 BIM、IFC、规范、审图或工程证据链假设。
+
+### 调整
+
+- 为所有 `aios-*` Skill 增加统一的适用性门槛：只有项目 profile、项目上下文或任务事实明确涉及建筑行业语义时，才启用行业增强。
+- 强化 `aios-ceo` 的深度评审能力：默认要求先取证再判断，区分工程进展、生产可信度和商业验证。
+- 更新 Skill、Workflow、Agent 路由和项目模板，避免泛用工程任务被错误路由到 AIOS 行业增强流程。
+- 同步 Codex、Gemini 和 Antigravity 用户级安装资产，使本地工具读取新版边界规则。
+
+### 验证
+
+- `npm test`
+- `npm run doctor`
+- `npm run install:user`
+
 ## 1.0.0
 
 首个面向开源准备的版本。
@@ -22,5 +41,5 @@
 
 - README 改为外部读者优先，先说明用途、适用人群、三步开始、项目生成内容和常用命令。
 - `package.json` 补充 repository、keywords、homepage、issue tracker 和 MIT license。
-- `aios-design` 将原先偏通用设计评审的 `Visual Specificity` 调整为“界面决策清晰度（Workspace Decision Clarity）”，强调任务入口、证据定位、复核动作、状态反馈、长任务进度、失败恢复和实现验收。
+- `aios-design` 将原先偏通用的视觉细节检查，调整为面向建筑行业工作台的“界面决策清晰度”，强调任务入口、证据定位、复核动作、状态反馈、长任务进度、失败恢复和实现验收。
 - `design-review` workflow 补强图纸定位、模型定位、审查结论、长任务和专家复核检查项，并明确不替代通用 `frontend-design` 或 `frontend-generation`。

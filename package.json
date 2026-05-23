@@ -1,6 +1,6 @@
 {
   "name": "@archsight/aios",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "面向建筑 AI 研发的规则、Skill、Workflow 与多 Agent 项目接入工具包。",
   "type": "module",
   "homepage": "https://github.com/ArchSightLabs/archsight-aios#readme",
