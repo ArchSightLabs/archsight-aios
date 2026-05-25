@@ -7,7 +7,7 @@
       "transport": "stdio-mcp",
       "capabilityIds": [
         "solver.beam_deflection",
-        "solver.beam_capacity_check",
+        "solver.beam_deflection_serviceability_check",
         "solver.frame_displacement",
         "solver.truss_member_force"
       ],
@@ -18,7 +18,7 @@
       "timeoutMs": 30000,
       "toolNameMap": {
         "solver.beam_deflection": "beam_deflection",
-        "solver.beam_capacity_check": "beam_capacity_check",
+        "solver.beam_deflection_serviceability_check": "beam_deflection_serviceability_check",
         "solver.frame_displacement": "frame_displacement",
         "solver.truss_member_force": "truss_member_force"
       }

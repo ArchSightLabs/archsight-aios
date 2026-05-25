@@ -228,12 +228,12 @@
       "humanEscalation": ["structural_safety_final_claim", "production_structural_design"]
     },
     {
-      "id": "solver.beam_capacity_check",
+      "id": "solver.beam_deflection_serviceability_check",
       "type": "deterministic_solver",
       "ownerAgents": ["euclid"],
       "allowedSkills": ["aios-structural"],
       "authorityLevel": "L1",
-      "description": "梁挠度限值校核接口。当前用于正常使用挠度校核，不代表材料强度、稳定或规范承载力设计。",
+      "description": "梁挠度正常使用限值校核接口。当前用于挠度服务性校核，不代表材料强度、稳定或规范承载力设计。",
       "status": "implemented",
       "inputSchema": {
         "type": "object",

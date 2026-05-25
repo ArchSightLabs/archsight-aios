@@ -99,9 +99,12 @@ AIOS 的多 Agent 协作不应停留在 Prompt 角色扮演。Agent 提出架构
 本地调用 `archsight-solver` 示例：
 
 ```powershell
-$env:ARCHSIGHT_SOLVER_HOME = "C:\Work\ArchSightLabs\archsight-solver"
+$env:ARCHSIGHT_SOLVER_HOME = "<archsight-solver 本地仓库绝对路径>"
 npx @archsight/aios capability:call --capability solver.beam_deflection --agent euclid --skill aios-structural --input beam-input.json
+npx @archsight/aios capability:call --capability solver.beam_deflection_serviceability_check --agent euclid --skill aios-structural --input beam-serviceability-input.json
 ```
+
+如果 `archsight-aios` 和 `archsight-solver` 是同级目录，CLI 会默认尝试使用相邻的 `../archsight-solver`，通常无需设置 `ARCHSIGHT_SOLVER_HOME`。
 
 ## 安装位置
 

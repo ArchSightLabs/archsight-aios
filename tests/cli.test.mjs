@@ -375,6 +375,84 @@ async function testCapabilityCallUsesRegisteredMcpAdapter() {
   await fs.rm(tempRoot, { recursive: true, force: true });
 }
 
+async function testCapabilityCallUsesCanonicalServiceabilityTool() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-serviceability-mcp-"));
+  const serverPath = path.join(tempRoot, "fake-solver-serviceability-mcp.mjs");
+  const inputPath = path.join(tempRoot, "beam-serviceability-input.json");
+
+  await fs.writeFile(
+    serverPath,
+    [
+      'import readline from "node:readline";',
+      'const rl = readline.createInterface({ input: process.stdin });',
+      'for await (const line of rl) {',
+      '  const request = JSON.parse(line);',
+      '  if (request.method === "initialize") {',
+      '    console.log(JSON.stringify({ jsonrpc: "2.0", id: request.id, result: { serverInfo: { name: "fake-solver-mcp", version: "0.0.0" } } }));',
+      '  } else if (request.method === "tools/call") {',
+      '    const toolName = request.params.name;',
+      '    console.log(JSON.stringify({',
+      '      jsonrpc: "2.0",',
+      '      id: request.id,',
+      '      result: {',
+      '        content: [{ type: "text", text: toolName }],',
+      '        isError: false,',
+      '        structuredContent: {',
+      '          capabilityId: "solver.beam_deflection_serviceability_check",',
+      '          status: "pass",',
+      '          checkType: "serviceability_deflection_check",',
+      '          deflection: { value: 17.857143, unit: "mm" },',
+      '          allowable: { value: 24, unit: "mm", ratio: 250 },',
+      '          inputValidated: true,',
+      '          warnings: []',
+      '        }',
+      '      }',
+      '    }));',
+      '  }',
+      '}'
+    ].join("\n"),
+    "utf8"
+  );
+  await fs.writeFile(
+    inputPath,
+    JSON.stringify({
+      span: { value: 6.0, unit: "m" },
+      elasticModulus: { value: 210.0, unit: "GPa" },
+      secondMomentOfArea: { value: 4500.0, unit: "cm4" },
+      load: { value: 10.0, unit: "kN/m", case: "uniform" },
+      boundaryCondition: "simply_supported",
+      deflectionLimitRatio: 250
+    }),
+    "utf8"
+  );
+
+  const result = run([
+    "capability:call",
+    "--capability",
+    "solver.beam_deflection_serviceability_check",
+    "--agent",
+    "euclid",
+    "--skill",
+    "aios-structural",
+    "--input",
+    inputPath,
+    "--mcp-cwd",
+    tempRoot,
+    "--mcp-command",
+    process.execPath,
+    "--mcp-arg",
+    serverPath
+  ]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  const envelope = JSON.parse(result.stdout);
+  assert.equal(envelope.adapter.toolName, "beam_deflection_serviceability_check");
+  assert.equal(envelope.toolResult.capabilityId, "solver.beam_deflection_serviceability_check");
+  assert.equal(envelope.decision.action, "proceed");
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
 async function testCapabilityCallRejectsUnauthorizedAgent() {
   const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-capability-deny-"));
   const inputPath = path.join(tempRoot, "beam-input.json");
@@ -431,6 +509,7 @@ const tests = [
   testProjectProfiles,
   testGenericProjectBoundaryText,
   testCapabilityCallUsesRegisteredMcpAdapter,
+  testCapabilityCallUsesCanonicalServiceabilityTool,
   testCapabilityCallRejectsUnauthorizedAgent,
   testHermesCommands
 ];

@@ -27,7 +27,7 @@ description: 结构力学与数值求解评审工作流。用于评估梁、桁�
 | Capability | 用途 | 证据等级 |
 | --- | --- | --- |
 | `solver.beam_deflection` | 梁挠度确定性计算接口示例 | L1 |
-| `solver.beam_capacity_check` | 梁挠度限值校核；不代表强度或稳定设计 | L1 |
+| `solver.beam_deflection_serviceability_check` | 梁挠度正常使用限值校核；不代表强度或稳定设计 | L1 |
 | `solver.frame_displacement` | 二维平面框架位移和控制节点求解 | L1 |
 | `solver.truss_member_force` | 二维平面桁架杆件轴力求解 | L1 |
 | `knowledge.norm_lookup` | 规范条文、版本和适用条件查询 | L3 |

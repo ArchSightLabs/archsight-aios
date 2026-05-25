@@ -23,7 +23,8 @@ npx @archsight/aios doctor
 Windows PowerShell 示例：
 
 ```powershell
-cd C:\Work\YourProject
+$projectPath = "<你的业务项目绝对路径>"
+cd $projectPath
 npx @archsight/aios init
 ```
 
