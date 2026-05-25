@@ -149,8 +149,14 @@ npm test
 
 ## 开源协作
 
-- 许可证：[MIT](LICENSE)
+- 许可证：[Apache-2.0](LICENSE)
 - 贡献说明：[CONTRIBUTING.md](CONTRIBUTING.md)
 - 安全问题：[SECURITY.md](SECURITY.md)
 - 行为准则：[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 - 变更记录：[CHANGELOG.md](CHANGELOG.md)
+
+### 商业边界
+
+- Apache-2.0 允许商业使用、修改、分发和私有部署；分发时需保留版权声明、许可证文本和必要 NOTICE，并遵守 Apache-2.0 的专利与免责声明条款。
+- 许可证只覆盖本仓库开源内容，不授权 ArchSightLabs / ArchSight 商标、品牌资产、托管服务、专有数据集、客户案例、商业支持、SLA 或任何第三方受限素材。
+- 基于 AIOS 提供商业产品、咨询或二次分发时，不得暗示官方认证、代理、合作或背书；工程结论、合规责任和客户交付责任由使用方自行承担。

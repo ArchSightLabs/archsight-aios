@@ -1,6 +1,6 @@
 {
   "name": "@archsight/aios",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "面向建筑 AI 研发的规则、Skill、Workflow 与多 Agent 项目接入工具包。",
   "type": "module",
   "homepage": "https://github.com/ArchSightLabs/archsight-aios#readme",
@@ -65,5 +65,5 @@
     "CLAUDE.md",
     "GEMINI.md"
   ],
-  "license": "MIT"
+  "license": "Apache-2.0"
 }
