@@ -2,16 +2,47 @@
 
 ## 1.1.0
 
+### 发布说明
+
+本版本把 AIOS 从“规则 / Skill / Workflow 工具包”扩展到可调用本地确定性工具证据的治理闭环。重点新增 Capability Registry、Capability Adapter 和仲裁协议，并与 `archsight-solver` 的本地 stdio MCP tools 对齐，让 Euclid / `aios-structural` 在结构力学任务中能够要求或调用梁、平面框架、平面桁架求解结果，而不是由 LLM 直接口算工程结论。
+
+本版本同时完成开源许可证和商业边界调整，为后续公开发布、商业使用和二次分发提供更清晰的法律与责任边界。
+
+### 新增
+
+- 新增 Capability Registry、Capability Registry Schema 和本地 Capability Adapter 配置，定义工具权限、输入 / 输出契约、证据字段和阻断规则。
+- 新增 `governance/arbitration-protocol.md`，按人工硬约束、确定性工具、项目事实、结构化知识和 Agent 判断的证据等级仲裁交付结论。
+- 新增 `aios-structural` Skill 和 Euclid 结构力学路由，用于梁、荷载、边界条件、FEM 输入输出、结构计算工具链和签审风险评审。
+- 新增 `archsight-aios capability:call` 本地调用闭环：校验 Agent / Skill 权限、校验输入 schema、调用 stdio MCP tool、校验输出证据契约并返回仲裁 Decision。
+- 新增对 `archsight-solver` 本地 MCP tools 的 AIOS Capability 对接：
+  - `solver.beam_deflection`
+  - `solver.beam_deflection_serviceability_check`
+  - `solver.frame_displacement`
+  - `solver.truss_member_force`
+- 新增 CLI 测试覆盖 Capability 调用、MCP tool 映射、未授权 Agent 拒绝和项目模板校验。
+
 ### 调整
 
 - 项目许可证从 MIT 升级为 Apache-2.0。
 - README 增加商业边界说明，明确商业使用、二次分发、商标 / 品牌、托管服务、专有素材、支持和交付责任不随开源许可证自动授权。
+- README 增加本地调用 `archsight-solver` 的 Capability 示例，并避免写死个人机器路径。
+- `aios-arch`、`aios-review`、`aios-runtime`、`aios-exec` 等 Skill 增加 Capability / Tool Result / Evidence / Decision 的证据链要求。
+- 架构评审、Feature 开发和 RAG Pipeline workflow 增加 Capability-backed arbitration 要求。
+- 结构力学挠度限值校核统一使用 `solver.beam_deflection_serviceability_check`，不再暴露容易误读为强度或稳定承载力校核的 `solver.beam_capacity_check` 命名。
+
+### 兼容性说明
+
+- `solver.beam_capacity_check` 未进入正式发布接口；新接入必须使用 `solver.beam_deflection_serviceability_check`。
+- `archsight-solver` 仍是本地可选 Adapter，不是 AIOS 安装的强依赖。没有相邻 solver 仓库或未设置 `ARCHSIGHT_SOLVER_HOME` 时，Capability 调用会报告本地 adapter cwd 不存在。
+- 当前 MCP 对接仅声明本地 stdio 调用，不开放远程 HTTP / SSE / Gateway 鉴权模型。
 
 ### 验证
 
 - `npm test`
 - `npm run doctor`
 - `npm run smoke:project`
+- `npm pack --dry-run`
+- 真实本地 MCP smoke：`solver.beam_deflection`、`solver.beam_deflection_serviceability_check`、`solver.frame_displacement`、`solver.truss_member_force`
 
 ## 1.0.1
 
