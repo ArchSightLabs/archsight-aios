@@ -29,6 +29,7 @@ AIOS Workflow 是建筑行业项目的增强路径，不是普通工程任务的
 - 再调用对应 Skill。
 - 最后用测试、构建、lint、typecheck 或人工检查验证。
 - 涉及建筑行业、BIM、IFC、规范、审图或 RAG / GraphRAG 时，先确认项目是否启用对应 profile。
+- 涉及规范检查、结构计算、安全扫描、测试门禁或 Agent 冲突时，输出 `Claim / Evidence / Tool Result / Decision`；工具证据缺失时不得标记为已验证。
 
 ## 本项目默认流程
 

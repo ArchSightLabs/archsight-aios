@@ -26,6 +26,7 @@ description: 建筑知识结构化工作流。用于整理 BIM、IFC、建筑规
 - 业务流程：设计、招采、施工、交付、审图。
 - 目标输出：知识库、GraphRAG、知识图谱、审查规则、产品功能。
 - 版本、适用范围、地区、项目类型等约束。
+- 可用 Capability，例如 `knowledge.norm_lookup`，以及规范来源、版本、地区、专业和页码证据。
 
 ## 工作流
 
@@ -34,7 +35,8 @@ description: 建筑知识结构化工作流。用于整理 BIM、IFC、建筑规
 3. 拆解条文：适用范围、检查对象、触发条件、判定逻辑、例外情况。
 4. 设计结构化表达：实体、属性、关系、标签、版本和来源。
 5. 标注冲突、歧义、缺失上下文和待核验项。
-6. 将可自动化部分交给 Daedalus / Hephaestus，将行业判断风险交给人工确认。
+6. 能调用或要求 Capability 时，输出 `Tool Result`；不能调用时标注 `Need tool implementation`。
+7. 将可自动化部分交给 Daedalus / Hephaestus，将结构求解链路交给 Euclid，将行业判断风险交给人工确认。
 
 ## 输出格式
 
@@ -45,7 +47,8 @@ description: 建筑知识结构化工作流。用于整理 BIM、IFC、建筑规
 3. 适用条件
 4. 结构化建议
 5. 风险与待核验项
-6. 后续动作
+6. Capability 证据 / Tool Result
+7. 后续动作
 
 规则条目建议格式：
 

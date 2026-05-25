@@ -1,0 +1,153 @@
+# Capability-Backed Arbitration Protocol
+
+状态：治理基线草案  
+适用范围：ArchSight AIOS 多 Agent 冲突仲裁、工具证据裁决和人工升级
+
+---
+
+## 一、目标
+
+本协议把 AIOS 的多 Agent 协作从“角色意见协商”升级为“证据驱动仲裁”。
+
+核心原则：
+
+> Agent 可以提出 Claim，但不能只凭自然语言推理裁决事实。事实裁决必须回到项目证据、结构化知识、确定性工具或人工授权。
+
+适用场景：
+
+- Atlas、Mason、Vitruvius、Argus、Daedalus、Euclid 等 Agent 对方案产生逻辑冲突。
+- 架构建议、工程计划、规范语义、结构计算、安全审查或 Runtime 权限之间存在互相阻断。
+- AIOS 需要决定继续执行、回滚、重新评审、收缩范围或升级给人类负责人。
+
+---
+
+## 二、证据优先级
+
+仲裁时按以下优先级裁决。低层级证据不能推翻高层级证据，除非高层级证据本身被标记为无效、过期或不适用。
+
+| 等级 | 证据 | 说明 |
+| --- | --- | --- |
+| L0 | 人类硬约束 | 预算、交付窗口、生产授权、法律责任、商业取舍、签章和最终发布许可。 |
+| L1 | 确定性工具返回值 | 测试、构建、lint、schema 校验、安全扫描、结构求解器、规范检查 API。 |
+| L2 | 项目事实 | 当前代码、配置、接口契约、数据库迁移、部署脚本、CI、ADR、运行日志。 |
+| L3 | 结构化知识库 | GraphRAG、规范条文、版本关系、地区 / 专业适用条件、来源页码和质量状态。 |
+| L4 | 专项 Agent 判断 | Atlas 的架构判断、Mason 的交付判断、Vitruvius 的领域判断、Euclid 的建模判断。 |
+| L5 | LLM 自然语言推理 | 只能作为假设、解释或建议，不能单独作为阻断或放行依据。 |
+
+工具结果优先，但不得盲信工具结果。L1/L3 证据必须带有输入、版本、适用条件和执行状态；缺失时只能进入 `Need verify`。
+
+---
+
+## 三、Claim 契约
+
+Agent 之间发生冲突时，不能只输出“我不同意”。每个参与方必须把意见转成 Claim：
+
+```text
+Claim:
+  id:
+  owner_agent:
+  type: architecture | delivery | domain_semantics | structural | security | runtime | business
+  statement:
+  evidence_level: L0 | L1 | L2 | L3 | L4 | L5
+  evidence:
+  assumptions:
+  need_verify:
+  blocking: true | false
+  severity: P0 | P1 | P2
+  requested_action: proceed | revise | reduce | stop | human_escalation
+```
+
+Claim 必须明确区分事实、判断、假设和待验证项。没有证据的 Claim 默认不具备阻断权。
+
+---
+
+## 四、冲突分类与主裁决依据
+
+| 冲突类型 | 主裁决依据 | 默认处理 |
+| --- | --- | --- |
+| 架构冲突 | Atlas + L2 项目事实 + L1 验证工具 | 回到 `architecture-review`。 |
+| 交付冲突 | Mason + CI / 测试 / 依赖图 | 收缩范围、重排计划或回到任务拆解。 |
+| 行业语义冲突 | Vitruvius + 规范工具 + 结构化知识库 | 不满足适用条件时阻断执行。 |
+| 结构计算冲突 | Euclid + Solver / 数值校验 + 单位和边界条件 | 缺少输入或工具失败时不得输出确定结论。 |
+| 安全 / 权限冲突 | Argus + 安全扫描 + 权限策略 | 默认阻断，除非人工明确批准。 |
+| Runtime 冲突 | Daedalus + Capability 权限 + 上下文策略 | 降权、隔离或重新设计工具调用边界。 |
+| 商业 / 范围冲突 | Janus / CEO + L0 人类目标 | 人工裁决或明确阶段性取舍。 |
+
+---
+
+## 五、状态机
+
+```text
+proposed
+  -> evidence_required
+  -> tool_check
+  -> accepted
+  -> planned
+  -> executed
+  -> reviewed
+  -> completed
+```
+
+异常路径：
+
+```text
+tool_check -> rejected -> revise
+tool_check -> need_verify -> hold
+reviewed -> rejected -> revise
+any -> human_escalation
+```
+
+阻断规则：
+
+- L1 工具返回 `fail` 且适用条件有效时，必须阻断后续执行或放行。
+- L3 规范 / 知识证据缺少版本、来源或适用条件时，不能自动判定合规。
+- L4 Agent 判断只能触发复核、重评或工具调用，不能独立推翻 L1/L2/L3。
+- L0 人类授权可以覆盖执行路线，但不能把未验证事实改写成已验证事实。
+
+---
+
+## 六、人工升级条件
+
+以下情况必须升级给人类负责人或项目指定审批人：
+
+- 核心技术栈替换。
+- 生产数据模型迁移。
+- Runtime 权限扩大。
+- 多 Agent 自动执行权限放开。
+- 自动发布到生产。
+- 法规合规最终判定、结构安全结论或工程签章。
+- 商业范围、预算、交付窗口和停损信号的最终取舍。
+
+人工裁决也必须记录证据和约束，不能只记录“老板同意”。
+
+---
+
+## 七、Decision Ledger
+
+每次仲裁必须沉淀为可复核记录。最小字段：
+
+```text
+Decision:
+  id:
+  date:
+  conflict:
+  claims:
+  evidence:
+  tool_results:
+  decision: proceed | revise | reduce | stop | escalate
+  rejected:
+  owner:
+  follow_up:
+```
+
+Decision Ledger 可以写入 ADR、memory、PR 描述、issue 或项目 `.ai/` 目录，具体位置由项目接入规则决定。
+
+---
+
+## 八、落地要求
+
+- Workflow 输出必须包含 `Claim / Evidence / Tool Result / Decision`。
+- Skill 需要声明可用 Capability、权限边界和证据契约。
+- Runtime Adapter 只负责调用工具和回传证据，不替代 Agent 判断。
+- 工具调用失败时必须暴露失败原因、输入摘要和可恢复路径。
+- 没有 Capability 实现时，必须标为 `declared-interface` 或 `Need verify`，不得伪造工具结果。

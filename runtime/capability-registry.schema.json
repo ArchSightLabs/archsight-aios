@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://archsightlabs.github.io/aios/schemas/capability-registry.schema.json",
+  "title": "ArchSight AIOS Capability Registry",
+  "type": "object",
+  "required": ["schema", "capabilities"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "integer",
+      "const": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "ownerAgents",
+          "authorityLevel",
+          "description",
+          "status",
+          "inputSchema",
+          "outputSchema",
+          "evidenceContract",
+          "blockingRules"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "verification",
+              "deterministic_solver",
+              "compliance_lookup",
+              "security_scanner",
+              "repository_fact",
+              "runtime_adapter"
+            ]
+          },
+          "ownerAgents": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "allowedSkills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "authorityLevel": {
+            "type": "string",
+            "enum": ["L1", "L2", "L3"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["declared-interface", "adapter-required", "implemented"]
+          },
+          "inputSchema": {
+            "type": "object"
+          },
+          "outputSchema": {
+            "type": "object"
+          },
+          "evidenceContract": {
+            "type": "object",
+            "required": ["requiredFields", "invalidWhenMissing"],
+            "additionalProperties": false,
+            "properties": {
+              "requiredFields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true
+              },
+              "invalidWhenMissing": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true
+              }
+            }
+          },
+          "blockingRules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["when", "severity", "action"],
+              "additionalProperties": false,
+              "properties": {
+                "when": {
+                  "type": "string"
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": ["P0", "P1", "P2"]
+                },
+                "action": {
+                  "type": "string",
+                  "enum": ["block", "hold", "revise", "human_escalation"]
+                }
+              }
+            }
+          },
+          "humanEscalation": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    }
+  }
+}

@@ -119,6 +119,13 @@
       "openaiConfigPath": "skills/aios-knowledge/agents/openai.yaml"
     },
     {
+      "id": "aios-structural",
+      "primaryAgent": "euclid",
+      "defaultWorkflow": "architecture-review",
+      "path": "skills/aios-structural/SKILL.md",
+      "openaiConfigPath": "skills/aios-structural/agents/openai.yaml"
+    },
+    {
       "id": "aios-runtime",
       "primaryAgent": "daedalus",
       "defaultWorkflow": "rag-pipeline",
@@ -219,6 +226,12 @@
       "workflow": "rag-pipeline"
     },
     {
+      "taskType": "结构力学、荷载、FEM、确定性求解和结构计算工具链",
+      "skill": "aios-structural",
+      "agent": "euclid",
+      "workflow": "architecture-review"
+    },
+    {
       "taskType": "建筑行业项目中的 Prompt / Context / Memory / MCP / Tool",
       "skill": "aios-runtime",
       "agent": "daedalus",
@@ -292,7 +305,13 @@
     "syncPolicyPath": "runtime/hermes/sync-policy.md",
     "syncRecordTemplatePath": "runtime/hermes/sync-record-template.md"
   },
+  "capabilityRegistry": {
+    "schemaPath": "runtime/capability-registry.schema.json",
+    "registryPath": "runtime/capability-registry.json",
+    "adapterPath": "runtime/capability-adapters.json"
+  },
   "requiredAssets": [
+    "governance/arbitration-protocol.md",
     "governance/ai-review-policy.md",
     "governance/security-policy.md",
     "governance/agent-boundary.md",
@@ -321,6 +340,9 @@
     "infra/permissions.md",
     "infra/service-boundaries.md",
     "runtime/hermes/sync-policy.md",
-    "runtime/hermes/sync-record-template.md"
+    "runtime/hermes/sync-record-template.md",
+    "runtime/capability-adapters.json",
+    "runtime/capability-registry.schema.json",
+    "runtime/capability-registry.json"
   ]
 }

@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "description": "ArchSight AIOS 本地 Capability Adapter 映射。当前只声明 stdio MCP 本地调用，不开放网络服务。",
+  "adapters": [
+    {
+      "id": "archsight-solver.local-mcp",
+      "transport": "stdio-mcp",
+      "capabilityIds": [
+        "solver.beam_deflection",
+        "solver.beam_capacity_check",
+        "solver.frame_displacement",
+        "solver.truss_member_force"
+      ],
+      "command": "python",
+      "args": ["-m", "backend.capabilities.mcp_server"],
+      "cwdEnv": "ARCHSIGHT_SOLVER_HOME",
+      "defaultSiblingDir": "archsight-solver",
+      "timeoutMs": 30000,
+      "toolNameMap": {
+        "solver.beam_deflection": "beam_deflection",
+        "solver.beam_capacity_check": "beam_capacity_check",
+        "solver.frame_displacement": "frame_displacement",
+        "solver.truss_member_force": "truss_member_force"
+      }
+    }
+  ]
+}

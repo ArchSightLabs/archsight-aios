@@ -17,3 +17,5 @@
 - spec driven development
 
 每个 workflow 应明确参与角色、输入、输出、执行顺序、验收标准和回滚策略。
+
+涉及多 Agent 冲突、规范证据、结构计算、安全扫描、测试门禁或 Runtime 权限时，Workflow 还应输出 `Claim / Evidence / Tool Result / Decision`，并按 [Capability-Backed Arbitration Protocol](../governance/arbitration-protocol.md) 仲裁。

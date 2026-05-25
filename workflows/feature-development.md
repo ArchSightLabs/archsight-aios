@@ -23,6 +23,7 @@
 | 质量审查 | Argus | `aios-review` |
 | AI Runtime 相关 | Daedalus | `aios-runtime` |
 | BIM / IFC / 行业语义相关 | Vitruvius | `aios-knowledge` |
+| 结构力学 / 求解链路相关 | Euclid | `aios-structural` |
 
 ## 输入
 
@@ -35,9 +36,10 @@
 
 1. Atlas 判断需求是否涉及架构边界、数据模型、Runtime 或长期复杂度。
 2. Mason 将需求拆成任务、依赖、验收标准和执行顺序。
-3. Hephaestus 按 Mason 的任务执行最小改动。
-4. Argus 审查 diff、测试缺口、安全和技术债风险。
-5. Mason 汇总交付状态、剩余风险和发布条件。
+3. 如涉及规范、结构计算、安全或 Runtime 权限，先按 Capability 证据和仲裁协议确认是否可进入执行。
+4. Hephaestus 按 Mason 的任务执行最小改动。
+5. Argus 审查 diff、测试缺口、安全和技术债风险。
+6. Mason 汇总交付状态、剩余风险和发布条件。
 
 ## 升级规则
 
@@ -45,7 +47,9 @@
 - 涉及权限、安全、Prompt 注入、生产发布：升级给 Argus。
 - 涉及 RAG、GraphRAG、MCP、Memory、Tool Calling：升级给 Daedalus。
 - 涉及 BIM、IFC、规范、审图逻辑：升级给 Vitruvius。
+- 涉及结构力学、荷载、边界条件、FEM 或结构计算工具链：升级给 Euclid。
 - 任务拆解不清、依赖复杂或交付顺序冲突：升级给 Mason。
+- Capability 返回阻断结果或证据缺失：按 `governance/arbitration-protocol.md` 回到对应 Agent 重评。
 
 ## 输出
 
@@ -54,6 +58,7 @@
 - 实现变更。
 - Review 结果。
 - 验证证据。
+- Claim / Evidence / Tool Result / Decision。
 - 剩余风险和发布建议。
 
 ## 验收标准
@@ -62,6 +67,7 @@
 - 实现只触碰必要范围。
 - 关键路径经过测试、构建、lint 或人工检查。
 - Argus 无阻断问题。
+- Capability 阻断项已清零，或已明确人工升级。
 - 未验证项被明确记录。
 
 ## 回滚与恢复

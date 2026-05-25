@@ -2,7 +2,7 @@
 
 ArchSight AIOS 是一套面向建筑 AI 研发的规则、Agent、Skill、Workflow 和项目接入工具包。它重点服务 BIM / IFC / Revit / CAD、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图和 AI Coding 治理，让 Codex、Claude Code、Antigravity 2.0 等 AI Coding 工具在同一个项目里读取同一套规则、项目上下文和验收要求。
 
-AIOS 不是全行业项目模板集合。它保留通用的 AI 编码规则、Agent 路由、Workflow、项目 `.ai/` 上下文和交付验证能力，但真正的差异化能力集中在建筑行业语义、工程证据链、规范知识工程和可复核的 AI 研发流程。
+AIOS 不是全行业项目模板集合。它保留通用的 AI 编码规则、Agent 路由、Workflow、项目 `.ai/` 上下文和交付验证能力，但真正的差异化能力集中在建筑行业语义、工程证据链、规范知识工程、Capability 工具证据和可复核的 AI 研发流程。
 
 ## 设计目标
 
@@ -76,6 +76,15 @@ npx @archsight/aios init --profile rag-knowledge
 | `.ai/skills.md` | 当前项目可用的 ArchSight Skills。 |
 | `.ai/workflows.md` | 当前项目可用的 Workflow 和验收路径。 |
 
+## Capability 与冲突仲裁
+
+AIOS 的多 Agent 协作不应停留在 Prompt 角色扮演。Agent 提出架构、交付、规范、结构计算或安全判断时，必须尽量回到项目事实、结构化知识和确定性工具证据。
+
+- `governance/arbitration-protocol.md` 定义证据优先级、Claim 契约、阻断规则和人工升级条件。
+- `runtime/capability-registry.json` 定义最小 Capability 接口，例如测试 runner、规范查询、梁挠度、梁挠度限值校核、框架位移和桁架杆力求解器接口。
+- `runtime/capability-adapters.json` 定义本地 stdio MCP Adapter 映射；AIOS 先按 Agent / Skill 权限校验，再调用 `archsight-solver` MCP Tool，并把结构化结果交给仲裁规则。
+- `aios-structural` 提供 Euclid 结构力学评审入口，要求关键数值来自求解器、项目计算书或可复验脚本，而不是 LLM 口算。
+
 ## 常用命令
 
 | 命令 | 用途 |
@@ -85,6 +94,14 @@ npx @archsight/aios init --profile rag-knowledge
 | `doctor` | 检查仓库资产、manifest、用户级安装、Skill 和 Workflow 是否一致。 |
 | `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录和可选行业 profile。 |
 | `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
+| `capability:call` | 按 Capability Registry 权限边界调用本地 MCP Adapter，并输出 Tool Result 与仲裁 Decision。 |
+
+本地调用 `archsight-solver` 示例：
+
+```powershell
+$env:ARCHSIGHT_SOLVER_HOME = "C:\Work\ArchSightLabs\archsight-solver"
+npx @archsight/aios capability:call --capability solver.beam_deflection --agent euclid --skill aios-structural --input beam-input.json
+```
 
 ## 安装位置
 

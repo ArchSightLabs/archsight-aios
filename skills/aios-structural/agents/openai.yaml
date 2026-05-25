@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Structural"
+  short_description: "结构力学、荷载、边界条件和确定性求解链路评审"
+  default_prompt: "当任务涉及梁、桁架、FEM、荷载、边界条件、结构计算工具或结构工程证据链时，使用该高级技能。必须优先要求确定性求解器和规范查询证据，不用 LLM 直接口算工程结论。"

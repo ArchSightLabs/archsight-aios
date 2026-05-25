@@ -1,0 +1,458 @@
+{
+  "schema": 1,
+  "description": "ArchSight AIOS 最小 Capability 注册表。注册表定义接口、权限边界和证据契约；本地工具适配器由 runtime/capability-adapters.json 声明。",
+  "capabilities": [
+    {
+      "id": "repo.test_runner",
+      "type": "verification",
+      "ownerAgents": ["hephaestus", "argus", "mason"],
+      "allowedSkills": ["aios-exec", "aios-review", "aios-plan"],
+      "authorityLevel": "L1",
+      "description": "运行项目声明的测试、构建、lint、typecheck 或 smoke 命令，并把退出码和摘要作为交付仲裁证据。",
+      "status": "adapter-required",
+      "inputSchema": {
+        "type": "object",
+        "required": ["cwd", "command"],
+        "properties": {
+          "cwd": {
+            "type": "string"
+          },
+          "command": {
+            "type": "string"
+          },
+          "timeoutSeconds": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["status", "exitCode", "command", "stdoutSummary", "stderrSummary"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "error"]
+          },
+          "exitCode": {
+            "type": "integer"
+          },
+          "command": {
+            "type": "string"
+          },
+          "stdoutSummary": {
+            "type": "string"
+          },
+          "stderrSummary": {
+            "type": "string"
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "evidenceContract": {
+        "requiredFields": ["command", "exitCode", "status"],
+        "invalidWhenMissing": ["command", "exitCode", "status"]
+      },
+      "blockingRules": [
+        {
+          "when": "status == fail",
+          "severity": "P0",
+          "action": "block"
+        },
+        {
+          "when": "status == error",
+          "severity": "P1",
+          "action": "hold"
+        }
+      ],
+      "humanEscalation": ["skip_required_tests", "production_release_after_failed_check"]
+    },
+    {
+      "id": "knowledge.norm_lookup",
+      "type": "compliance_lookup",
+      "ownerAgents": ["vitruvius", "athena"],
+      "allowedSkills": ["aios-knowledge", "aios-arch", "aios-ceo"],
+      "authorityLevel": "L3",
+      "description": "按地区、专业、版本、条文和适用条件检索规范知识，返回可追溯引用和适用性判断。",
+      "status": "declared-interface",
+      "inputSchema": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "discipline": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "projectCondition": {
+            "type": "string"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["status", "citations", "applicability"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["found", "not_found", "conflict", "inapplicable", "error"]
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "applicability": {
+            "type": "string",
+            "enum": ["applicable", "not_applicable", "need_context"]
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "evidenceContract": {
+        "requiredFields": ["status", "citations", "applicability", "sourceVersion"],
+        "invalidWhenMissing": ["citations", "applicability", "sourceVersion"]
+      },
+      "blockingRules": [
+        {
+          "when": "status == conflict",
+          "severity": "P0",
+          "action": "hold"
+        },
+        {
+          "when": "applicability == need_context",
+          "severity": "P1",
+          "action": "hold"
+        }
+      ],
+      "humanEscalation": ["legal_compliance_final_claim", "formal_drawing_review"]
+    },
+    {
+      "id": "solver.beam_deflection",
+      "type": "deterministic_solver",
+      "ownerAgents": ["euclid"],
+      "allowedSkills": ["aios-structural"],
+      "authorityLevel": "L1",
+      "description": "梁挠度计算接口示例。LLM 只负责参数提取和结果解释，数值计算必须由外部求解器完成。",
+      "status": "implemented",
+      "inputSchema": {
+        "type": "object",
+        "required": ["span", "elasticModulus", "secondMomentOfArea", "load"],
+        "properties": {
+          "span": {
+            "type": "object",
+            "required": ["value", "unit"]
+          },
+          "elasticModulus": {
+            "type": "object",
+            "required": ["value", "unit"]
+          },
+          "secondMomentOfArea": {
+            "type": "object",
+            "required": ["value", "unit"]
+          },
+          "load": {
+            "type": "object",
+            "required": ["value", "unit", "case"]
+          },
+          "boundaryCondition": {
+            "type": "string"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["status", "deflection", "inputValidated", "formulaRef"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "invalid_input", "error"]
+          },
+          "deflection": {
+            "type": "object",
+            "required": ["value", "unit"]
+          },
+          "inputValidated": {
+            "type": "boolean"
+          },
+          "formulaRef": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "evidenceContract": {
+        "requiredFields": ["status", "deflection", "inputValidated", "formulaRef"],
+        "invalidWhenMissing": ["inputValidated", "formulaRef"]
+      },
+      "blockingRules": [
+        {
+          "when": "status == invalid_input",
+          "severity": "P0",
+          "action": "block"
+        },
+        {
+          "when": "inputValidated == false",
+          "severity": "P0",
+          "action": "block"
+        },
+        {
+          "when": "status == error",
+          "severity": "P1",
+          "action": "hold"
+        }
+      ],
+      "humanEscalation": ["structural_safety_final_claim", "production_structural_design"]
+    },
+    {
+      "id": "solver.beam_capacity_check",
+      "type": "deterministic_solver",
+      "ownerAgents": ["euclid"],
+      "allowedSkills": ["aios-structural"],
+      "authorityLevel": "L1",
+      "description": "梁挠度限值校核接口。当前用于正常使用挠度校核，不代表材料强度、稳定或规范承载力设计。",
+      "status": "implemented",
+      "inputSchema": {
+        "type": "object",
+        "required": ["span", "elasticModulus", "secondMomentOfArea", "load"],
+        "properties": {
+          "span": {
+            "type": "object",
+            "required": ["value", "unit"]
+          },
+          "elasticModulus": {
+            "type": "object",
+            "required": ["value", "unit"]
+          },
+          "secondMomentOfArea": {
+            "type": "object",
+            "required": ["value", "unit"]
+          },
+          "load": {
+            "type": "object",
+            "required": ["value", "unit", "case"]
+          },
+          "boundaryCondition": {
+            "type": "string"
+          },
+          "deflectionLimitRatio": {
+            "type": "number"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["status", "checkType", "deflection", "allowable", "inputValidated"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "invalid_input", "error"]
+          },
+          "checkType": {
+            "type": "string"
+          },
+          "deflection": {
+            "type": "object"
+          },
+          "allowable": {
+            "type": "object"
+          },
+          "inputValidated": {
+            "type": "boolean"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "evidenceContract": {
+        "requiredFields": ["status", "checkType", "deflection", "allowable", "inputValidated"],
+        "invalidWhenMissing": ["inputValidated", "deflection", "allowable"]
+      },
+      "blockingRules": [
+        {
+          "when": "status == fail",
+          "severity": "P1",
+          "action": "hold"
+        },
+        {
+          "when": "status == invalid_input",
+          "severity": "P0",
+          "action": "block"
+        },
+        {
+          "when": "status == error",
+          "severity": "P1",
+          "action": "hold"
+        }
+      ],
+      "humanEscalation": ["structural_capacity_final_claim", "production_structural_design"]
+    },
+    {
+      "id": "solver.frame_displacement",
+      "type": "deterministic_solver",
+      "ownerAgents": ["euclid"],
+      "allowedSkills": ["aios-structural", "aios-arch"],
+      "authorityLevel": "L1",
+      "description": "二维平面框架位移求解接口，返回最大位移、控制节点、目标节点和内力控制摘要。",
+      "status": "implemented",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          },
+          "structure": {
+            "type": "object"
+          },
+          "targetNodeId": {
+            "type": "string"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["status", "maxDisplacement", "inputValidated"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "invalid_input", "error"]
+          },
+          "maxDisplacement": {
+            "type": "object"
+          },
+          "targetNode": {
+            "type": "object"
+          },
+          "inputValidated": {
+            "type": "boolean"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "evidenceContract": {
+        "requiredFields": ["status", "maxDisplacement", "inputValidated"],
+        "invalidWhenMissing": ["inputValidated", "maxDisplacement"]
+      },
+      "blockingRules": [
+        {
+          "when": "status == fail",
+          "severity": "P1",
+          "action": "hold"
+        },
+        {
+          "when": "status == invalid_input",
+          "severity": "P0",
+          "action": "block"
+        },
+        {
+          "when": "status == error",
+          "severity": "P1",
+          "action": "hold"
+        }
+      ],
+      "humanEscalation": ["structural_safety_final_claim", "production_structural_design"]
+    },
+    {
+      "id": "solver.truss_member_force",
+      "type": "deterministic_solver",
+      "ownerAgents": ["euclid"],
+      "allowedSkills": ["aios-structural", "aios-arch"],
+      "authorityLevel": "L1",
+      "description": "二维平面桁架杆件轴力求解接口，返回最大轴力、控制杆件和指定杆件结果。",
+      "status": "implemented",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          },
+          "structure": {
+            "type": "object"
+          },
+          "targetMemberId": {
+            "type": "string"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["status", "maxAxialForce", "inputValidated"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "invalid_input", "error"]
+          },
+          "maxAxialForce": {
+            "type": "object"
+          },
+          "targetMember": {
+            "type": "object"
+          },
+          "inputValidated": {
+            "type": "boolean"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "evidenceContract": {
+        "requiredFields": ["status", "maxAxialForce", "inputValidated"],
+        "invalidWhenMissing": ["inputValidated", "maxAxialForce"]
+      },
+      "blockingRules": [
+        {
+          "when": "status == fail",
+          "severity": "P1",
+          "action": "hold"
+        },
+        {
+          "when": "status == invalid_input",
+          "severity": "P0",
+          "action": "block"
+        },
+        {
+          "when": "status == error",
+          "severity": "P1",
+          "action": "hold"
+        }
+      ],
+      "humanEscalation": ["structural_safety_final_claim", "production_structural_design"]
+    }
+  ]
+}

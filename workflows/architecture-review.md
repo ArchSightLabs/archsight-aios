@@ -21,6 +21,7 @@
 | 工程拆解 | Mason | `aios-plan` |
 | Runtime 设计 | Daedalus | `aios-runtime` |
 | 行业语义 | Vitruvius | `aios-knowledge` |
+| 结构力学 / 求解链路 | Euclid | `aios-structural` |
 | 风险审查 | Argus | `aios-review` |
 
 ## 输入
@@ -31,6 +32,7 @@
 - 候选方案。
 - 约束：成本、时间、团队、运行环境、权限、数据规模。
 - 已知风险和历史决策。
+- 可用 Capability、工具返回值、测试 / 构建 / 规范查询 / 求解器证据。
 
 ## 执行顺序
 
@@ -43,9 +45,11 @@
 7. Atlas 用 P0/P1/P2 或等效等级标注风险优先级，形成架构依据。
 8. Daedalus 评审 AI Runtime / RAG / Tool / Memory 相关设计。
 9. Vitruvius 评审 BIM / IFC / 建筑规范相关语义。
-10. Argus 评审安全、权限、Prompt 注入、依赖和发布风险。
-11. Atlas 做交付审查增强：列出本次事实刷新、历史报告过期判断、与既有报告 diff、领域风险 / 工程风险分类，以及每个高优先级发现的文件落点和验证方式。
-12. Mason 将通过评审的方案拆成可执行任务，并纳入 Failure Modes、测试缺口、并行 workstream 和冲突点。
+10. Euclid 评审结构力学、荷载、边界条件、FEM 或求解器接口相关问题；关键数值必须来自确定性求解器或标记 `Need verify`。
+11. Argus 评审安全、权限、Prompt 注入、依赖和发布风险。
+12. 对 Agent 冲突输出 `Claim / Evidence / Tool Result / Decision`，按 `governance/arbitration-protocol.md` 仲裁。
+13. Atlas 做交付审查增强：列出本次事实刷新、历史报告过期判断、与既有报告 diff、领域风险 / 工程风险分类，以及每个高优先级发现的文件落点和验证方式。
+14. Mason 将通过评审的方案拆成可执行任务，并纳入 Failure Modes、测试缺口、并行 workstream 和冲突点。
 
 ## 输出
 
@@ -56,10 +60,11 @@
 5. Rejected 方案
 6. Assumption / Need verify
 7. Failure Modes
-8. 后续执行任务
-9. 本次事实刷新
-10. 已过期判断 / 与既有报告 diff
-11. 第一小步建议
+8. Claim / Evidence / Tool Result / Decision
+9. 后续执行任务
+10. 本次事实刷新
+11. 已过期判断 / 与既有报告 diff
+12. 第一小步建议
 
 ## 文档与补充检查
 
@@ -76,6 +81,16 @@
 - 对 RAG / GraphRAG、规范知识库和审计系统，重点抽查 `source_version`、适用地区、专业、生效状态、复核状态、版本替代关系、证据引用和缓存/索引版本是否从摄取入口贯通到消费端。
 - 每个 P0/P1/P2 发现必须标注为 `领域风险`、`工程风险` 或 `混合风险`，并说明文件 / 模块、最小改动范围和验证命令；无法定位时标为 `Need verify`。
 - 最终必须给出“现在最该做的一件小事”，优先选择低风险、可验证、能消除静默错误或关键漂移的动作。
+
+## 仲裁门禁
+
+当 Atlas、Mason、Vitruvius、Euclid、Daedalus 或 Argus 的判断冲突时：
+
+- 先把意见转成 Claim，不直接用自然语言争论结论。
+- 优先采纳确定性工具、项目事实和结构化知识证据。
+- 工具结果缺少输入、版本、适用条件或执行状态时，标为 `Need verify`。
+- L1 工具失败、规范适用性冲突、安全权限失败或结构输入无效时，阻断进入 Mason 拆解或 Hephaestus 执行。
+- 涉及生产授权、法规合规最终判断、结构安全结论或商业范围取舍时，升级给人类负责人。
 
 ## 端到端链路抽样清单
 
@@ -97,6 +112,7 @@
 - Runtime 权限扩大。
 - 自动执行权限放开。
 - 影响长期平台路线的服务边界调整。
+- 法规合规最终判定和结构安全结论。
 
 ## 验收标准
 

@@ -18,6 +18,7 @@
 | Skill | 怎么做 |
 | Workflow | 什么时候做、按什么顺序做 |
 | Runtime | 在哪里运行 |
+| Capability | 用什么确定性工具或结构化知识提供证据 |
 
 ## 泛化边界
 
@@ -25,6 +26,7 @@
 - Hermes、飞书、OpenClaw、Codex、Claude、Gemini 等都是可选运行入口；未启用时不得写入项目假设。
 - 建筑、BIM、IFC、规范、审图和 RAG / GraphRAG 知识工程能力通过 profile 或明确任务触发；普通项目不默认启用这些语义。
 - AIOS 是建筑行业增强层；普通非建筑任务优先使用宿主工具的通用能力，不因为安装了 AIOS 就强制套用 `aios-*` Skill。
+- 冲突仲裁按证据等级处理：人类硬约束、确定性工具、项目事实、结构化知识优先于 Agent 自然语言判断。
 
 ## 默认任务路由
 
@@ -36,6 +38,7 @@
 | 建筑行业项目任务拆解、交付顺序、CI/CD | Mason | 工程总工 |
 | 建筑行业项目 Code Review、安全、性能、技术债 | Argus | 代码审查官 |
 | BIM、IFC、建筑规范、审图逻辑 | Vitruvius | 建筑数字化专家 |
+| 结构力学、荷载、FEM、结构计算工具链 | Euclid | 结构力学专家 |
 | 建筑行业 RAG、GraphRAG、MCP、Memory、Tool Calling | Daedalus | AI 研发工程师 |
 | 建筑行业项目代码修改、脚本执行、测试、文档生成 | Hephaestus | 受控执行官 |
 
@@ -47,5 +50,7 @@
 - 涉及多模块交付、任务依赖、发布顺序：升级给 Mason。
 - 涉及权限、安全、生产发布、AI 生成代码：升级给 Argus。
 - 涉及行业规范、BIM / IFC、审图语义：升级给 Vitruvius。
+- 涉及结构力学、荷载、边界条件、FEM 或结构计算工具链：升级给 Euclid。
 - 涉及 RAG、GraphRAG、MCP、Memory、Tool：升级给 Daedalus。
 - 具体实现和验证：交给 Hephaestus。
+- Capability 返回阻断结果、证据缺失或工具不可用：停止执行并输出 `Claim / Evidence / Tool Result / Decision`。

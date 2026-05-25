@@ -26,6 +26,7 @@ description: 高级 Runtime 和知识管线设计入口。用于设计 Prompt、
 - Agent 角色资产、system prompt 或 workflow。
 - 目标运行时约束，例如本地 Agent、Hermes、OpenClaw、飞书机器人或其他协作入口。
 - 工具清单、权限、输入输出 schema。
+- Capability 注册表、工具权限、输入输出 schema、证据契约和仲裁阻断规则。
 - RAG / GraphRAG 数据源、索引、评估需求。
 - 当前上下文、记忆、检索或工具调用失败案例。
 
@@ -35,9 +36,10 @@ description: 高级 Runtime 和知识管线设计入口。用于设计 Prompt、
 2. 压缩上下文：只保留任务必要信息，避免完整仓库或完整角色文件夹直接进入运行时。
 3. 设计 Prompt：角色、职责、边界、输入、输出、风格、升级路径。
 4. 设计 Memory：写入条件、读取策略、过期和清理机制。
-5. 设计 Tool Calling：权限最小化、schema、审计、人工确认点。
+5. 设计 Tool Calling / Capability：权限最小化、schema、证据契约、审计、人工确认点。
 6. 设计 RAG / GraphRAG：chunk、实体、关系、索引、检索、引用、评估。
-7. 指定安全审查和验证：交给 Argus 复核注入、越权和数据污染风险。
+7. 对工具失败、权限扩大、证据缺失和 Agent 冲突输出 `Claim / Evidence / Tool Result / Decision`。
+8. 指定安全审查和验证：交给 Argus 复核注入、越权和数据污染风险。
 
 ## 输出格式
 
@@ -47,8 +49,9 @@ description: 高级 Runtime 和知识管线设计入口。用于设计 Prompt、
 2. Runtime 设计
 3. Context / Memory 策略
 4. Tool 权限边界
-5. 评估与风险
-6. 后续动作
+5. Capability Registry / 仲裁门禁
+6. 评估与风险
+7. 后续动作
 
 Runtime 条目建议格式：
 

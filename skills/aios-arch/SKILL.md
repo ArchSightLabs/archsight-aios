@@ -37,6 +37,7 @@ AIOS Arch 的目标是补足通用架构评审：在 AIOS 行业增强启用时�
 - 已有设计方案或候选方案。
 - 约束条件：时间、成本、团队、技术栈、数据、权限、运行环境。
 - 已知风险、测试结果或失败记录。
+- 可用 Capability、工具返回值、规范查询、结构求解、测试 / 构建 / 安全扫描证据。
 
 信息不足时，先列出缺口和可推进的最小判断，不要编造背景。
 
@@ -53,7 +54,8 @@ AIOS Arch 的目标是补足通用架构评审：在 AIOS 行业增强启用时�
 9. 用 P0/P1/P2 或同等级别标注风险优先级；不要把所有问题写成平级 TODO。
 10. 做交付审查增强：输出事实刷新、历史结论 diff、领域风险 / 工程风险分类、任务化落点和第一步建议。
 11. 给出推荐方案，并说明被拒绝方案和原因。
-12. 给 Mason、Daedalus、Argus 或 Hephaestus 标注后续交接点；工程拆解细节交给 Mason，不在 Atlas 报告里替代交付计划。
+12. 对多 Agent 冲突输出 `Claim / Evidence / Tool Result / Decision`，按 `governance/arbitration-protocol.md` 仲裁。
+13. 给 Mason、Daedalus、Argus、Vitruvius、Euclid 或 Hephaestus 标注后续交接点；工程拆解细节交给 Mason，不在 Atlas 报告里替代交付计划。
 
 ## Step 0 范围挑战
 
@@ -142,6 +144,7 @@ AIOS Arch 的目标是补足通用架构评审：在 AIOS 行业增强启用时�
 - Coverage Map：代码路径、用户路径、异常路径和 eval 覆盖情况。
 - Parallel Lanes：可并行 workstream、依赖、冲突点和合并顺序。
 - Implementation Tasks：由发现直接生成的任务清单，包含文件、验证和优先级。
+- Claim / Evidence / Tool Result / Decision：Agent 冲突、工具返回值和仲裁结论。
 - 第一小步：当前最该做的一件小事。
 - `Rejected:` 被拒绝的备选方案及原因。
 - `Assumption:` 当前判断依赖的假设。

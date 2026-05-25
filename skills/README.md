@@ -6,7 +6,7 @@
 
 AIOS Skill 的差异化目标是让通用 AI Coding 工具在建筑行业平台研发中获得更专业的默认判断。所有 `aios-*` Skill 都继承这个行业取向；Skill 名称只表示任务分工，不表示只有某一个 Skill 才面向建筑行业。
 
-当项目涉及 BIM / IFC、建筑规范、智能审图、图纸 / 模型处理、RAG / GraphRAG、任务编排、审计证据链或长期平台演进时，`aios-ceo`、`aios-design`、`aios-plan`、`aios-exec`、`aios-review`、`aios-arch`、`aios-knowledge` 和 `aios-runtime` 都应把这些行业约束纳入判断。区别只是：`aios-ceo` 做建筑行业软件 / 系统的一把手深度评价，把产品定位、行业专业性、工程可信度、证据链和商业验证放到同一决策框架里；`aios-design` 判断界面方案能否支撑审查、定位、复核、追溯和交付，`aios-arch` 判断边界，`aios-knowledge` 判断行业语义，`aios-runtime` 判断 AI / RAG 运行时，`aios-plan` 拆交付，`aios-review` 查风险，`aios-exec` 做受控实现。
+当项目涉及 BIM / IFC、建筑规范、智能审图、图纸 / 模型处理、RAG / GraphRAG、任务编排、审计证据链、结构力学或长期平台演进时，`aios-ceo`、`aios-design`、`aios-plan`、`aios-exec`、`aios-review`、`aios-arch`、`aios-knowledge`、`aios-structural` 和 `aios-runtime` 都应把这些行业约束纳入判断。区别只是：`aios-ceo` 做建筑行业软件 / 系统的一把手深度评价，把产品定位、行业专业性、工程可信度、证据链和商业验证放到同一决策框架里；`aios-design` 判断界面方案能否支撑审查、定位、复核、追溯和交付，`aios-arch` 判断边界，`aios-knowledge` 判断行业语义，`aios-structural` 判断结构力学输入、求解链路和人工签审边界，`aios-runtime` 判断 AI / RAG 运行时，`aios-plan` 拆交付，`aios-review` 查风险，`aios-exec` 做受控实现。
 
 ## 适用性门槛
 
@@ -39,6 +39,8 @@ skills/
         └── openai.yaml
 ```
 
+Skill 可以继续用 `SKILL.md` 表达操作方法，但涉及确定性工具、规范查询、结构求解、安全扫描或测试门禁时，必须同时引用 `runtime/capability-registry.json` 中的 Capability，并按 `governance/arbitration-protocol.md` 输出证据。
+
 使用方式：
 
 - Codex：通过 `SKILL.md` frontmatter 的 `name` 和 `description` 自动识别触发。
@@ -56,4 +58,5 @@ skills/
 | `aios-review` | PR、diff、AI 生成代码、安全、证据链和测试缺口审查。 |
 | `aios-arch` | 架构边界、技术选型、长期复杂度和方案评审。 |
 | `aios-knowledge` | BIM、IFC、建筑规范、审图规则和知识结构化。 |
+| `aios-structural` | 结构力学、荷载、边界条件、FEM 和确定性求解链路评审。 |
 | `aios-runtime` | Prompt、Context、Memory、MCP/Tool、RAG/GraphRAG 和多 Agent Runtime 设计。 |

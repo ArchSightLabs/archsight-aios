@@ -3,6 +3,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
+import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -43,6 +44,7 @@ const skillAliases = {
     "aios-bim-domain-modeling",
     "archsight-bim-domain-modeling"
   ],
+  "aios-structural": ["aios-structural-review", "archsight-structural-review"],
   "aios-runtime": [
     "aios-runtime-design",
     "archsight-runtime-design",
@@ -62,6 +64,7 @@ function usage() {
     "  archsight-aios doctor",
     "  archsight-aios init [--cwd <path>] [--mode <auto|full|linked|ai-only>] [--profile <name>]",
     "  archsight-aios validate [--cwd <path>] [--profile <name>] [--temp]",
+    "  archsight-aios capability:call --capability <id> --agent <id> --skill <id> --input <json-file>",
     "  archsight-aios hermes:validate",
     "  archsight-aios hermes:sync-dry-run",
     "  archsight-aios hermes:detect-drift",
@@ -72,6 +75,7 @@ function usage() {
     "  doctor                Check repository assets and user-level installation.",
     "  init                  Add AI rules and .ai governance files to a project.",
     "  validate              Validate the project AI template output.",
+    "  capability:call       Authorize and call a registered local Capability adapter.",
     "  hermes:*              Validate or dry-run Hermes runtime prompt sync.",
     "",
     "Examples:",
@@ -94,7 +98,15 @@ function parseArgs(argv) {
     profile: undefined,
     cwd: process.cwd(),
     help,
-    temp: false
+    temp: false,
+    capability: undefined,
+    agent: undefined,
+    skill: undefined,
+    input: undefined,
+    mcpCwd: undefined,
+    mcpCommand: undefined,
+    mcpArgs: [],
+    timeoutMs: undefined
   };
 
   for (let i = 0; i < rest.length; i += 1) {
@@ -111,6 +123,22 @@ function parseArgs(argv) {
       options.profile = rest[++i];
     } else if (arg === "--temp") {
       options.temp = true;
+    } else if (arg === "--capability") {
+      options.capability = rest[++i];
+    } else if (arg === "--agent") {
+      options.agent = rest[++i];
+    } else if (arg === "--skill") {
+      options.skill = rest[++i];
+    } else if (arg === "--input") {
+      options.input = path.resolve(rest[++i]);
+    } else if (arg === "--mcp-cwd") {
+      options.mcpCwd = path.resolve(rest[++i]);
+    } else if (arg === "--mcp-command") {
+      options.mcpCommand = rest[++i];
+    } else if (arg === "--mcp-arg") {
+      options.mcpArgs.push(rest[++i]);
+    } else if (arg === "--timeout-ms") {
+      options.timeoutMs = Number(rest[++i]);
     } else if (arg === "--help" || arg === "-h") {
       options.help = true;
     } else {
@@ -211,6 +239,373 @@ async function readManifest() {
 async function readJson(filePath) {
   const raw = await fs.readFile(filePath, "utf8");
   return JSON.parse(raw);
+}
+
+async function readCapabilityRegistry() {
+  const manifest = await readManifest();
+  const registryPath = path.join(repoRoot, manifest.capabilityRegistry.registryPath);
+  return readJson(registryPath);
+}
+
+async function readCapabilityAdapters() {
+  const manifest = await readManifest();
+  const adapterPath = manifest.capabilityRegistry?.adapterPath;
+  if (!adapterPath) {
+    return { schema: 1, adapters: [] };
+  }
+  return readJson(path.join(repoRoot, adapterPath));
+}
+
+function jsonTypeMatches(schemaType, value) {
+  if (schemaType === "object") {
+    return value !== null && typeof value === "object" && !Array.isArray(value);
+  }
+  if (schemaType === "array") {
+    return Array.isArray(value);
+  }
+  if (schemaType === "integer") {
+    return Number.isInteger(value);
+  }
+  if (schemaType === "number") {
+    return typeof value === "number" && Number.isFinite(value);
+  }
+  if (schemaType === "string") {
+    return typeof value === "string";
+  }
+  if (schemaType === "boolean") {
+    return typeof value === "boolean";
+  }
+  return true;
+}
+
+function valueAtPath(value, fieldPath) {
+  return fieldPath.split(".").reduce((current, key) => {
+    if (current === null || typeof current !== "object") {
+      return undefined;
+    }
+    return current[key];
+  }, value);
+}
+
+function validateJsonSchemaSubset(schema, value, label = "$", errors = []) {
+  if (!schema || typeof schema !== "object") {
+    return errors;
+  }
+
+  if (schema.type && !jsonTypeMatches(schema.type, value)) {
+    errors.push(`${label} expected ${schema.type}`);
+    return errors;
+  }
+
+  if (schema.enum && !schema.enum.includes(value)) {
+    errors.push(`${label} expected one of ${schema.enum.join(", ")}`);
+  }
+
+  if (typeof schema.minimum === "number" && typeof value === "number" && value < schema.minimum) {
+    errors.push(`${label} must be >= ${schema.minimum}`);
+  }
+
+  if (schema.type === "object" && value !== null && typeof value === "object" && !Array.isArray(value)) {
+    for (const requiredField of schema.required ?? []) {
+      if (!Object.hasOwn(value, requiredField)) {
+        errors.push(`${label}.${requiredField} is required`);
+      }
+    }
+
+    for (const [property, propertySchema] of Object.entries(schema.properties ?? {})) {
+      if (Object.hasOwn(value, property)) {
+        validateJsonSchemaSubset(propertySchema, value[property], `${label}.${property}`, errors);
+      }
+    }
+  }
+
+  if (schema.type === "array" && Array.isArray(value) && schema.items) {
+    value.forEach((item, index) => validateJsonSchemaSubset(schema.items, item, `${label}[${index}]`, errors));
+  }
+
+  return errors;
+}
+
+function findCapability(registry, capabilityId) {
+  return (registry.capabilities ?? []).find((capability) => capability.id === capabilityId);
+}
+
+function findCapabilityAdapter(adapters, capabilityId) {
+  return (adapters.adapters ?? []).find((adapter) => (adapter.capabilityIds ?? []).includes(capabilityId));
+}
+
+function authorizeCapability(capability, options) {
+  if (!options.agent) {
+    throw new Error("--agent is required for Capability calls");
+  }
+  if (!options.skill) {
+    throw new Error("--skill is required for Capability calls");
+  }
+  if (!capability.ownerAgents.includes(options.agent)) {
+    throw new Error(`Capability denied: agent ${options.agent} cannot call ${capability.id}`);
+  }
+  if ((capability.allowedSkills ?? []).length > 0 && !capability.allowedSkills.includes(options.skill)) {
+    throw new Error(`Capability denied: skill ${options.skill} cannot call ${capability.id}`);
+  }
+}
+
+function normalizeExpectedValue(rawValue) {
+  const trimmed = rawValue.trim();
+  if (trimmed === "true") {
+    return true;
+  }
+  if (trimmed === "false") {
+    return false;
+  }
+  if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+    return Number(trimmed);
+  }
+  return trimmed.replace(/^["']|["']$/g, "");
+}
+
+function evaluateRuleCondition(condition, result) {
+  const match = condition.match(/^([A-Za-z0-9_.]+)\s*==\s*(.+)$/);
+  if (!match) {
+    return false;
+  }
+  const actual = valueAtPath(result, match[1]);
+  const expected = normalizeExpectedValue(match[2]);
+  return actual === expected;
+}
+
+function evaluateCapabilityDecision(capability, result, validationErrors) {
+  const missingEvidence = (capability.evidenceContract?.requiredFields ?? [])
+    .filter((field) => valueAtPath(result, field) === undefined);
+  const matchedRules = (capability.blockingRules ?? [])
+    .filter((rule) => evaluateRuleCondition(rule.when, result));
+
+  if (validationErrors.length > 0 || missingEvidence.length > 0) {
+    return {
+      action: "hold",
+      severity: "P1",
+      matchedRules,
+      missingEvidence,
+      validationErrors
+    };
+  }
+
+  if (matchedRules.length === 0) {
+    return {
+      action: "proceed",
+      severity: "none",
+      matchedRules,
+      missingEvidence,
+      validationErrors
+    };
+  }
+
+  const actionRank = { block: 4, human_escalation: 3, hold: 2, revise: 1 };
+  const severityRank = { P0: 3, P1: 2, P2: 1 };
+  const sorted = [...matchedRules].sort((left, right) => {
+    const severityDiff = (severityRank[right.severity] ?? 0) - (severityRank[left.severity] ?? 0);
+    if (severityDiff !== 0) {
+      return severityDiff;
+    }
+    return (actionRank[right.action] ?? 0) - (actionRank[left.action] ?? 0);
+  });
+
+  return {
+    action: sorted[0].action,
+    severity: sorted[0].severity,
+    matchedRules,
+    missingEvidence,
+    validationErrors
+  };
+}
+
+function defaultAdapterCwd(adapter, options) {
+  if (options.mcpCwd) {
+    return options.mcpCwd;
+  }
+  if (adapter.cwdEnv && process.env[adapter.cwdEnv]) {
+    return path.resolve(process.env[adapter.cwdEnv]);
+  }
+  if (adapter.defaultSiblingDir) {
+    return path.resolve(repoRoot, "..", adapter.defaultSiblingDir);
+  }
+  return repoRoot;
+}
+
+function resolveCapabilityAdapter(adapter, capabilityId, options) {
+  return {
+    command: options.mcpCommand || adapter.command,
+    args: options.mcpArgs.length > 0 ? options.mcpArgs : adapter.args ?? [],
+    cwd: defaultAdapterCwd(adapter, options),
+    toolName: adapter.toolNameMap?.[capabilityId] ?? capabilityId.split(".").at(-1),
+    timeoutMs: Number(options.timeoutMs || adapter.timeoutMs || 30000)
+  };
+}
+
+function callMcpStdio({ command, args, cwd, toolName, input, timeoutMs }) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, {
+      cwd,
+      stdio: ["pipe", "pipe", "pipe"],
+      windowsHide: true
+    });
+    let stdout = "";
+    let stderr = "";
+    let settled = false;
+
+    function settle(callback, value) {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      clearTimeout(timer);
+      callback(value);
+    }
+
+    const timer = setTimeout(() => {
+      child.kill();
+      settle(reject, new Error(`MCP call timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk.toString("utf8");
+    });
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk.toString("utf8");
+    });
+    child.on("error", (error) => {
+      settle(reject, error);
+    });
+    child.on("close", (exitCode) => {
+      if (exitCode !== 0) {
+        settle(reject, new Error(`MCP server exited with ${exitCode}: ${stderr.trim()}`));
+        return;
+      }
+
+      try {
+        const responses = stdout
+          .split(/\r?\n/)
+          .filter((line) => line.trim().length > 0)
+          .map((line) => JSON.parse(line));
+        const callResponse = responses.find((response) => response.id === 2);
+        if (!callResponse) {
+          throw new Error("MCP tools/call response was not returned");
+        }
+        if (callResponse.error) {
+          throw new Error(`MCP tools/call failed: ${callResponse.error.message}`);
+        }
+        settle(resolve, {
+          initialize: responses.find((response) => response.id === 1)?.result,
+          call: callResponse.result,
+          stderr
+        });
+      } catch (error) {
+        settle(reject, new Error(`${error.message}. stdout: ${stdout.trim()}`));
+      }
+    });
+
+    const initialize = {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "initialize",
+      params: {
+        protocolVersion: "2025-06-18",
+        capabilities: {},
+        clientInfo: { name: "archsight-aios", version: "1.0.1" }
+      }
+    };
+    const callTool = {
+      jsonrpc: "2.0",
+      id: 2,
+      method: "tools/call",
+      params: {
+        name: toolName,
+        arguments: input
+      }
+    };
+    child.stdin.write(`${JSON.stringify(initialize)}\n`);
+    child.stdin.write(`${JSON.stringify(callTool)}\n`);
+    child.stdin.end();
+  });
+}
+
+async function capabilityCall(options) {
+  if (!options.capability) {
+    throw new Error("--capability is required");
+  }
+  if (!options.input) {
+    throw new Error("--input is required");
+  }
+
+  const registry = await readCapabilityRegistry();
+  const capability = findCapability(registry, options.capability);
+  if (!capability) {
+    throw new Error(`Unknown Capability: ${options.capability}`);
+  }
+  authorizeCapability(capability, options);
+
+  const adapters = await readCapabilityAdapters();
+  const adapter = findCapabilityAdapter(adapters, capability.id);
+  if (!adapter) {
+    throw new Error(`No local adapter registered for Capability: ${capability.id}`);
+  }
+
+  const input = await readJson(options.input);
+  const inputErrors = validateJsonSchemaSubset(capability.inputSchema, input, "$.input");
+  if (inputErrors.length > 0) {
+    throw new Error(`Capability input validation failed: ${inputErrors.join("; ")}`);
+  }
+
+  const resolvedAdapter = resolveCapabilityAdapter(adapter, capability.id, options);
+  if (!resolvedAdapter.command) {
+    throw new Error(`Capability adapter ${adapter.id} does not define a command`);
+  }
+  if (!(await exists(resolvedAdapter.cwd))) {
+    throw new Error(`MCP adapter cwd not found: ${resolvedAdapter.cwd}`);
+  }
+
+  const mcp = await callMcpStdio({
+    command: resolvedAdapter.command,
+    args: resolvedAdapter.args,
+    cwd: resolvedAdapter.cwd,
+    toolName: resolvedAdapter.toolName,
+    input,
+    timeoutMs: resolvedAdapter.timeoutMs
+  });
+  const structuredContent = mcp.call?.structuredContent;
+  if (!structuredContent || typeof structuredContent !== "object") {
+    throw new Error("MCP tool result did not include structuredContent");
+  }
+
+  const outputErrors = validateJsonSchemaSubset(capability.outputSchema, structuredContent, "$.toolResult");
+  const decision = evaluateCapabilityDecision(capability, structuredContent, outputErrors);
+  const envelope = {
+    schema: 1,
+    capabilityId: capability.id,
+    agent: options.agent,
+    skill: options.skill,
+    authorized: true,
+    inputValidated: true,
+    adapter: {
+      id: adapter.id,
+      transport: adapter.transport,
+      cwd: resolvedAdapter.cwd,
+      command: resolvedAdapter.command,
+      args: resolvedAdapter.args,
+      toolName: resolvedAdapter.toolName
+    },
+    toolResult: structuredContent,
+    decision,
+    evidence: {
+      level: capability.authorityLevel,
+      source: "mcp.structuredContent",
+      serverInfo: mcp.initialize?.serverInfo
+    }
+  };
+
+  console.log(JSON.stringify(envelope, null, 2));
+  if (["block", "hold", "human_escalation"].includes(decision.action)) {
+    process.exitCode = 2;
+  }
 }
 
 function routeAgentName(manifest, agentId) {
@@ -624,6 +1019,44 @@ async function doctor() {
     await check("hermes sync record template", path.join(repoRoot, manifest.hermes.syncRecordTemplatePath));
   }
 
+  if (manifest.capabilityRegistry) {
+    const registryPath = path.join(repoRoot, manifest.capabilityRegistry.registryPath);
+    await check("capability registry schema", path.join(repoRoot, manifest.capabilityRegistry.schemaPath));
+    await check("capability registry", registryPath);
+    if (manifest.capabilityRegistry.adapterPath) {
+      await check("capability adapters", path.join(repoRoot, manifest.capabilityRegistry.adapterPath));
+    }
+
+    const registry = await readJson(registryPath);
+    checkCondition("capability registry schema version", registry.schema === 1, "schema === 1");
+    checkCondition("capability registry has capabilities", registry.capabilities?.length > 0, "capabilities.length > 0");
+
+    const capabilityIds = new Set();
+    for (const capability of registry.capabilities ?? []) {
+      checkCondition(`capability id unique ${capability.id}`, !capabilityIds.has(capability.id), capability.id);
+      capabilityIds.add(capability.id);
+      checkCondition(`capability authority ${capability.id}`, ["L1", "L2", "L3"].includes(capability.authorityLevel), capability.authorityLevel);
+      checkCondition(`capability has blocking rules ${capability.id}`, capability.blockingRules?.length > 0, "blockingRules.length > 0");
+      for (const agentId of capability.ownerAgents ?? []) {
+        checkCondition(`capability owner exists ${capability.id}/${agentId}`, agentIds.has(agentId), agentId);
+      }
+      for (const skillId of capability.allowedSkills ?? []) {
+        checkCondition(`capability skill exists ${capability.id}/${skillId}`, skillIds.has(skillId), skillId);
+      }
+    }
+
+    if (manifest.capabilityRegistry.adapterPath) {
+      const adapters = await readJson(path.join(repoRoot, manifest.capabilityRegistry.adapterPath));
+      checkCondition("capability adapters schema version", adapters.schema === 1, "schema === 1");
+      for (const adapter of adapters.adapters ?? []) {
+        checkCondition(`capability adapter transport ${adapter.id}`, adapter.transport === "stdio-mcp", adapter.transport);
+        for (const capabilityId of adapter.capabilityIds ?? []) {
+          checkCondition(`capability adapter target exists ${adapter.id}/${capabilityId}`, capabilityIds.has(capabilityId), capabilityId);
+        }
+      }
+    }
+  }
+
   await check("gemini support assets", geminiRoot);
   await check("gemini support skills", path.join(geminiRoot, "skills"));
   await check("gemini support workflows", path.join(geminiRoot, "workflows"));
@@ -942,6 +1375,8 @@ async function main() {
     await initProject(options);
   } else if (options.command === "validate") {
     await validateProjectTemplate(options);
+  } else if (options.command === "capability:call") {
+    await capabilityCall(options);
   } else if (options.command === "hermes:validate") {
     await validateHermesRegistry();
   } else if (options.command === "hermes:sync-dry-run") {

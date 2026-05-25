@@ -16,7 +16,7 @@
 | 规范知识库 / GraphRAG 项目 | `--profile rag-knowledge` |
 | 看某类任务怎么做 | `skills/` 和 `workflows/` |
 
-维护者才需要关心 Agent 定义。每个 Agent 不应只保存 prompt，而应保存职责、边界、输入、输出、禁止事项、参与 workflow 和模型路由。
+维护者才需要关心 Agent 定义。每个 Agent 不应只保存 prompt，而应保存职责、边界、输入、输出、禁止事项、参与 workflow、模型路由和可用 Capability。
 
 当前采用三层管理：
 
@@ -25,6 +25,7 @@
 | Source | `role.md` / `responsibilities.md` / `constraints.md` / `workflow.md` | 长期维护角色资产 |
 | Runtime | `system-prompt.md` | 运行时可加载的最小提示词 |
 | Instance / Adapter | Codex、Claude Code、Gemini、Hermes、飞书等 | 实际对话或协作入口 |
+| Capability | `runtime/capability-registry.json` | 外部工具、结构化知识和确定性证据接口 |
 
 当前与规划 Agent：
 
