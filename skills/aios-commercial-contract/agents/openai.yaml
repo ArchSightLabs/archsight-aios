@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Contract"
+  short_description: "整理工程合同履约节点、责任边界和证据链风险"
+  default_prompt: "当任务涉及建筑工程合同、分包、采购、租赁或补充协议履约资料时，使用该技能抽取履约节点、付款条件、责任边界、原文证据和人工复核事项；不得输出最终法律或结算结论。"

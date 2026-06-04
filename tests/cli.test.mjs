@@ -80,6 +80,36 @@ async function testProductIdentity() {
   await assert.rejects(fs.access(legacyManifest));
 }
 
+async function testManifestCoversRepositoryAssets() {
+  const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
+  const skillEntries = await fs.readdir(path.join(repoRoot, "skills"), { withFileTypes: true });
+  const workflowEntries = await fs.readdir(path.join(repoRoot, "workflows"), { withFileTypes: true });
+
+  const skillDirs = skillEntries
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith("aios-"))
+    .map((entry) => entry.name)
+    .sort();
+  const workflowIds = workflowEntries
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".md") && entry.name !== "README.md")
+    .map((entry) => entry.name.replace(/\.md$/, ""))
+    .sort();
+  const manifestSkillIds = manifest.skills.map((skill) => skill.id).sort();
+  const manifestWorkflowIds = manifest.workflows.map((workflow) => workflow.id).sort();
+
+  assert.deepEqual(manifestSkillIds, skillDirs);
+  assert.deepEqual(manifestWorkflowIds, workflowIds);
+}
+
+async function testSkillsAvoidPromptTemplateShape() {
+  const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
+  for (const skill of manifest.skills) {
+    const content = await fs.readFile(path.join(repoRoot, skill.path), "utf8");
+    assert.doesNotMatch(content, /## 提示词与执行逻辑/);
+    assert.doesNotMatch(content, /## 执行指令/);
+    assert.doesNotMatch(content, /当你被调用来执行/);
+  }
+}
+
 async function testInstallAntigravityUsesPluginByDefault() {
   const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-antigravity-2-"));
   const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
@@ -496,6 +526,8 @@ const tests = [
   testHelpCommand,
   testUnknownCommand,
   testProductIdentity,
+  testManifestCoversRepositoryAssets,
+  testSkillsAvoidPromptTemplateShape,
   testInstallAntigravityUsesPluginByDefault,
   testInstallGeminiWritesGeminiSupportAssets,
   testInstallAntigravityUsesLegacyWhenDetected,

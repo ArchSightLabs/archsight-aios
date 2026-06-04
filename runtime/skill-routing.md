@@ -28,6 +28,12 @@
 | 建筑行业项目中的 Prompt / Context / Memory / MCP / Tool | `aios-runtime` | Daedalus | `architecture-review` |
 | 建筑行业知识库 / 工程知识 RAG / GraphRAG Pipeline | `aios-runtime` | Daedalus | `rag-pipeline` |
 | 建筑行业项目中的受控代码修改、文档、脚本、测试 | `aios-exec` | Hephaestus | `feature-development` |
+| 工程招投标响应、评分点、废标风险和技术标资料矩阵 | `aios-commercial-tender` | Mason | `review` |
+| 工程合同履约节点、付款条件、责任边界和资料缺口 | `aios-commercial-contract` | Argus | `review` |
+| 施工日报、现场异常、项目群记录和问题追踪台账 | `aios-construction-daily` | Mason | `site-daily-loop` |
+| 工程会议纪要、待办闭环、遗留争议和下次追踪 | `aios-construction-meeting` | Mason | `site-daily-loop` |
+| 工程变更签证资料链、联系单、图纸变更和索赔线索 | `aios-commercial-variation` | Argus | `site-daily-loop` |
+| 专项施工方案、危险源、交底要点和规范 / 计算书复核清单 | `aios-construction-scheme` | Vitruvius | `review` |
 
 ## 路由原则
 
@@ -40,6 +46,7 @@
 - `aios-design` 用于实现前判断界面方案是否支撑建筑行业审查、定位、复核、追溯和交付；不替代 `frontend-generation` 的 UI 实现、布局验证和交互验证，也不替代通用 `frontend-design` 的视觉风格和前端代码美化评审。
 - `aios-arch` 应补足通用架构评审缺失的建筑行业平台视角，包括 BIM / IFC、规范知识链路、审图证据链、RAG / GraphRAG、任务编排、审计和后端运行可靠性。
 - `aios-structural` 用于结构力学、荷载、边界条件、FEM 和求解器接口评审；它不能替代结构工程师签审，关键数值必须来自 Capability 或项目已有求解器证据。
+- `aios-commercial-tender`、`aios-commercial-contract`、`aios-construction-daily`、`aios-construction-meeting`、`aios-commercial-variation` 和 `aios-construction-scheme` 属于工程业务管理增强；它们只处理建筑工程资料的抽取、证据链整理、风险提示和人工复核分流，不扩展为 HR、行政、财务等通用职能 Skill。
 - Agent 可以调用多个 Skill；Skill 也可以被多个 Agent 复用。
 - 项目工作目录中的事实优先于 AIOS 的通用模板。
 - Hermes / 飞书只是可选入口和调度适配器，不替代本地验证，也不是 AIOS 的必要前提。
@@ -56,6 +63,8 @@
 - 涉及结构力学、荷载、边界条件、FEM 或结构计算工具链：升级给 Euclid，并优先使用 `aios-structural`。
 - 涉及 RAG、GraphRAG、MCP、Tool Calling、Memory：升级给 Daedalus。
 - 涉及具体代码、脚本、测试、文档执行：交给 Hephaestus。
+- 涉及工程现场日报、会议闭环或变更签证线索：升级给 Mason 编排 `site-daily-loop`，并按资料类型调用 `aios-construction-daily`、`aios-construction-meeting` 或 `aios-commercial-variation`。
+- 涉及工程合同、招投标或专项施工方案：按风险类型分别交给 Argus、Mason 或 Vitruvius；涉及规范、计算或签审结论时必须保留人工复核或 Capability 证据。
 
 ## 项目接入
 

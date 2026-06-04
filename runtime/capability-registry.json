@@ -75,8 +75,18 @@
     {
       "id": "knowledge.norm_lookup",
       "type": "compliance_lookup",
-      "ownerAgents": ["vitruvius", "athena"],
-      "allowedSkills": ["aios-knowledge", "aios-arch", "aios-ceo"],
+      "ownerAgents": ["vitruvius", "athena", "mason", "argus"],
+      "allowedSkills": [
+        "aios-knowledge",
+        "aios-arch",
+        "aios-ceo",
+        "aios-commercial-tender",
+        "aios-commercial-contract",
+        "aios-construction-daily",
+        "aios-construction-meeting",
+        "aios-commercial-variation",
+        "aios-construction-scheme"
+      ],
       "authorityLevel": "L3",
       "description": "按地区、专业、版本、条文和适用条件检索规范知识，返回可追溯引用和适用性判断。",
       "status": "declared-interface",

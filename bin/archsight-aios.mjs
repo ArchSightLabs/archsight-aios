@@ -51,7 +51,13 @@ const skillAliases = {
     "aios-ai-runtime-design",
     "archsight-ai-runtime-design"
   ],
-  "aios-exec": ["aios-controlled-execution", "archsight-controlled-execution"]
+  "aios-exec": ["aios-controlled-execution", "archsight-controlled-execution"],
+  "aios-commercial-tender": ["aios-tender", "archsight-tender"],
+  "aios-commercial-contract": ["aios-contract", "archsight-contract"],
+  "aios-commercial-variation": ["aios-variation", "archsight-variation"],
+  "aios-construction-daily": ["aios-daily", "archsight-daily"],
+  "aios-construction-meeting": ["aios-meeting", "archsight-meeting"],
+  "aios-construction-scheme": ["aios-scheme", "archsight-scheme"]
 };
 
 function usage() {
@@ -215,18 +221,29 @@ async function listAiosSkills() {
     return manifest.skills.map((skill) => skill.id).sort();
   }
 
-  const skillsRoot = path.join(repoRoot, "skills");
-  const entries = await fs.readdir(skillsRoot, { withFileTypes: true });
-  return entries
-    .filter((entry) => entry.isDirectory() && entry.name.startsWith("aios-"))
-    .map((entry) => entry.name)
-    .sort();
+  return listRepositoryAiosSkills();
 }
 
 async function listAiosWorkflowPaths() {
   const manifest = await readManifest();
   return (manifest.workflows ?? [])
     .map((workflow) => workflow.path)
+    .sort();
+}
+
+async function listRepositoryAiosSkills() {
+  const entries = await fs.readdir(path.join(repoRoot, "skills"), { withFileTypes: true });
+  return entries
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith("aios-"))
+    .map((entry) => entry.name)
+    .sort();
+}
+
+async function listRepositoryWorkflowIds() {
+  const entries = await fs.readdir(path.join(repoRoot, "workflows"), { withFileTypes: true });
+  return entries
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".md") && entry.name !== "README.md")
+    .map((entry) => entry.name.replace(/\.md$/, ""))
     .sort();
 }
 
@@ -956,12 +973,24 @@ async function doctor() {
   const manifestPath = path.join(repoRoot, "runtime", "archsight-aios.manifest.json");
   const skillRoutingPath = path.join(repoRoot, "runtime", "skill-routing.md");
   const packageJson = await readJson(path.join(repoRoot, "package.json"));
+  const repositorySkillIds = await listRepositoryAiosSkills();
+  const repositoryWorkflowIds = await listRepositoryWorkflowIds();
 
   await check("manifest", manifestPath);
   checkCondition("manifest schema", manifest.schema === 1, "schema === 1");
   checkCondition("manifest name", manifest.name === "archsight-aios", "name === archsight-aios");
   checkCondition("package name", packageJson.name === "@archsight/aios", "name === @archsight/aios");
   checkCondition("package bin", packageJson.bin?.["archsight-aios"] === "./bin/archsight-aios.mjs", "bin.archsight-aios");
+  checkCondition(
+    "manifest covers skill directories",
+    JSON.stringify([...skillIds].sort()) === JSON.stringify(repositorySkillIds),
+    `manifest=${JSON.stringify([...skillIds].sort())} repo=${JSON.stringify(repositorySkillIds)}`
+  );
+  checkCondition(
+    "manifest covers workflow files",
+    JSON.stringify([...workflowIds].sort()) === JSON.stringify(repositoryWorkflowIds),
+    `manifest=${JSON.stringify([...workflowIds].sort())} repo=${JSON.stringify(repositoryWorkflowIds)}`
+  );
   checkCondition("codex workflows target", manifest.installTargets?.codexWorkflows === "~/.codex/workflows/aios", "codexWorkflows");
   checkCondition("antigravity plugin target", manifest.installTargets?.antigravityPlugin === "~/.gemini/config/plugins/archsight-aios", "antigravityPlugin");
   checkCondition("antigravity legacy skills target", manifest.installTargets?.antigravityLegacySkills === "~/.gemini/antigravity/skills", "antigravityLegacySkills");

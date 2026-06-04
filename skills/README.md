@@ -60,3 +60,16 @@ Skill 可以继续用 `SKILL.md` 表达操作方法，但涉及确定性工具�
 | `aios-knowledge` | BIM、IFC、建筑规范、审图规则和知识结构化。 |
 | `aios-structural` | 结构力学、荷载、边界条件、FEM 和确定性求解链路评审。 |
 | `aios-runtime` | Prompt、Context、Memory、MCP/Tool、RAG/GraphRAG 和多 Agent Runtime 设计。 |
+
+工程业务管理技能包 (Engineering Project Management)：
+
+| Skill | 用途 |
+| --- | --- |
+| `aios-commercial-tender` | 工程招投标响应证据链，用于提取评分点、资格条件、废标风险、资料缺口和人工复核事项。 |
+| `aios-commercial-contract` | 工程分包、采购和补充协议履约证据链，用于提取节点、责任边界、付款条件和合同资料缺口。 |
+| `aios-construction-daily` | 现场施工日报证据链，用于提取管理摘要、异常、问题台账、计划偏差和需补充确认事项。 |
+| `aios-construction-meeting` | 工程现场会议待办闭环，用于将会议讨论转化为责任人、期限、争议点和下次追踪清单。 |
+| `aios-commercial-variation` | 工程变更签证资料链审查，用于梳理联系单、纪要、图纸变更、合同流程和资料断点。 |
+| `aios-construction-scheme` | 专项施工方案证据链辅审，用于提取危险源、交底要点、规范核验点、计算书缺口和专家复核事项。 |
+
+工程业务管理 Skill 只处理建筑工程资料抽取、证据链整理、风险提示和人工复核分流，不替代法务、造价、监理、安全、项目经理、总工或专家签审。涉及规范、制度、结构计算、质量安全、金额、工期索赔或责任归属时，必须输出 `Claim / Evidence / Tool Result / Decision`；没有工具或人工证据时只能标注 `Need verify` 或 `Hold for human`。

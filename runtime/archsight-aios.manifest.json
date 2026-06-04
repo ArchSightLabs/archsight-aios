@@ -138,6 +138,48 @@
       "defaultWorkflow": "feature-development",
       "path": "skills/aios-exec/SKILL.md",
       "openaiConfigPath": "skills/aios-exec/agents/openai.yaml"
+    },
+    {
+      "id": "aios-commercial-tender",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "review",
+      "path": "skills/aios-commercial-tender/SKILL.md",
+      "openaiConfigPath": "skills/aios-commercial-tender/agents/openai.yaml"
+    },
+    {
+      "id": "aios-commercial-contract",
+      "primaryAgent": "argus",
+      "defaultWorkflow": "review",
+      "path": "skills/aios-commercial-contract/SKILL.md",
+      "openaiConfigPath": "skills/aios-commercial-contract/agents/openai.yaml"
+    },
+    {
+      "id": "aios-construction-daily",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "site-daily-loop",
+      "path": "skills/aios-construction-daily/SKILL.md",
+      "openaiConfigPath": "skills/aios-construction-daily/agents/openai.yaml"
+    },
+    {
+      "id": "aios-construction-meeting",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "site-daily-loop",
+      "path": "skills/aios-construction-meeting/SKILL.md",
+      "openaiConfigPath": "skills/aios-construction-meeting/agents/openai.yaml"
+    },
+    {
+      "id": "aios-commercial-variation",
+      "primaryAgent": "argus",
+      "defaultWorkflow": "site-daily-loop",
+      "path": "skills/aios-commercial-variation/SKILL.md",
+      "openaiConfigPath": "skills/aios-commercial-variation/agents/openai.yaml"
+    },
+    {
+      "id": "aios-construction-scheme",
+      "primaryAgent": "vitruvius",
+      "defaultWorkflow": "review",
+      "path": "skills/aios-construction-scheme/SKILL.md",
+      "openaiConfigPath": "skills/aios-construction-scheme/agents/openai.yaml"
     }
   ],
   "workflows": [
@@ -180,6 +222,10 @@
     {
       "id": "rag-pipeline",
       "path": "workflows/rag-pipeline.md"
+    },
+    {
+      "id": "site-daily-loop",
+      "path": "workflows/site-daily-loop.md"
     }
   ],
   "routes": [
@@ -248,6 +294,42 @@
       "skill": "aios-exec",
       "agent": "hephaestus",
       "workflow": "feature-development"
+    },
+    {
+      "taskType": "工程招投标响应、评分点、废标风险和技术标资料矩阵",
+      "skill": "aios-commercial-tender",
+      "agent": "mason",
+      "workflow": "review"
+    },
+    {
+      "taskType": "工程合同履约节点、付款条件、责任边界和资料缺口",
+      "skill": "aios-commercial-contract",
+      "agent": "argus",
+      "workflow": "review"
+    },
+    {
+      "taskType": "施工日报、现场异常、项目群记录和问题追踪台账",
+      "skill": "aios-construction-daily",
+      "agent": "mason",
+      "workflow": "site-daily-loop"
+    },
+    {
+      "taskType": "工程会议纪要、待办闭环、遗留争议和下次追踪",
+      "skill": "aios-construction-meeting",
+      "agent": "mason",
+      "workflow": "site-daily-loop"
+    },
+    {
+      "taskType": "工程变更签证资料链、联系单、图纸变更和索赔线索",
+      "skill": "aios-commercial-variation",
+      "agent": "argus",
+      "workflow": "site-daily-loop"
+    },
+    {
+      "taskType": "专项施工方案、危险源、交底要点和规范/计算书复核清单",
+      "skill": "aios-construction-scheme",
+      "agent": "vitruvius",
+      "workflow": "review"
     }
   ],
   "projectTemplate": {

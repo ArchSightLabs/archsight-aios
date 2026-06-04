@@ -21,6 +21,7 @@ AIOS Workflow 是建筑行业项目的增强路径，不是普通工程任务的
 | RAG / GraphRAG 知识链路 | `rag-pipeline` |
 | 发布前检查 | `release` |
 | 前端生成 | `frontend-generation` |
+| 施工日报、工程会议、现场异常和变更签证线索每日闭环 | `site-daily-loop` |
 
 ## 执行要求
 
@@ -30,6 +31,7 @@ AIOS Workflow 是建筑行业项目的增强路径，不是普通工程任务的
 - 最后用测试、构建、lint、typecheck 或人工检查验证。
 - 涉及建筑行业、BIM、IFC、规范、审图或 RAG / GraphRAG 时，先确认项目是否启用对应 profile。
 - 涉及规范检查、结构计算、安全扫描、测试门禁或 Agent 冲突时，输出 `Claim / Evidence / Tool Result / Decision`；工具证据缺失时不得标记为已验证。
+- 涉及施工日报、会议纪要、联系单或变更签证线索时，使用 `site-daily-loop` 并保留 Source Map、Evidence 和人工复核结论。
 
 ## 本项目默认流程
 
@@ -41,3 +43,4 @@ AIOS Workflow 是建筑行业项目的增强路径，不是普通工程任务的
 - Quality readiness / UAT / 试运行确认：
 - Release：
 - RAG / GraphRAG：
+- Site daily loop：
