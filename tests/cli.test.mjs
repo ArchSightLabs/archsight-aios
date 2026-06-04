@@ -17,6 +17,14 @@ function run(args, options = {}) {
   });
 }
 
+function runNodeScript(scriptPath, options = {}) {
+  return spawnSync(process.execPath, [scriptPath], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    ...options
+  });
+}
+
 function runWithHome(args, homeDir) {
   return run(args, {
     env: {
@@ -36,7 +44,7 @@ async function testHelp() {
   assert.equal(result.status, 0);
   assert.match(result.stdout, /ArchSight AIOS/);
   assert.match(result.stdout, /archsight-aios help/);
-  assert.match(result.stdout, /codex\|agents\|gemini\|antigravity\|all/);
+  assert.match(result.stdout, /codex\|agents\|gemini\|antigravity\|workbuddy\|all/);
   assert.match(result.stdout, /archsight-aios doctor/);
   assert.match(result.stdout, /archsight-aios init /);
   assert.doesNotMatch(result.stdout, /init-project/);
@@ -76,6 +84,7 @@ async function testProductIdentity() {
   assert.equal(manifest.installTargets.antigravityPlugin, "~/.gemini/config/plugins/archsight-aios");
   assert.equal(manifest.installTargets.antigravityLegacySkills, "~/.gemini/antigravity/skills");
   assert.equal(manifest.installTargets.geminiSupportAssets, "~/.gemini/archsight-aios");
+  assert.equal(manifest.installTargets.workBuddySkills, "~/.workbuddy/skills");
 
   await assert.rejects(fs.access(legacyManifest));
 }
@@ -98,6 +107,38 @@ async function testManifestCoversRepositoryAssets() {
 
   assert.deepEqual(manifestSkillIds, skillDirs);
   assert.deepEqual(manifestWorkflowIds, workflowIds);
+}
+
+async function testPublicDiscoveryMetadata() {
+  const pkg = await readJson(path.join(repoRoot, "package.json"));
+  const geminiExtension = await readJson(path.join(repoRoot, "gemini-extension.json"));
+  const claudePlugin = await readJson(path.join(repoRoot, ".claude-plugin", "plugin.json"));
+  const claudeMarketplace = await readJson(path.join(repoRoot, ".claude-plugin", "marketplace.json"));
+
+  assert.equal(pkg.scripts["validate:skills"], "node ./scripts/validate-skills.mjs");
+  assert.ok(pkg.files.includes("skills/"));
+  assert.ok(pkg.files.includes("scripts/"));
+  assert.ok(pkg.files.includes(".claude-plugin/"));
+  assert.ok(pkg.files.includes("gemini-extension.json"));
+  assert.ok(pkg.files.includes("adapters/"));
+  for (const keyword of ["agent-skills", "skills-sh", "gemini-cli", "claude-code", "workbuddy", "construction-ai"]) {
+    assert.ok(pkg.keywords.includes(keyword), keyword);
+  }
+
+  assert.equal(geminiExtension.name, "archsight-aios");
+  assert.equal(geminiExtension.version, pkg.version);
+  assert.equal(geminiExtension.contextFileName, "GEMINI.md");
+  assert.equal(claudePlugin.name, "archsight-aios");
+  assert.equal(claudePlugin.version, pkg.version);
+  assert.equal(claudePlugin.skills, "./skills/");
+  assert.equal(claudeMarketplace.plugins[0].name, "archsight-aios");
+  assert.equal(claudeMarketplace.plugins[0].skills, "./skills/");
+}
+
+async function testValidateSkillsCommand() {
+  const result = runNodeScript(path.join(repoRoot, "scripts", "validate-skills.mjs"));
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /Skill validation passed/);
 }
 
 async function testSkillsAvoidPromptTemplateShape() {
@@ -140,6 +181,38 @@ async function testInstallGeminiWritesGeminiSupportAssets() {
   await fs.access(path.join(tempHome, ".gemini", "GEMINI.md"));
   await fs.access(path.join(tempHome, ".gemini", "archsight-aios", "runtime", "archsight-aios.manifest.json"));
   await assert.rejects(fs.access(path.join(tempHome, ".archsight-aios")));
+
+  await fs.rm(tempHome, { recursive: true, force: true });
+}
+
+async function testInstallWorkBuddyWritesPersonalSkills() {
+  const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-workbuddy-"));
+  const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
+  const skillName = manifest.skills[0].id;
+
+  const result = runWithHome(["install", "--target", "workbuddy", "--scope", "user"], tempHome);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /workbuddy skills/);
+
+  await fs.access(path.join(tempHome, ".workbuddy", "skills", skillName, "SKILL.md"));
+  await assert.rejects(fs.access(path.join(tempHome, ".gemini", "archsight-aios")));
+  await assert.rejects(fs.access(path.join(tempHome, ".codex", "skills", skillName, "SKILL.md")));
+
+  await fs.rm(tempHome, { recursive: true, force: true });
+}
+
+async function testInstallAllIncludesWorkBuddy() {
+  const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-all-workbuddy-"));
+  const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
+  const skillName = manifest.skills[0].id;
+
+  const result = runWithHome(["install", "--target", "all", "--scope", "user"], tempHome);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /workbuddy skills/);
+
+  await fs.access(path.join(tempHome, ".workbuddy", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".codex", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".gemini", "archsight-aios", "skills", skillName, "SKILL.md"));
 
   await fs.rm(tempHome, { recursive: true, force: true });
 }
@@ -527,9 +600,13 @@ const tests = [
   testUnknownCommand,
   testProductIdentity,
   testManifestCoversRepositoryAssets,
+  testPublicDiscoveryMetadata,
+  testValidateSkillsCommand,
   testSkillsAvoidPromptTemplateShape,
   testInstallAntigravityUsesPluginByDefault,
   testInstallGeminiWritesGeminiSupportAssets,
+  testInstallWorkBuddyWritesPersonalSkills,
+  testInstallAllIncludesWorkBuddy,
   testInstallAntigravityUsesLegacyWhenDetected,
   testInstallAntigravityInstallsPluginWhen2ConfigDetected,
   testValidateProjectTemplate,

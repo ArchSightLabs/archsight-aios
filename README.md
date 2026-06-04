@@ -1,6 +1,6 @@
 # ArchSight AIOS
 
-ArchSight AIOS 是一套面向建筑 AI 研发的规则、Agent、Skill、Workflow 和项目接入工具包。它重点服务 BIM / IFC / Revit / CAD、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图和 AI Coding 治理，让 Codex、Claude Code、Antigravity 2.0 等 AI Coding 工具在同一个项目里读取同一套规则、项目上下文和验收要求。
+ArchSight AIOS 是一套面向建筑行业知识工作从业者与 AI 研发团队的规则、Agent、Skill、Workflow 和项目接入工具包。它重点服务 BIM / IFC / Revit / CAD、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图、工程资料证据链和 AI Coding 治理，让 Codex、Claude Code、Antigravity 2.0、WorkBuddy 等 AI Agent 工具在同一个项目或个人 skills 目录里读取同一套规则、项目上下文和验收要求。
 
 AIOS 不是全行业项目模板集合。它保留通用的 AI 编码规则、Agent 路由、Workflow、项目 `.ai/` 上下文和交付验证能力，但真正的差异化能力集中在建筑行业语义、工程证据链、规范知识工程、Capability 工具证据和可复核的 AI 研发流程。
 
@@ -92,10 +92,11 @@ AIOS 的多 Agent 协作不应停留在 Prompt 角色扮演。Agent 提出架构
 | 命令 | 用途 |
 | --- | --- |
 | `help` | 查看 CLI 帮助、可用命令和示例。 |
-| `install` | 安装 ArchSight AIOS 用户级资产到 Codex、Antigravity 2.0、Gemini 和共享目录。 |
+| `install` | 安装 ArchSight AIOS 用户级资产到 Codex、Antigravity 2.0、Gemini、WorkBuddy 和共享目录。 |
 | `doctor` | 检查仓库资产、manifest、用户级安装、Skill 和 Workflow 是否一致。 |
 | `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录和可选行业 profile。 |
 | `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
+| `validate:skills` | 校验公共 skill 发现入口、frontmatter、跨 host manifest 和 npm metadata 是否一致。 |
 | `capability:call` | 按 Capability Registry 权限边界调用本地 MCP Adapter，并输出 Tool Result 与仲裁 Decision。 |
 
 本地调用 `archsight-solver` 示例：
@@ -116,12 +117,30 @@ npx @archsight/aios capability:call --capability solver.beam_deflection_servicea
 - Gemini：`~/.gemini/GEMINI.md`、`~/.gemini/archsight-aios/`
 - Antigravity 2.0：`~/.gemini/config/plugins/archsight-aios/`
 - Antigravity 1.x legacy：仅当已存在 `~/.gemini/antigravity/` 时，写入 `~/.gemini/antigravity/skills/`；如果同时检测到 Antigravity 2.0 配置，也会额外写入 2.0 plugin 目录。
+- WorkBuddy：`~/.workbuddy/skills/`
 
 `~/.agents/skills/` 和 `~/.agents/workflows/aios/` 是可选的通用 Agent 共享目录，不是所有 AI Agent 都会自动读取。需要这类兼容目录时，单独执行：
 
 ```bash
 npx @archsight/aios install --target agents --scope user
 ```
+
+WorkBuddy 固定读取个人 skills 目录，可单独安装：
+
+```bash
+npx @archsight/aios install --target workbuddy --scope user
+```
+
+## 公共发现
+
+AIOS 保留标准 `skills/` 目录作为公共发现入口，供 `skills.sh`、`npx skills`、Antigravity / agy、Gemini CLI extension、Claude Code plugin marketplace、WorkBuddy 和第三方索引器扫描。
+
+```powershell
+npx skills add ArchSightLabs/archsight-aios --list
+npx skills add ArchSightLabs/archsight-aios --skill aios-arch --global
+```
+
+跨 host 发现元数据包括根目录 `gemini-extension.json`、`.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json` 和 `package.json` 的 `agent-skills` / `skills-sh` / `gemini-cli` 等关键词。公共发现、GitHub topics、索引请求和发布前检查见 [公共发现与上架清单](docs/PUBLIC_DISCOVERY.md)。
 
 ## init 默认行为
 
@@ -154,6 +173,8 @@ npx @archsight/aios init --mode ai-only
 npm run install:user
 npm run doctor
 npm run smoke:project
+npm run validate:skills
+npx skills add . --list
 npm test
 ```
 
@@ -168,6 +189,8 @@ npm test
 - [Workflows](workflows/README.md)
 - [Templates](templates/README.md)
 - [Runtime 路由](runtime/agent-routing.md)
+- [WorkBuddy 适配说明](adapters/workbuddy/README.md)
+- [公共发现与上架清单](docs/PUBLIC_DISCOVERY.md)
 
 ## 开源协作
 

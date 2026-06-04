@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "name": "archsight-aios",
-  "version": "0.1.0",
-  "description": "ArchSight AIOS agent, skill, workflow, runtime, and project-template registry.",
+  "version": "1.2.0",
+  "description": "ArchSight AIOS agent, skill, workflow, runtime, and project-template registry for building-industry knowledge workers and AI engineering teams.",
   "agents": [
     {
       "id": "atlas",
@@ -375,6 +375,7 @@
   "installTargets": {
     "codexSkills": "~/.codex/skills",
     "codexWorkflows": "~/.codex/workflows/aios",
+    "workBuddySkills": "~/.workbuddy/skills",
     "sharedAgentSkills": "~/.agents/skills",
     "sharedAgentWorkflows": "~/.agents/workflows/aios",
     "geminiInstructions": "~/.gemini/GEMINI.md",

@@ -1,7 +1,7 @@
 {
   "name": "@archsight/aios",
-  "version": "1.1.0",
-  "description": "面向建筑 AI 研发的规则、Skill、Workflow 与多 Agent 项目接入工具包。",
+  "version": "1.2.0",
+  "description": "面向建筑行业知识工作从业者与 AI 研发团队的 Skills、Workflow 与多 Agent 工具包 / Building-industry AI agent skills for BIM, IFC, RAG, GraphRAG, project evidence work, code review, and runtime governance.",
   "type": "module",
   "homepage": "https://github.com/ArchSightLabs/archsight-aios#readme",
   "repository": {
@@ -20,9 +20,24 @@
     "rag",
     "graphrag",
     "construction",
+    "construction-ai",
+    "building-ai",
+    "aec",
+    "building-code",
+    "project-evidence-work",
+    "agent-skills",
+    "ai-agent",
     "codex",
+    "gemini-cli",
     "antigravity",
-    "claude-code"
+    "claude-code",
+    "workbuddy",
+    "skills-sh",
+    "mcp",
+    "runtime-governance",
+    "architecture-review",
+    "code-review",
+    "design-review"
   ],
   "bin": {
     "archsight-aios": "./bin/archsight-aios.mjs"
@@ -31,6 +46,7 @@
     "doctor": "node ./bin/archsight-aios.mjs doctor",
     "install:user": "node ./bin/archsight-aios.mjs install --target all --scope user",
     "smoke:project": "node ./bin/archsight-aios.mjs validate --temp",
+    "validate:skills": "node ./scripts/validate-skills.mjs",
     "test": "node ./tests/cli.test.mjs"
   },
   "engines": {
@@ -38,6 +54,8 @@
   },
   "files": [
     "bin/",
+    "scripts/",
+    "adapters/",
     "skills/",
     "workflows/",
     "templates/",
@@ -54,8 +72,11 @@
     "prompts/",
     "vision/",
     "docs/",
+    ".claude-plugin/",
+    "gemini-extension.json",
     "LICENSE",
     "CHANGELOG.md",
+    "RELEASE_NOTES.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
     "CODE_OF_CONDUCT.md",

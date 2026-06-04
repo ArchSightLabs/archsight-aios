@@ -1,0 +1,60 @@
+{
+  "name": "archsight",
+  "owner": {
+    "name": "ArchSightLabs"
+  },
+  "metadata": {
+    "description": "ArchSight AIOS 公共 skill marketplace / public marketplace for building-industry AI engineering skills."
+  },
+  "plugins": [
+    {
+      "name": "archsight-aios",
+      "description": "面向建筑行业知识工作从业者与 AI 研发团队的 Skills、Workflow 与多 Agent 工具包 / Building-industry AI agent skills for BIM, IFC, RAG, GraphRAG, project evidence work, code review, and runtime governance.",
+      "source": "./",
+      "category": "AI & Agent Building",
+      "tags": [
+        "agent-skills",
+        "construction-ai",
+        "building-ai",
+        "aec",
+        "bim",
+        "ifc",
+        "building-code",
+        "project-evidence-work",
+        "rag",
+        "graphrag",
+        "mcp",
+        "runtime-governance",
+        "codex",
+        "claude-code",
+        "gemini-cli",
+        "antigravity",
+        "workbuddy",
+        "architecture-review",
+        "code-review",
+        "design-review"
+      ],
+      "repository": "https://github.com/ArchSightLabs/archsight-aios",
+      "homepage": "https://github.com/ArchSightLabs/archsight-aios",
+      "license": "Apache-2.0",
+      "keywords": [
+        "agent skills",
+        "construction AI",
+        "building code",
+        "building-industry AI",
+        "AEC AI",
+        "project evidence work",
+        "BIM",
+        "IFC",
+        "GraphRAG",
+        "architecture review",
+        "code review",
+        "runtime design",
+        "structural review",
+        "construction daily",
+        "tender review"
+      ],
+      "skills": "./skills/"
+    }
+  ]
+}
