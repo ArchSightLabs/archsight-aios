@@ -28,11 +28,11 @@
 - README 增加本地调用 `archsight-solver` 的 Capability 示例，并避免写死个人机器路径。
 - `aios-arch`、`aios-review`、`aios-runtime`、`aios-exec` 等 Skill 增加 Capability / Tool Result / Evidence / Decision 的证据链要求。
 - 架构评审、Feature 开发和 RAG Pipeline workflow 增加 Capability-backed arbitration 要求。
-- 结构力学挠度限值校核使用 `solver.beam_deflection_serviceability_check` 作为正式 Capability 命名，明确它是正常使用挠度校核，不是强度、稳定或规范承载力设计。
+- 结构力学挠度限值校核统一使用 `solver.beam_deflection_serviceability_check`，不再暴露容易误读为强度或稳定承载力校核的 `solver.beam_capacity_check` 命名，明确它是正常使用挠度校核。
 
 ### 兼容性说明
 
-- `solver.beam_deflection_serviceability_check` 是本版本发布的正式挠度正常使用校核接口。
+- `solver.beam_capacity_check` 未进入正式发布接口；新接入必须使用 `solver.beam_deflection_serviceability_check`。
 - `archsight-solver` 仍是本地可选 Adapter，不是 AIOS 安装的强依赖。没有相邻 solver 仓库或未设置 `ARCHSIGHT_SOLVER_HOME` 时，Capability 调用会报告本地 adapter cwd 不存在。
 - 当前 MCP 对接仅声明本地 stdio 调用，不开放远程 HTTP / SSE / Gateway 鉴权模型。
 
