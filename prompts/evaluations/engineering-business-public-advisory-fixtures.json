@@ -1,0 +1,422 @@
+{
+  "schema": 1,
+  "name": "engineering-business-public-advisory-fixtures",
+  "version": "0.2",
+  "dataBoundary": "Fully de-identified public fixtures derived from advisory document shapes. Customer names, people, locations, dates, amounts, document numbers, and project facts are synthetic.",
+  "sourceBoundary": "Source signals preserve document type, structural shape, and AIOS routing need only. Private provenance is kept under ignored .local-docs and must not be copied into public fixtures.",
+  "syntheticDataPolicy": {
+    "entitiesAreFictional": true,
+    "purpose": "Keep realistic extraction fields while preventing leakage of customer identities, contacts, locations, dates, amounts, and raw source text.",
+    "inputFormat": "Markdown-normalized fixtures. Raw PDF, DOCX, image, and PPT parsing are tested separately from prompt behavior."
+  },
+  "cases": [
+    {
+      "id": "public-advisory-technical-bid-route",
+      "skillId": "aios-commercial-tender",
+      "promptPath": "skills/aios-commercial-tender/prompts/basic-prompt.md",
+      "markdownFixturePath": "prompts/evaluations/public-advisory-md/01-technical-bid.md",
+      "scenario": "技术标生成后人工复核问题清单和评分点响应矩阵",
+      "sourceSignals": [
+        "advisory:deidentified-docx-shape technical-bid issue list",
+        "source-shape:short question-like items plus scoring-response categories",
+        "boundary-shape:no raw tender document and no real customer project facts"
+      ],
+      "syntheticFields": {
+        "customer": ["虚构客户：青石建工集团有限公司"],
+        "project": ["虚构项目：云港新区星澜中心一期总承包工程"],
+        "location": ["虚构地点：青岚市云港新区"],
+        "dates": ["虚构日期：2031-04-18"],
+        "people": ["虚构人员：王若衡、陈知远、林初禾"],
+        "numbers": ["虚构金额：招标控制价 86,430,000 元、投标保证金 800,000 元"],
+        "documentRefs": ["虚构编号：YGZX-TB-2031-017"]
+      },
+      "advisoryComparison": [
+        "来源资料形态更像 AI 技术标工具试用后的问题清单，而不是完整招标文件。",
+        "公开样例保留输入类型判断、评分点响应矩阵、资料缺口和人工复核边界。"
+      ],
+      "weakPrompt": "请分析这些技术标问题，给出建议。",
+      "inputSummary": [
+        "虚构施工企业经营团队试用 AI 生成技术标后，整理了一组人工复核问题。",
+        "资料包含评分点、章节结构、图表资料、格式合并和专业工具边界。",
+        "未提供招标文件原文、评分办法页码、废标条款或完整投标文件。"
+      ],
+      "sampleInput": [
+        "使用 markdownFixturePath 指向的 Markdown 作为完整验证输入。",
+        "该 Markdown 包含虚构客户、项目、人员、地点、日期、金额和编号。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "输入类型",
+        "缺少可验证招标依据",
+        "AI 技术标复核问题回应矩阵",
+        "评分点响应矩阵",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "先判断这不是完整读标任务。",
+        "输出 AI 技术标复核问题回应矩阵。",
+        "输出评分点响应矩阵并标注缺证据字段。",
+        "把投标、技术、法务、造价复核事项分流。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "输入类型和资料状态判断",
+        "AI 技术标复核问题回应矩阵",
+        "评分点响应矩阵",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "默认已读取完整招标文件。",
+        "给出工具采购建议。",
+        "编造评分分值、废标项或项目结论。"
+      ],
+      "bannedClaims": [
+        "中标概率",
+        "评标结论",
+        "保证中标",
+        "工具采购建议",
+        "串标规避建议"
+      ]
+    },
+    {
+      "id": "public-advisory-contract-obligation-route",
+      "skillId": "aios-commercial-contract",
+      "promptPath": "skills/aios-commercial-contract/prompts/basic-prompt.md",
+      "markdownFixturePath": "prompts/evaluations/public-advisory-md/02-contract.md",
+      "scenario": "工程分包合同履约节点、付款结算和空白字段复核",
+      "sourceSignals": [
+        "advisory:deidentified-docx-shape labor-subcontract contract",
+        "source-shape:contract body with payment acceptance settlement and blank fields",
+        "boundary-shape:contract text fragment cannot support legal conclusions"
+      ],
+      "syntheticFields": {
+        "customer": ["虚构客户：青石建工集团有限公司"],
+        "project": ["虚构项目：云港新区星澜中心一期总承包工程"],
+        "location": ["虚构地点：青岚市云港新区"],
+        "dates": ["虚构日期：2031-04-22、2031-05-25"],
+        "people": ["虚构人员：李慕白、赵澄、顾南栀"],
+        "numbers": ["虚构金额：合同暂定价 12,680,000 元、质保金比例 3%"],
+        "documentRefs": ["虚构编号：QSLW-2031-0422"]
+      },
+      "advisoryComparison": [
+        "来源资料形态包含合同主体、履约、付款、验收、结算和资料提交节点。",
+        "公开样例只保留履约节点和空白字段核对，不保留原合同措辞。"
+      ],
+      "weakPrompt": "请总结这份合同的重点和风险。",
+      "inputSummary": [
+        "输入为工程分包合同片段。",
+        "资料包含月度工程量、验收、结算、资料提交和工资支付相关条款。",
+        "合同价款、现场代表、工程地点、签章状态等字段需要补充确认。"
+      ],
+      "sampleInput": [
+        "使用 markdownFixturePath 指向的 Markdown 作为完整验证输入。",
+        "该 Markdown 包含虚构客户、项目、人员、地点、日期、金额和编号。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "合同基本信息",
+        "空白字段优先核对表",
+        "关键履约节点",
+        "付款和结算条款",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "先列合同基本信息和空白字段。",
+        "把履约节点拆成触发条件、期限、责任方、依据和需准备资料。",
+        "付款结算只做条件梳理，不做金额判断。",
+        "保留法务、商务、造价、财务和项目负责人复核边界。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "合同基本信息",
+        "空白字段优先核对表",
+        "关键履约节点",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "只输出法律风险摘要。",
+        "忽略空白字段和履约触发条件。",
+        "把风险提示写成违约责任结论。"
+      ],
+      "bannedClaims": [
+        "法律意见",
+        "违约定性",
+        "索赔金额",
+        "结算金额结论",
+        "责任归属结论"
+      ]
+    },
+    {
+      "id": "public-advisory-daily-template-quality",
+      "skillId": "aios-construction-daily",
+      "promptPath": "skills/aios-construction-daily/prompts/basic-prompt.md",
+      "markdownFixturePath": "prompts/evaluations/public-advisory-md/03-daily.md",
+      "scenario": "施工日报管理摘要、问题跟踪和模板质量诊断",
+      "sourceSignals": [
+        "advisory:deidentified-docx-shape construction daily report",
+        "source-shape:multi-table daily with weather work content resources and blank photo fields",
+        "boundary-shape:blank cells indicate data-quality gaps not site-fact conclusions"
+      ],
+      "syntheticFields": {
+        "customer": ["虚构客户：青石建工集团有限公司"],
+        "project": ["虚构项目：云港新区星澜中心一期总承包工程"],
+        "location": ["虚构地点：青岚市云港新区 2 号楼"],
+        "dates": ["虚构日期：2031-04-23"],
+        "people": ["虚构人员：周砚、白昀、许清禾"],
+        "numbers": ["虚构数字：瓦工 18 人、安装 9 人、塔吊 1 台、混凝土 C35 36m3"],
+        "documentRefs": ["虚构编号：DR-2031-04-23-017"]
+      },
+      "advisoryComparison": [
+        "来源资料形态是表格化日报，存在大量短字段和空白区域。",
+        "公开样例保留日报结构、空白字段和待核实事项，不保留项目现场事实。"
+      ],
+      "weakPrompt": "请总结这份项目日报并指出问题。",
+      "inputSummary": [
+        "输入为单日施工日报片段。",
+        "资料包含天气、施工内容、人员、机械、材料、检查、照片和明日计划字段。",
+        "部分资源、照片、完成量和滞后措施字段为空。"
+      ],
+      "sampleInput": [
+        "使用 markdownFixturePath 指向的 Markdown 作为完整验证输入。",
+        "该 Markdown 包含虚构客户、项目、人员、地点、日期、材料数量和编号。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "当日管理摘要",
+        "问题跟踪表",
+        "日报模板质量诊断",
+        "需补充确认事项",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "区分已记录事实、资料空白和需补充确认。",
+        "把机械、材料、照片等空白字段归入模板质量诊断。",
+        "输出问题台账字段，便于项目复盘。",
+        "不把未提及事项写成现场不合格。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "当日管理摘要",
+        "问题跟踪表",
+        "日报模板质量诊断",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "把材料表为空写成未进材料。",
+        "把照片缺失写成无施工留痕结论。",
+        "直接判断进度、质量或安全不合格。"
+      ],
+      "bannedClaims": [
+        "项目进度不合格",
+        "质量验收结论",
+        "安全合规结论",
+        "签证成立",
+        "索赔成立"
+      ]
+    },
+    {
+      "id": "public-advisory-meeting-action-route",
+      "skillId": "aios-construction-meeting",
+      "promptPath": "skills/aios-construction-meeting/prompts/basic-prompt.md",
+      "markdownFixturePath": "prompts/evaluations/public-advisory-md/04-meeting.md",
+      "scenario": "工程会议纪要待办闭环和责任线索整理",
+      "sourceSignals": [
+        "advisory:deidentified-docx-shape meeting minutes",
+        "source-shape:meeting minutes with table status clues and missing owner deadline fields",
+        "boundary-shape:speaker and department are clues not final accountability"
+      ],
+      "syntheticFields": {
+        "customer": ["虚构客户：青石建工集团有限公司"],
+        "project": ["虚构项目：云港新区星澜中心一期总承包工程"],
+        "location": ["虚构地点：项目部三楼会议室"],
+        "dates": ["虚构日期：2031-04-24 15:00"],
+        "people": ["虚构人员：沈乔、陆遥、韩知夏、唐砚"],
+        "numbers": ["虚构数字：待办 7 项、需确认责任人 3 项、下次会议 2031-04-30"],
+        "documentRefs": ["虚构编号：MM-2031-04-24-006"]
+      },
+      "advisoryComparison": [
+        "来源资料形态包含会议主题、参会角色、过程状态和后续事项。",
+        "公开样例只保留待办闭环结构，不保留真实人员、会议时间或项目名称。"
+      ],
+      "weakPrompt": "请整理这份会议纪要的重点和待办。",
+      "inputSummary": [
+        "输入为工程协调会纪要片段。",
+        "资料包含多个部门的资料提交、整改、证照、培训和后续跟踪事项。",
+        "部分事项只有发言人或部门线索，没有最终责任人和截止时间。"
+      ],
+      "sampleInput": [
+        "使用 markdownFixturePath 指向的 Markdown 作为完整验证输入。",
+        "该 Markdown 包含虚构客户、项目、人员、地点、日期、待办数量和编号。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "会议核心结论",
+        "待办闭环表",
+        "责任线索与需确认表",
+        "下次会议建议关注",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "提取会议中明确出现的决定、问题、待办和分工。",
+        "责任人不明确时标为需确认责任人。",
+        "期限不明确时标为需确认期限。",
+        "把发言人作为责任线索，不自动当成最终责任人。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "会议核心结论",
+        "待办闭环表",
+        "责任线索与需确认表",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "只生成会议摘要。",
+        "自行补截止日期。",
+        "把讨论事项改写成正式决议。"
+      ],
+      "bannedClaims": [
+        "最终责任归属",
+        "正式会议决议",
+        "合同通知效力",
+        "审批通过",
+        "签证成立"
+      ]
+    },
+    {
+      "id": "public-advisory-variation-evidence-route",
+      "skillId": "aios-commercial-variation",
+      "promptPath": "skills/aios-commercial-variation/prompts/basic-prompt.md",
+      "markdownFixturePath": "prompts/evaluations/public-advisory-md/05-variation.md",
+      "scenario": "变更签证资料链完整度和公开样表字段结构整理",
+      "sourceSignals": [
+        "advisory:deidentified-public-sample-shape variation form fields",
+        "source-shape:form fields plus meeting daily contract process clues",
+        "boundary-shape:form shape and process clues do not establish settlement facts"
+      ],
+      "syntheticFields": {
+        "customer": ["虚构客户：青石建工集团有限公司"],
+        "project": ["虚构项目：云港新区星澜中心一期总承包工程"],
+        "location": ["虚构地点：B 标段地下室东区"],
+        "dates": ["虚构日期：2031-04-25、2031-04-26"],
+        "people": ["虚构人员：许清禾、陆遥、孟星河"],
+        "numbers": ["虚构金额：暂估变更金额 218,600 元、工程量 42.5m3"],
+        "documentRefs": ["虚构编号：VS-2031-0425-009、LC-2031-0426-003"]
+      },
+      "advisoryComparison": [
+        "来源资料形态包含样表字段、过程资料和合同流程线索。",
+        "公开样例只保留字段结构和资料链缺口，不保留真实签证事项。"
+      ],
+      "weakPrompt": "请分析这份变更签证资料是否完整。",
+      "inputSummary": [
+        "输入为变更签证资料链片段。",
+        "资料包含样表字段、会议线索、日报记录、合同流程条款和缺失签认资料。",
+        "缺少正式签证单、联系单编号、图纸变更、工程量计算和完整签章状态。"
+      ],
+      "sampleInput": [
+        "使用 markdownFixturePath 指向的 Markdown 作为完整验证输入。",
+        "该 Markdown 包含虚构客户、项目、人员、地点、日期、金额、工程量和编号。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "资料来源和演示边界",
+        "资料链完整度判断",
+        "资料链清单",
+        "合同和流程依据",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "先判断资料链完整度。",
+        "区分样表字段、过程线索、合同依据和正式依据缺口。",
+        "明确样表不代表项目事实。",
+        "分流到项目、经营、造价、合同、法务和资料员复核。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "资料链完整度判断",
+        "样表字段结构",
+        "资料链清单",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "把样表当成项目事实。",
+        "把会议或日报直接写成结算依据。",
+        "判断签证成立、索赔成立或金额倾向。"
+      ],
+      "bannedClaims": [
+        "签证成立",
+        "索赔成立",
+        "责任归属",
+        "最终金额",
+        "结算通过"
+      ]
+    },
+    {
+      "id": "public-advisory-scheme-review-route",
+      "skillId": "aios-construction-scheme",
+      "promptPath": "skills/aios-construction-scheme/prompts/basic-prompt.md",
+      "markdownFixturePath": "prompts/evaluations/public-advisory-md/06-scheme.md",
+      "scenario": "专项施工方案辅助复核、专家意见回查和 AI 生成失准复盘",
+      "sourceSignals": [
+        "advisory:deidentified-docx-shape special-construction-scheme feedback",
+        "source-shape:tables plus notes about scheme text calculation book drawings and local standards",
+        "boundary-shape:assistant produces review checklist only not technical approval"
+      ],
+      "syntheticFields": {
+        "customer": ["虚构客户：青石建工集团有限公司"],
+        "project": ["虚构项目：云港新区星澜中心一期总承包工程"],
+        "location": ["虚构地点：3 号楼高支模区域"],
+        "dates": ["虚构日期：2031-04-27"],
+        "people": ["虚构人员：陈知远、宋栀、纪北辰"],
+        "numbers": ["虚构数字：支模高度 8.4m、梁截面 300x900、专家意见 12 条"],
+        "documentRefs": ["虚构编号：SCH-2031-0427-HZM-02"]
+      },
+      "advisoryComparison": [
+        "来源资料形态包含施工方案 AI 应用难点、方案审核、计算书、附图和地方标准线索。",
+        "公开样例保留失准复盘和回查清单，不保留真实方案或计算参数。"
+      ],
+      "weakPrompt": "请分析施工方案应用难点并给建议。",
+      "inputSummary": [
+        "输入为专项施工方案和 AI 生成反馈片段。",
+        "资料包含工程概况、危险源、专家意见、附图、计算书、地方标准和技术交底要点。",
+        "计算书、附图、扫描页和验收要求需要专业人员或确定性工具复核。"
+      ],
+      "sampleInput": [
+        "使用 markdownFixturePath 指向的 Markdown 作为完整验证输入。",
+        "该 Markdown 包含虚构客户、项目、人员、地点、日期、构件参数和编号。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "AI 生成失准原因复盘",
+        "专家修改说明回查清单",
+        "危险源和控制措施",
+        "需人工复核问题清单",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "使用 AI 辅助施工方案复核口径。",
+        "输入为 AI 试用反馈时先输出失准原因复盘。",
+        "把专家意见回查到正文、附图、计算书和验收要求。",
+        "不确认计算正确，不输出方案合格或专家论证通过。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "AI 生成失准原因复盘",
+        "专家修改说明回查清单",
+        "危险源和控制措施",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "使用 AI 审查施工方案口径。",
+        "输出方案合格或不合格。",
+        "确认计算书公式正确或专家论证通过。"
+      ],
+      "bannedClaims": [
+        "方案合格",
+        "计算正确",
+        "专家论证通过",
+        "审批通过",
+        "现场安全满足"
+      ]
+    }
+  ]
+}

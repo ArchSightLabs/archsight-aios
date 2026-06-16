@@ -88,15 +88,19 @@ if (manifest) {
     check(frontmatter.name === skill.id, `${skillFile}: frontmatter name must be ${skill.id}`);
     check(Boolean(frontmatter.description), `${skillFile}: missing frontmatter description`);
   }
+
+  for (const requiredAsset of manifest.requiredAssets ?? []) {
+    check(exists(requiredAsset), `runtime/archsight-aios.manifest.json: required asset missing ${requiredAsset}`);
+  }
 }
 
 if (packageJson) {
-  const requiredFiles = ["skills/", "scripts/", ".claude-plugin/", "gemini-extension.json"];
+  const requiredFiles = ["skills/", "scripts/", ".claude-plugin/", "gemini-extension.json", "OPENCODE.md"];
   for (const requiredFile of requiredFiles) {
     check(packageJson.files?.includes(requiredFile), `package.json: files must include ${requiredFile}`);
   }
 
-  const requiredKeywords = ["agent-skills", "skills-sh", "gemini-cli", "claude-code", "workbuddy", "construction-ai"];
+  const requiredKeywords = ["agent-skills", "skills-sh", "gemini-cli", "claude-code", "workbuddy", "opencode", "construction-ai"];
   for (const keyword of requiredKeywords) {
     check(packageJson.keywords?.includes(keyword), `package.json: keywords must include ${keyword}`);
   }

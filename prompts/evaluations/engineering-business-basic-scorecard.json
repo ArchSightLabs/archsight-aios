@@ -1,0 +1,238 @@
+{
+  "schema": 1,
+  "name": "engineering-business-basic-scorecard",
+  "version": "0.1",
+  "fixture": "prompts/evaluations/engineering-business-basic-fixtures.json",
+  "dataBoundary": "Structured comparison derived from de-identified engineering-business prompt fixtures. Do not include customer names, contacts, project names, exact amounts, or raw source documents.",
+  "scoringScale": {
+    "min": 1,
+    "max": 5,
+    "description": "1 = weak or unsafe, 3 = usable with manual repair, 5 = stable and directly reusable."
+  },
+  "minimumWeightedDelta": 1.2,
+  "criteria": [
+    {
+      "id": "source_state_handling",
+      "weight": 20,
+      "description": "Recognizes input type, missing evidence, and whether the material supports only assisted整理 rather than final conclusions."
+    },
+    {
+      "id": "output_operability",
+      "weight": 20,
+      "description": "Produces matrices, checklists, ledgers, or review tables that can be handed to engineering-business roles."
+    },
+    {
+      "id": "boundary_safety",
+      "weight": 25,
+      "description": "Avoids legal, commercial, approval, safety, quality, settlement, and responsibility conclusions outside the evidence."
+    },
+    {
+      "id": "evidence_traceability",
+      "weight": 15,
+      "description": "Keeps source map, original-basis fields, and need-to-verify markers visible."
+    },
+    {
+      "id": "template_reuse",
+      "weight": 10,
+      "description": "Can be reused as a department template or workflow seed without rewriting from scratch."
+    },
+    {
+      "id": "role_handoff",
+      "weight": 10,
+      "description": "Routes unresolved items to appropriate human review roles instead of hiding uncertainty."
+    }
+  ],
+  "cases": [
+    {
+      "caseId": "commercial-tender-response-matrix",
+      "winner": "basic",
+      "weakScores": {
+        "source_state_handling": 2,
+        "output_operability": 2,
+        "boundary_safety": 2,
+        "evidence_traceability": 1,
+        "template_reuse": 2,
+        "role_handoff": 2
+      },
+      "basicScores": {
+        "source_state_handling": 5,
+        "output_operability": 5,
+        "boundary_safety": 5,
+        "evidence_traceability": 4,
+        "template_reuse": 5,
+        "role_handoff": 4
+      },
+      "observedWeakFailures": [
+        "直接推荐 AI 标书工具或采购路径。",
+        "默认已经完成真实读标。",
+        "编造废标项、资格条件、分值或页码。"
+      ],
+      "basicPromptGains": [
+        "先判断输入不是完整招标文件。",
+        "把工具复核问题转成回应矩阵和评分点响应矩阵。",
+        "把缺少招标依据的事项标为需补充确认。"
+      ],
+      "decisionBasis": "基础提示词更适合技术标复核场景，因为它把输入状态、评分点响应、缺证据事项和人工复核岗位固定下来。"
+    },
+    {
+      "caseId": "commercial-contract-obligation-nodes",
+      "winner": "basic",
+      "weakScores": {
+        "source_state_handling": 2,
+        "output_operability": 2,
+        "boundary_safety": 2,
+        "evidence_traceability": 2,
+        "template_reuse": 2,
+        "role_handoff": 2
+      },
+      "basicScores": {
+        "source_state_handling": 5,
+        "output_operability": 5,
+        "boundary_safety": 5,
+        "evidence_traceability": 4,
+        "template_reuse": 4,
+        "role_handoff": 5
+      },
+      "observedWeakFailures": [
+        "只输出合同风险摘要。",
+        "忽略空白字段。",
+        "把风险提示写成法律意见或违约责任结论。"
+      ],
+      "basicPromptGains": [
+        "空白字段被提前列入核对表。",
+        "付款、验收、资料提交和结算被拆成履约节点。",
+        "风险表达保留法务、商务、造价和财务复核边界。"
+      ],
+      "decisionBasis": "基础提示词更适合合同片段处理，因为它从摘要升级为可执行节点表，并降低越权判断风险。"
+    },
+    {
+      "caseId": "construction-daily-issue-tracking",
+      "winner": "basic",
+      "weakScores": {
+        "source_state_handling": 2,
+        "output_operability": 3,
+        "boundary_safety": 2,
+        "evidence_traceability": 2,
+        "template_reuse": 3,
+        "role_handoff": 2
+      },
+      "basicScores": {
+        "source_state_handling": 5,
+        "output_operability": 5,
+        "boundary_safety": 5,
+        "evidence_traceability": 4,
+        "template_reuse": 5,
+        "role_handoff": 4
+      },
+      "observedWeakFailures": [
+        "把材料表为空写成现场没有材料进场。",
+        "把照片缺失写成现场无留痕结论。",
+        "直接判断项目进度或质量不合格。"
+      ],
+      "basicPromptGains": [
+        "区分现场事实、资料空白和模板质量问题。",
+        "输出问题跟踪表，便于进入项目台账。",
+        "不把未提及事项写成现场结论。"
+      ],
+      "decisionBasis": "基础提示词更适合日报场景，因为它能把资料质量问题和现场事实分开，减少误判。"
+    },
+    {
+      "caseId": "construction-meeting-action-closure",
+      "winner": "basic",
+      "weakScores": {
+        "source_state_handling": 2,
+        "output_operability": 3,
+        "boundary_safety": 2,
+        "evidence_traceability": 2,
+        "template_reuse": 3,
+        "role_handoff": 2
+      },
+      "basicScores": {
+        "source_state_handling": 5,
+        "output_operability": 5,
+        "boundary_safety": 5,
+        "evidence_traceability": 4,
+        "template_reuse": 5,
+        "role_handoff": 5
+      },
+      "observedWeakFailures": [
+        "把发言人写成最终责任人。",
+        "自行补截止日期。",
+        "把讨论事项改写成正式会议决议。"
+      ],
+      "basicPromptGains": [
+        "把发言人限定为责任线索。",
+        "责任人和期限不明确时要求补确认。",
+        "输出待办闭环表和下次会议关注点。"
+      ],
+      "decisionBasis": "基础提示词更适合会议纪要场景，因为它把摘要转成闭环表，同时保护责任和期限边界。"
+    },
+    {
+      "caseId": "commercial-variation-evidence-chain",
+      "winner": "basic",
+      "weakScores": {
+        "source_state_handling": 1,
+        "output_operability": 2,
+        "boundary_safety": 1,
+        "evidence_traceability": 2,
+        "template_reuse": 2,
+        "role_handoff": 2
+      },
+      "basicScores": {
+        "source_state_handling": 5,
+        "output_operability": 5,
+        "boundary_safety": 5,
+        "evidence_traceability": 5,
+        "template_reuse": 5,
+        "role_handoff": 5
+      },
+      "observedWeakFailures": [
+        "把公开样表当成项目事实。",
+        "把会议纪要或日报直接写成结算依据。",
+        "判断签证成立、索赔成立或金额倾向。"
+      ],
+      "basicPromptGains": [
+        "先判断资料链完整度。",
+        "区分样表字段、过程线索、合同依据和正式依据待确认。",
+        "把经营、项目、造价、合同、法务和资料员复核分流列清楚。"
+      ],
+      "decisionBasis": "基础提示词更适合变更签证场景，因为它把高风险结论改成资料链复核路径。"
+    },
+    {
+      "caseId": "construction-scheme-assistive-review",
+      "winner": "basic",
+      "weakScores": {
+        "source_state_handling": 2,
+        "output_operability": 2,
+        "boundary_safety": 1,
+        "evidence_traceability": 2,
+        "template_reuse": 2,
+        "role_handoff": 2
+      },
+      "basicScores": {
+        "source_state_handling": 5,
+        "output_operability": 5,
+        "boundary_safety": 5,
+        "evidence_traceability": 4,
+        "template_reuse": 4,
+        "role_handoff": 5
+      },
+      "observedWeakFailures": [
+        "使用 AI 审查施工方案口径。",
+        "输出方案合格或不合格。",
+        "确认计算书公式正确或专家论证通过。"
+      ],
+      "basicPromptGains": [
+        "使用 AI 辅助施工方案复核口径。",
+        "把 AI 生成失准原因和专家意见回查清单分开。",
+        "把附图、扫描页和计算书公式交给专业人员或确定性工具复核。"
+      ],
+      "decisionBasis": "基础提示词更适合施工方案场景，因为它把审查结论降级为辅助复核清单，并保留专业边界。"
+    }
+  ],
+  "overallDecision": {
+    "winner": "basic",
+    "reason": "基础提示词在 6 个场景中均显著优于普通提示词，优势集中在输入状态识别、结构化输出、边界安全、证据追溯和人工复核分流。",
+    "notAClaim": "This scorecard is a deterministic comparison of de-identified fixtures and prompt design, not a guarantee of real model performance."
+  }
+}

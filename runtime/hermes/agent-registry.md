@@ -35,6 +35,9 @@ Hermes Agent 是部署实例，不是角色资产源；未使用 Hermes 的项�
 | Athena | `agents/athena/` | `agents/athena/system-prompt.md` |
 | Mercury | `agents/mercury/` | `agents/mercury/system-prompt.md` |
 | Janus | `agents/janus/` | `agents/janus/system-prompt.md` |
+| Themis | `agents/themis/` | `agents/themis/system-prompt.md` |
+| Plutus | `agents/plutus/` | `agents/plutus/system-prompt.md` |
+| Hestia | `agents/hestia/` | `agents/hestia/system-prompt.md` |
 
 ## 创建规则
 

@@ -73,6 +73,27 @@
       "role": "产品策略官",
       "sourcePath": "agents/janus",
       "runtimePromptPath": "agents/janus/system-prompt.md"
+    },
+    {
+      "id": "themis",
+      "displayName": "Themis",
+      "role": "法务与合规官",
+      "sourcePath": "agents/themis",
+      "runtimePromptPath": "agents/themis/system-prompt.md"
+    },
+    {
+      "id": "plutus",
+      "displayName": "Plutus",
+      "role": "商务造价与财务内控官",
+      "sourcePath": "agents/plutus",
+      "runtimePromptPath": "agents/plutus/system-prompt.md"
+    },
+    {
+      "id": "hestia",
+      "displayName": "Hestia",
+      "role": "组织行政与人事协同官",
+      "sourcePath": "agents/hestia",
+      "runtimePromptPath": "agents/hestia/system-prompt.md"
     }
   ],
   "skills": [
@@ -133,6 +154,13 @@
       "openaiConfigPath": "skills/aios-runtime/agents/openai.yaml"
     },
     {
+      "id": "aios-prompt-compare",
+      "primaryAgent": "daedalus",
+      "defaultWorkflow": "quality-readiness",
+      "path": "skills/aios-prompt-compare/SKILL.md",
+      "openaiConfigPath": "skills/aios-prompt-compare/agents/openai.yaml"
+    },
+    {
       "id": "aios-exec",
       "primaryAgent": "hephaestus",
       "defaultWorkflow": "feature-development",
@@ -148,7 +176,7 @@
     },
     {
       "id": "aios-commercial-contract",
-      "primaryAgent": "argus",
+      "primaryAgent": "themis",
       "defaultWorkflow": "review",
       "path": "skills/aios-commercial-contract/SKILL.md",
       "openaiConfigPath": "skills/aios-commercial-contract/agents/openai.yaml"
@@ -169,7 +197,7 @@
     },
     {
       "id": "aios-commercial-variation",
-      "primaryAgent": "argus",
+      "primaryAgent": "plutus",
       "defaultWorkflow": "site-daily-loop",
       "path": "skills/aios-commercial-variation/SKILL.md",
       "openaiConfigPath": "skills/aios-commercial-variation/agents/openai.yaml"
@@ -290,6 +318,12 @@
       "workflow": "rag-pipeline"
     },
     {
+      "taskType": "提示词、便携强提示词和真实 Skill 输出对比评测",
+      "skill": "aios-prompt-compare",
+      "agent": "daedalus",
+      "workflow": "quality-readiness"
+    },
+    {
       "taskType": "建筑行业项目中的受控代码修改、文档、脚本、测试",
       "skill": "aios-exec",
       "agent": "hephaestus",
@@ -304,7 +338,7 @@
     {
       "taskType": "工程合同履约节点、付款条件、责任边界和资料缺口",
       "skill": "aios-commercial-contract",
-      "agent": "argus",
+      "agent": "themis",
       "workflow": "review"
     },
     {
@@ -322,7 +356,7 @@
     {
       "taskType": "工程变更签证资料链、联系单、图纸变更和索赔线索",
       "skill": "aios-commercial-variation",
-      "agent": "argus",
+      "agent": "plutus",
       "workflow": "site-daily-loop"
     },
     {
@@ -339,6 +373,7 @@
       "AI_CODING_RULES.md",
       "CLAUDE.md",
       "GEMINI.md",
+      "OPENCODE.md",
       ".ai/ARCHSIGHT_AIOS_RULES.md",
       ".ai/project-context.md",
       ".ai/agent-routing.md",
@@ -376,6 +411,8 @@
     "codexSkills": "~/.codex/skills",
     "codexWorkflows": "~/.codex/workflows/aios",
     "workBuddySkills": "~/.workbuddy/skills",
+    "openCodeSkills": "~/.opencode/skills",
+    "claudeCodeSkills": "~/.claude/skills",
     "sharedAgentSkills": "~/.agents/skills",
     "sharedAgentWorkflows": "~/.agents/workflows/aios",
     "geminiInstructions": "~/.gemini/GEMINI.md",
@@ -394,6 +431,7 @@
     "adapterPath": "runtime/capability-adapters.json"
   },
   "requiredAssets": [
+    "OPENCODE.md",
     "governance/arbitration-protocol.md",
     "governance/ai-review-policy.md",
     "governance/security-policy.md",
@@ -419,9 +457,34 @@
     "prompts/prompt-registry.md",
     "prompts/evaluation-policy.md",
     "prompts/failure-cases.md",
+    "prompts/evaluations/engineering-business-basic-advisory-validation-2026-06-16.md",
+    "prompts/evaluations/engineering-business-basic-fixtures.json",
+    "prompts/evaluations/engineering-business-basic-model-output.example.json",
+    "prompts/evaluations/engineering-business-basic-prompts-2026-06-16.md",
+    "prompts/evaluations/engineering-business-basic-scorecard.json",
+    "prompts/evaluations/engineering-business-public-advisory-fixtures.json",
+    "prompts/evaluations/public-advisory-md/01-technical-bid.md",
+    "prompts/evaluations/public-advisory-md/02-contract.md",
+    "prompts/evaluations/public-advisory-md/03-daily.md",
+    "prompts/evaluations/public-advisory-md/04-meeting.md",
+    "prompts/evaluations/public-advisory-md/05-variation.md",
+    "prompts/evaluations/public-advisory-md/06-scheme.md",
     "infra/environment-policy.md",
     "infra/permissions.md",
     "infra/service-boundaries.md",
+    "skills/engineering-business-starter-kit.md",
+    "skills/aios-commercial-tender/prompts/basic-prompt.md",
+    "skills/aios-commercial-contract/prompts/basic-prompt.md",
+    "skills/aios-construction-daily/prompts/basic-prompt.md",
+    "skills/aios-construction-meeting/prompts/basic-prompt.md",
+    "skills/aios-commercial-variation/prompts/basic-prompt.md",
+    "skills/aios-construction-scheme/prompts/basic-prompt.md",
+    "scripts/analyze-prompt-run-results.mjs",
+    "scripts/build-prompt-run-pack.mjs",
+    "scripts/validate-prompt-fixtures.mjs",
+    "scripts/validate-prompt-model-outputs.mjs",
+    "scripts/validate-prompt-run-results.mjs",
+    "scripts/validate-prompt-scorecard.mjs",
     "runtime/hermes/sync-policy.md",
     "runtime/hermes/sync-record-template.md",
     "runtime/capability-adapters.json",

@@ -34,7 +34,8 @@ const assetDirs = [
   "vision",
   "docs"
 ];
-const assetFiles = ["README.md", "AI_CODING_RULES.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md"];
+const assetFiles = ["README.md", "AI_CODING_RULES.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md", "OPENCODE.md"];
+const skillSupportFiles = ["README.md", "engineering-business-starter-kit.md"];
 const skillAliases = {
   "aios-arch": ["aios-architecture-review", "archsight-architecture-review"],
   "aios-plan": ["aios-delivery-planning", "archsight-delivery-planning"],
@@ -67,7 +68,7 @@ function usage() {
     "",
     "Usage:",
     "  archsight-aios help",
-    "  archsight-aios install --target <codex|agents|gemini|antigravity|workbuddy|all> --scope user",
+    "  archsight-aios install --target <codex|agents|gemini|antigravity|workbuddy|opencode|claude-code|all> --scope user",
     "  archsight-aios doctor",
     "  archsight-aios init [--cwd <path>] [--mode <auto|full|linked|ai-only>] [--profile <name>]",
     "  archsight-aios validate [--cwd <path>] [--profile <name>] [--temp]",
@@ -89,6 +90,8 @@ function usage() {
     "  npx @archsight/aios install --target codex --scope user",
     "  npx @archsight/aios install --target agents --scope user",
     "  npx @archsight/aios install --target workbuddy --scope user",
+    "  npx @archsight/aios install --target opencode --scope user",
+    "  npx @archsight/aios install --target claude-code --scope user",
     "  npx @archsight/aios init",
     "  npx @archsight/aios validate --temp",
     "  npx @archsight/aios doctor"
@@ -671,6 +674,13 @@ async function syncGeminiContent() {
 
 async function installSkillsTo(targetRoot, skillNames) {
   await ensureDir(targetRoot);
+  for (const fileName of skillSupportFiles) {
+    await copyFileIfExists(
+      path.join(repoRoot, "skills", fileName),
+      path.join(targetRoot, fileName)
+    );
+  }
+
   for (const skillName of skillNames) {
     await copyDir(
       path.join(repoRoot, "skills", skillName),
@@ -702,6 +712,14 @@ function antigravityPluginRoot() {
 
 function workBuddySkillsRoot() {
   return path.join(home, ".workbuddy", "skills");
+}
+
+function openCodeSkillsRoot() {
+  return path.join(home, ".opencode", "skills");
+}
+
+function claudeCodeSkillsRoot() {
+  return path.join(home, ".claude", "skills");
 }
 
 async function hasAntigravity2Config() {
@@ -899,7 +917,16 @@ async function install(options) {
     throw new Error("Only --scope user is supported in this release.");
   }
 
-  const validTargets = new Set(["codex", "agents", "gemini", "antigravity", "workbuddy", "all"]);
+  const targetAliases = {
+    claudecode: "claude-code",
+    claude_code: "claude-code",
+    claude: "claude-code",
+    "open-code": "opencode",
+    open_code: "opencode"
+  };
+  options.target = targetAliases[options.target] ?? options.target;
+
+  const validTargets = new Set(["codex", "agents", "gemini", "antigravity", "workbuddy", "opencode", "claude-code", "all"]);
   if (!validTargets.has(options.target)) {
     throw new Error(`Unsupported target: ${options.target}`);
   }
@@ -907,7 +934,7 @@ async function install(options) {
   const skillNames = await listAiosSkills();
   const workflowPaths = await listAiosWorkflowPaths();
   const targets = options.target === "all"
-    ? ["codex", "gemini", "antigravity", "workbuddy"]
+    ? ["codex", "gemini", "antigravity", "workbuddy", "opencode", "claude-code"]
     : [options.target];
 
   const installed = [];
@@ -953,6 +980,18 @@ async function install(options) {
     await removeLegacySkillDirs(workBuddySkillsRoot(), skillNames);
     await installSkillsTo(workBuddySkillsRoot(), skillNames);
     installed.push("workbuddy skills");
+  }
+
+  if (targets.includes("opencode")) {
+    await removeLegacySkillDirs(openCodeSkillsRoot(), skillNames);
+    await installSkillsTo(openCodeSkillsRoot(), skillNames);
+    installed.push("opencode skills");
+  }
+
+  if (targets.includes("claude-code")) {
+    await removeLegacySkillDirs(claudeCodeSkillsRoot(), skillNames);
+    await installSkillsTo(claudeCodeSkillsRoot(), skillNames);
+    installed.push("claude-code skills");
   }
 
   console.log(`Installed: ${installed.join(", ")}`);
@@ -1005,6 +1044,8 @@ async function doctor() {
   );
   checkCondition("codex workflows target", manifest.installTargets?.codexWorkflows === "~/.codex/workflows/aios", "codexWorkflows");
   checkCondition("workbuddy skills target", manifest.installTargets?.workBuddySkills === "~/.workbuddy/skills", "workBuddySkills");
+  checkCondition("opencode skills target", manifest.installTargets?.openCodeSkills === "~/.opencode/skills", "openCodeSkills");
+  checkCondition("claude-code skills target", manifest.installTargets?.claudeCodeSkills === "~/.claude/skills", "claudeCodeSkills");
   checkCondition("antigravity plugin target", manifest.installTargets?.antigravityPlugin === "~/.gemini/config/plugins/archsight-aios", "antigravityPlugin");
   checkCondition("antigravity legacy skills target", manifest.installTargets?.antigravityLegacySkills === "~/.gemini/antigravity/skills", "antigravityLegacySkills");
 
@@ -1107,6 +1148,8 @@ async function doctor() {
   await check("gemini support delivery", path.join(geminiRoot, "delivery"));
   await check("gemini support memory", path.join(geminiRoot, "memory"));
   await check("codex skills root", path.join(home, ".codex", "skills"));
+  await check("opencode skills root", openCodeSkillsRoot());
+  await check("claude-code skills root", claudeCodeSkillsRoot());
   await check("codex workflows root", path.join(home, ".codex", "workflows", "aios"));
   await check("gemini instructions", path.join(home, ".gemini", "GEMINI.md"));
   await checkContains("gemini managed block", path.join(home, ".gemini", "GEMINI.md"), managedStart);
@@ -1127,6 +1170,8 @@ async function doctor() {
     await check(`gemini support skill ${skillName}`, path.join(geminiRoot, sourceDir, "SKILL.md"));
     await check(`codex skill ${skillName}`, path.join(home, ".codex", "skills", skillName, "SKILL.md"));
     await check(`workbuddy skill ${skillName}`, path.join(workBuddySkillsRoot(), skillName, "SKILL.md"));
+    await check(`opencode skill ${skillName}`, path.join(openCodeSkillsRoot(), skillName, "SKILL.md"));
+    await check(`claude-code skill ${skillName}`, path.join(claudeCodeSkillsRoot(), skillName, "SKILL.md"));
     if (useAntigravityLegacy) {
       await check(`antigravity 1.x legacy skill ${skillName}`, path.join(antigravityLegacySkillsRoot(), skillName, "SKILL.md"));
     }
@@ -1162,12 +1207,14 @@ async function initProject(options) {
     "AGENTS.md",
     "AI_CODING_RULES.md",
     "CLAUDE.md",
-    "GEMINI.md"
+    "GEMINI.md",
+    "OPENCODE.md"
   ];
   const linkedInstructionFiles = [
     "AGENTS.md",
     "CLAUDE.md",
-    "GEMINI.md"
+    "GEMINI.md",
+    "OPENCODE.md"
   ];
   const aiFiles = [
     path.join(".ai", "ARCHSIGHT_AIOS_RULES.md"),
@@ -1281,6 +1328,7 @@ async function validateProjectTemplate(options) {
     ["project AIOS rules uses AIOS", path.join(".ai", "ARCHSIGHT_AIOS_RULES.md")],
     ["project CLAUDE uses AIOS", "CLAUDE.md"],
     ["project GEMINI uses AIOS", "GEMINI.md"],
+    ["project OPENCODE uses AIOS", "OPENCODE.md"],
     ["project context uses AIOS", path.join(".ai", "project-context.md")]
   ]) {
     const content = await fs.readFile(path.join(targetRoot, fileName), "utf8");

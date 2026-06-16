@@ -4,7 +4,7 @@
 
 结论：公共发现不是单一市场自动收录。AIOS 需要同时满足三类机制：
 
-1. 本地自动发现：宿主扫描 `SKILL.md`、`skills/`、`.agents/skills/`、`.claude/skills/` 或 extension/plugin 目录。
+1. 本地自动发现：宿主扫描 `SKILL.md`、`skills/`、`.agents/skills/`、`.claude/skills/`、`.opencode/skills/` 或 extension/plugin 目录。
 2. 可分发安装：通过 GitHub、npm/npx、Antigravity/agy、Gemini extension 兼容入口、Claude marketplace、WorkBuddy、`skills.sh` / `npx skills` 安装。
 3. 公共检索：依赖 GitHub topics、manifest、标准目录、README 关键词、release、安装量、star 和主动提交。
 
@@ -12,10 +12,11 @@
 
 | 入口 | 文件 | 目的 |
 | --- | --- | --- |
-| 标准 skills 目录 | `skills/` | 让 `skills.sh`、`npx skills`、Antigravity/agy、Gemini extension 和其他标准 skill 索引器直接看到 `aios-*` Skill。 |
+| 标准 skills 目录 | `skills/` | 让 `skills.sh`、`npx skills`、Antigravity/agy、Gemini extension、OpenCode 和其他标准 skill 索引器直接看到 `aios-*` Skill。 |
 | Gemini extension manifest | `gemini-extension.json` | 保留 Gemini CLI extension 兼容入口和 Gallery / 第三方索引 manifest。 |
 | Claude marketplace manifest | `.claude-plugin/marketplace.json` | 允许 Claude Code 用户通过 marketplace 方式发现本项目。 |
 | Claude plugin manifest | `.claude-plugin/plugin.json` | 描述插件元数据，并把插件 skills 指向 `./skills/`。 |
+| OpenCode 项目入口 | `OPENCODE.md` | 让业务项目中的 OpenCode 会话能读取公共规则和 `.ai/` 项目治理目录。 |
 | WorkBuddy adapter | `adapters/workbuddy/README.md` | 说明如何把 `aios-*` Skill 安装到 `~/.workbuddy/skills/`。 |
 | npm metadata | `package.json` | 提供英文检索关键词、分发文件清单和 `validate:skills` 校验入口。 |
 | 发现校验脚本 | `scripts/validate-skills.mjs` | 校验 manifest、skill frontmatter、跨 host manifest 和 npm metadata 是否一致。 |
@@ -84,6 +85,18 @@ Codex：
 npx @archsight/aios install --target codex --scope user
 ```
 
+Claude Code 用户级 skills：
+
+```powershell
+npx @archsight/aios install --target claude-code --scope user
+```
+
+OpenCode 用户级 skills：
+
+```powershell
+npx @archsight/aios install --target opencode --scope user
+```
+
 Antigravity / agy：
 
 ```powershell
@@ -124,6 +137,7 @@ agent skills
 AI agent skills
 Codex skills
 Claude Code skills
+OpenCode skills
 Gemini CLI extension
 Antigravity CLI
 construction AI

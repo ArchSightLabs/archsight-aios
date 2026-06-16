@@ -40,6 +40,7 @@
 | BIM、IFC、建筑规范、审图逻辑 | Vitruvius | 建筑数字化专家 |
 | 结构力学、荷载、FEM、结构计算工具链 | Euclid | 结构力学专家 |
 | 建筑行业 RAG、GraphRAG、MCP、Memory、Tool Calling | Daedalus | AI 研发工程师 |
+| Prompt / Skill 输出对比、weak/basic/runtime 三栏评测 | Daedalus | AI 研发工程师 |
 | 建筑行业项目代码修改、脚本执行、测试、文档生成 | Hephaestus | 受控执行官 |
 
 ## 升级规则
@@ -52,5 +53,6 @@
 - 涉及行业规范、BIM / IFC、审图语义：升级给 Vitruvius。
 - 涉及结构力学、荷载、边界条件、FEM 或结构计算工具链：升级给 Euclid。
 - 涉及 RAG、GraphRAG、MCP、Memory、Tool：升级给 Daedalus。
+- 涉及提示词效果、weak/basic 对照、真实 Skill 输出比较或是否应沉淀为 Skill：升级给 Daedalus，并使用 `aios-prompt-compare`。
 - 具体实现和验证：交给 Hephaestus。
 - Capability 返回阻断结果、证据缺失或工具不可用：停止执行并输出 `Claim / Evidence / Tool Result / Decision`。

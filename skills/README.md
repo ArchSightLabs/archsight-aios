@@ -60,8 +60,11 @@ Skill 可以继续用 `SKILL.md` 表达操作方法，但涉及确定性工具�
 | `aios-knowledge` | BIM、IFC、建筑规范、审图规则和知识结构化。 |
 | `aios-structural` | 结构力学、荷载、边界条件、FEM 和确定性求解链路评审。 |
 | `aios-runtime` | Prompt、Context、Memory、MCP/Tool、RAG/GraphRAG 和多 Agent Runtime 设计。 |
+| `aios-prompt-compare` | Prompt / Skill 效果对比：对同一输入分别评估弱提示词、便携强提示词和真实 Skill 触发结果，判断是否应沉淀为 Skill。 |
 
 工程业务管理技能包 (Engineering Project Management)：
+
+工程业务管理场景可直接参考 [工程业务管理基础技能包](engineering-business-starter-kit.md)。该基础包提供 L0-L1 级通用提示词 / Skill 模板能力：把工程资料整理成矩阵、清单、台账和人工复核问题；不承诺系统建设、自动审批、专业结论或替代签审。
 
 | Skill | 用途 |
 | --- | --- |

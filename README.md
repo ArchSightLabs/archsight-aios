@@ -1,10 +1,10 @@
 # ArchSight AIOS
 
-ArchSight AIOS 是一套面向建筑行业知识工作从业者与 AI 研发团队的规则、Agent、Skill、Workflow 和项目接入工具包。它重点服务 BIM / IFC / Revit / CAD、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图、工程资料证据链和 AI Coding 治理，让 Codex、Claude Code、Antigravity 2.0、WorkBuddy 等 AI Agent 工具在同一个项目或个人 skills 目录里读取同一套规则、项目上下文和验收要求。
+ArchSight AIOS 是一套面向建筑行业知识工作从业者与 AI 研发团队的规则、Agent、Skill、Workflow 和项目接入工具包。它重点服务 BIM / IFC / Revit / CAD、施工视觉 AI、建筑规范知识库、GraphRAG、智能审图、工程资料证据链和 AI Coding 治理，让 Codex、Claude Code、OpenCode、Antigravity 2.0、WorkBuddy 等 AI Agent 工具在同一个项目或个人 skills 目录里读取同一套规则、项目上下文和验收要求。
 
 AIOS 不是全行业项目模板集合。它保留通用的 AI 编码规则、Agent 路由、Workflow、项目 `.ai/` 上下文和交付验证能力，但真正的差异化能力集中在建筑行业语义、工程证据链、规范知识工程、Capability 工具证据和可复核的 AI 研发流程。
 
-工程业务管理 Skill 只作为建筑工程资料治理的增强包，用于招投标、合同履约、施工日报、工程会议、变更签证和专项施工方案的证据链整理、风险提示和人工复核分流。它不是 HR、行政、财务或通用职能 Prompt 集合，也不替代法务、造价、监理、安全、项目经理、总工或专家签审。
+工程业务管理 Skill 只作为建筑工程资料治理的增强包，用于招投标、合同履约、施工日报、工程会议、变更签证和专项施工方案的证据链整理、风险提示和人工复核分流。它不是通用 HR、行政、财务或法律咨询 Prompt 集合；涉及工程款、合同法务、证照、人事和组织协同时，只做工程场景内的资料整理、风险标注和人工复核分流，不替代法务、造价、财务、监理、安全、项目经理、总工、HR 或专家签审。
 
 ## 设计目标
 
@@ -25,7 +25,7 @@ AIOS 是建筑行业增强层，不是通用任务替代器。装了 AIOS 后，
 | 产品 / 项目 / 设计负责人 | 把业务目标、页面任务、工作台体验、验收标准和 AI 协作流程写进项目规则。 |
 | 企业负责人 / 业务一把手 | 用 `aios-ceo` 深度评价建筑行业软件 / 系统的产品定位、行业专业性、工程可信度、证据链、商业验证、阶段路线和停损信号。 |
 | AI / 软件工程师 | 给建筑 AI 项目接入统一 AI 编码规则、Skills、Workflows 和行业 profile。 |
-| 团队负责人 | 统一多工具、多模型、多 Agent 的工作边界和交付检查方式。 |
+| 团队负责人 | 统一多工具、多模型、多 Agent 的工作边界和交付检查方式，并用 `aios-prompt-compare` 判断提示词是否值得沉淀为正式 Skill。 |
 
 ## 解决什么问题
 
@@ -33,6 +33,7 @@ AIOS 是建筑行业增强层，不是通用任务替代器。装了 AIOS 后，
 - 项目里缺少明确的 `.ai/` 上下文目录，AI 不知道行业知识、验收标准和人工复核点。
 - 建筑行业项目涉及规范、BIM、图纸、模型、施工现场、知识库和 AI 检测，容易把模型推断误当成工程结论；AIOS 通过 profile 叠加这些行业规则，而不是把它们写成所有项目的默认事实。
 - AI 生成代码、文档或规则后，缺少统一的 review、验证和发布检查路径。
+- 普通提示词、便携强提示词和正式 Skill 的效果容易混在一起；`aios-prompt-compare` 用同一输入做 weak / portable / skill-runtime 三栏对照，帮助团队判断哪些能力应沉淀为 Skill。
 
 ## 三步开始
 
@@ -44,7 +45,7 @@ cd /path/to/your-project
 npx @archsight/aios init
 ```
 
-执行后，当前业务项目会获得统一的 AI 入口文件和 `.ai/` 项目治理目录。已有 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md` 或 `AI_CODING_RULES.md` 的项目不会被覆盖；CLI 会补充缺失文件，并在合适的位置追加 ArchSight AIOS 引用。
+执行后，当前业务项目会获得统一的 AI 入口文件和 `.ai/` 项目治理目录。已有 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md` 或 `AI_CODING_RULES.md` 的项目不会被覆盖；CLI 会补充缺失文件，并在合适的位置追加 ArchSight AIOS 引用。
 
 如果你不写代码，只参与业务判断，可以先看 [业务专家指南](docs/business-expert-guide.md)。如果你需要一步一步安装和验证，可以看 [快速上手](docs/quickstart.md)。
 
@@ -71,6 +72,7 @@ npx @archsight/aios init --profile rag-knowledge
 | `AGENTS.md` | Codex 等 Agent 工具读取的项目入口。 |
 | `CLAUDE.md` | Claude Code 读取的项目入口。 |
 | `GEMINI.md` | Gemini 读取的项目入口。 |
+| `OPENCODE.md` | OpenCode 读取的项目入口。 |
 | `AI_CODING_RULES.md` | 项目通用 AI 编码规则。 |
 | `.ai/ARCHSIGHT_AIOS_RULES.md` | ArchSight AIOS 补充规则。 |
 | `.ai/project-context.md` | 项目事实、业务背景和边界。 |
@@ -92,7 +94,7 @@ AIOS 的多 Agent 协作不应停留在 Prompt 角色扮演。Agent 提出架构
 | 命令 | 用途 |
 | --- | --- |
 | `help` | 查看 CLI 帮助、可用命令和示例。 |
-| `install` | 安装 ArchSight AIOS 用户级资产到 Codex、Antigravity 2.0、Gemini、WorkBuddy 和共享目录。 |
+| `install` | 安装 ArchSight AIOS 用户级资产到 Codex、Claude Code、OpenCode、Antigravity 2.0、Gemini、WorkBuddy 和共享目录。 |
 | `doctor` | 检查仓库资产、manifest、用户级安装、Skill 和 Workflow 是否一致。 |
 | `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录和可选行业 profile。 |
 | `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
@@ -114,6 +116,8 @@ npx @archsight/aios capability:call --capability solver.beam_deflection_servicea
 `install --target all --scope user` 会写入当前用户目录：
 
 - Codex：`~/.codex/skills/`、`~/.codex/workflows/aios/`
+- Claude Code：`~/.claude/skills/`
+- OpenCode：`~/.opencode/skills/`
 - Gemini：`~/.gemini/GEMINI.md`、`~/.gemini/archsight-aios/`
 - Antigravity 2.0：`~/.gemini/config/plugins/archsight-aios/`
 - Antigravity 1.x legacy：仅当已存在 `~/.gemini/antigravity/` 时，写入 `~/.gemini/antigravity/skills/`；如果同时检测到 Antigravity 2.0 配置，也会额外写入 2.0 plugin 目录。
@@ -131,9 +135,16 @@ WorkBuddy 固定读取个人 skills 目录，可单独安装：
 npx @archsight/aios install --target workbuddy --scope user
 ```
 
+Claude Code 和 OpenCode 也可以按需单独写入个人 skills 目录：
+
+```bash
+npx @archsight/aios install --target claude-code --scope user
+npx @archsight/aios install --target opencode --scope user
+```
+
 ## 公共发现
 
-AIOS 保留标准 `skills/` 目录作为公共发现入口，供 `skills.sh`、`npx skills`、Antigravity / agy、Gemini CLI extension、Claude Code plugin marketplace、WorkBuddy 和第三方索引器扫描。
+AIOS 保留标准 `skills/` 目录作为公共发现入口，供 `skills.sh`、`npx skills`、Antigravity / agy、Gemini CLI extension、Claude Code plugin marketplace、OpenCode、WorkBuddy 和第三方索引器扫描。
 
 ```powershell
 npx skills add ArchSightLabs/archsight-aios --list
@@ -146,8 +157,8 @@ npx skills add ArchSightLabs/archsight-aios --skill aios-arch --global
 
 `init` 默认使用 `--mode auto`：
 
-- 新项目或没有 AI 工具入口文件时，创建 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md`、`GEMINI.md` 和 `.ai/` 模板文件。
-- 已存在 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md` 或 `GEMINI.md` 时，创建缺失的 `.ai/` 文件，并在 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md` 中追加或刷新 ArchSight AIOS 托管引用块。
+- 新项目或没有 AI 工具入口文件时，创建 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md` 和 `.ai/` 模板文件。
+- 已存在 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md`、`GEMINI.md` 或 `OPENCODE.md` 时，创建缺失的 `.ai/` 文件，并在 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md` 中追加或刷新 ArchSight AIOS 托管引用块。
 - 重复执行不会重复追加托管块，也不会覆盖已有项目规则。
 - 自动模式不修改已有 `AI_CODING_RULES.md` 正文。
 

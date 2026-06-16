@@ -8,7 +8,7 @@
 npx @archsight/aios install --target all --scope user
 ```
 
-这一步会把 ArchSight AIOS 的 Skills、Workflows、Runtime 和模板同步到当前用户目录，让 Codex、Gemini、Antigravity 等工具可以读取。
+这一步会把 ArchSight AIOS 的 Skills、Workflows、Runtime 和模板同步到当前用户目录，让 Codex、Claude Code、OpenCode、Gemini、Antigravity、WorkBuddy 等工具可以读取。
 
 ## 2. 检查安装
 
@@ -35,7 +35,7 @@ cd /work/your-project
 npx @archsight/aios init
 ```
 
-`init` 不指定 `--cwd` 时默认使用当前目录。已有 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md` 或 `AI_CODING_RULES.md` 的项目不会被覆盖。
+`init` 不指定 `--cwd` 时默认使用当前目录。已有 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md` 或 `AI_CODING_RULES.md` 的项目不会被覆盖。
 
 ## 4. 选择行业 profile
 
@@ -55,6 +55,7 @@ npx @archsight/aios init --profile rag-knowledge
 AGENTS.md
 CLAUDE.md
 GEMINI.md
+OPENCODE.md
 AI_CODING_RULES.md
 .ai/
 ```

@@ -40,6 +40,10 @@ Claude Code 读取的项目入口文件。
 
 Gemini 读取的项目入口文件。
 
+## `OPENCODE.md`
+
+OpenCode 读取的项目入口文件。
+
 ## `AI_CODING_RULES.md`
 
 项目通用 AI 编码规则。它是项目自己的规则主体，AIOS 不应该随意覆盖它。

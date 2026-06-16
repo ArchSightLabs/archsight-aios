@@ -26,4 +26,4 @@ archsight-aios init --cwd /path/to/project --profile construction-vision
 archsight-aios init --cwd /path/to/project --profile rag-knowledge
 ```
 
-`init` 默认使用 `--mode auto`：新项目补齐根目录入口和 `.ai/`，已有 AI 工具入口文件的项目自动追加或刷新 ArchSight AIOS 托管引用块。Profile 只补充 `.ai/profiles/*.md`，不复制公共入口规则。
+`init` 默认使用 `--mode auto`：新项目补齐根目录入口（`AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md`、`AI_CODING_RULES.md`）和 `.ai/`，已有 AI 工具入口文件的项目自动追加或刷新 ArchSight AIOS 托管引用块。Profile 只补充 `.ai/profiles/*.md`，不复制公共入口规则。

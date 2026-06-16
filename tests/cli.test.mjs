@@ -25,6 +25,14 @@ function runNodeScript(scriptPath, options = {}) {
   });
 }
 
+function runNodeScriptWithArgs(scriptPath, args, options = {}) {
+  return spawnSync(process.execPath, [scriptPath, ...args], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    ...options
+  });
+}
+
 function runWithHome(args, homeDir) {
   return run(args, {
     env: {
@@ -44,7 +52,7 @@ async function testHelp() {
   assert.equal(result.status, 0);
   assert.match(result.stdout, /ArchSight AIOS/);
   assert.match(result.stdout, /archsight-aios help/);
-  assert.match(result.stdout, /codex\|agents\|gemini\|antigravity\|workbuddy\|all/);
+  assert.match(result.stdout, /codex\|agents\|gemini\|antigravity\|workbuddy\|opencode\|claude-code\|all/);
   assert.match(result.stdout, /archsight-aios doctor/);
   assert.match(result.stdout, /archsight-aios init /);
   assert.doesNotMatch(result.stdout, /init-project/);
@@ -85,6 +93,8 @@ async function testProductIdentity() {
   assert.equal(manifest.installTargets.antigravityLegacySkills, "~/.gemini/antigravity/skills");
   assert.equal(manifest.installTargets.geminiSupportAssets, "~/.gemini/archsight-aios");
   assert.equal(manifest.installTargets.workBuddySkills, "~/.workbuddy/skills");
+  assert.equal(manifest.installTargets.openCodeSkills, "~/.opencode/skills");
+  assert.equal(manifest.installTargets.claudeCodeSkills, "~/.claude/skills");
 
   await assert.rejects(fs.access(legacyManifest));
 }
@@ -107,6 +117,10 @@ async function testManifestCoversRepositoryAssets() {
 
   assert.deepEqual(manifestSkillIds, skillDirs);
   assert.deepEqual(manifestWorkflowIds, workflowIds);
+
+  for (const requiredAsset of manifest.requiredAssets ?? []) {
+    await fs.access(path.join(repoRoot, requiredAsset));
+  }
 }
 
 async function testPublicDiscoveryMetadata() {
@@ -121,7 +135,8 @@ async function testPublicDiscoveryMetadata() {
   assert.ok(pkg.files.includes(".claude-plugin/"));
   assert.ok(pkg.files.includes("gemini-extension.json"));
   assert.ok(pkg.files.includes("adapters/"));
-  for (const keyword of ["agent-skills", "skills-sh", "gemini-cli", "claude-code", "workbuddy", "construction-ai"]) {
+  assert.ok(pkg.files.includes("OPENCODE.md"));
+  for (const keyword of ["agent-skills", "skills-sh", "gemini-cli", "claude-code", "workbuddy", "opencode", "construction-ai"]) {
     assert.ok(pkg.keywords.includes(keyword), keyword);
   }
 
@@ -139,6 +154,192 @@ async function testValidateSkillsCommand() {
   const result = runNodeScript(path.join(repoRoot, "scripts", "validate-skills.mjs"));
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(result.stdout, /Skill validation passed/);
+}
+
+async function testValidatePromptFixturesCommand() {
+  const result = runNodeScript(path.join(repoRoot, "scripts", "validate-prompt-fixtures.mjs"));
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /Prompt fixture validation passed/);
+}
+
+async function testValidatePromptModelOutputsCommand() {
+  const result = runNodeScript(path.join(repoRoot, "scripts", "validate-prompt-model-outputs.mjs"));
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /Prompt model output validation passed/);
+}
+
+async function testValidatePromptScorecardCommand() {
+  const result = runNodeScript(path.join(repoRoot, "scripts", "validate-prompt-scorecard.mjs"));
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /Prompt scorecard validation passed/);
+}
+
+async function testBuildPromptRunPackCommand() {
+  const scriptPath = path.join(repoRoot, "scripts", "build-prompt-run-pack.mjs");
+  const runPackPath = path.join(repoRoot, "prompts", "evaluations", ".tmp-run-pack.json");
+  const publicRunPackPath = path.join(repoRoot, "prompts", "evaluations", ".tmp-public-run-pack.json");
+  const relativeRunPackPath = path.relative(repoRoot, runPackPath);
+  const relativePublicRunPackPath = path.relative(repoRoot, publicRunPackPath);
+  const publicFixturePath = "prompts/evaluations/engineering-business-public-advisory-fixtures.json";
+
+  await fs.rm(runPackPath, { force: true });
+  await fs.rm(publicRunPackPath, { force: true });
+
+  try {
+    const validate = runNodeScriptWithArgs(scriptPath, ["--check"]);
+    assert.equal(validate.status, 0, `${validate.stdout}\n${validate.stderr}`);
+    assert.match(validate.stdout, /Prompt run pack validation passed/);
+
+    const build = runNodeScriptWithArgs(scriptPath, ["--out", relativeRunPackPath]);
+    assert.equal(build.status, 0, `${build.stdout}\n${build.stderr}`);
+    assert.match(build.stdout, /Prompt run pack written/);
+
+    const runPack = await readJson(runPackPath);
+    assert.equal(runPack.schema, 1);
+    assert.equal(runPack.runs.length, 12);
+
+    const variantsByCase = new Map();
+    for (const item of runPack.runs) {
+      const variants = variantsByCase.get(item.caseId) ?? new Set();
+      variants.add(item.variant);
+      variantsByCase.set(item.caseId, variants);
+      assert.ok(Array.isArray(item.sampleInput) && item.sampleInput.length > 0);
+      assert.ok(typeof item.prompt === "string" && item.prompt.length > 0);
+    }
+
+    assert.equal(variantsByCase.size, 6);
+    for (const variants of variantsByCase.values()) {
+      assert.deepEqual([...variants].sort(), ["basic", "weak"]);
+    }
+
+    const validatePublic = runNodeScriptWithArgs(scriptPath, ["--fixture", publicFixturePath, "--check"]);
+    assert.equal(validatePublic.status, 0, `${validatePublic.stdout}\n${validatePublic.stderr}`);
+    assert.match(validatePublic.stdout, /Prompt run pack validation passed/);
+
+    const buildPublic = runNodeScriptWithArgs(scriptPath, ["--fixture", publicFixturePath, "--out", relativePublicRunPackPath]);
+    assert.equal(buildPublic.status, 0, `${buildPublic.stdout}\n${buildPublic.stderr}`);
+    assert.match(buildPublic.stdout, /Prompt run pack written/);
+
+    const publicRunPack = await readJson(publicRunPackPath);
+    assert.equal(publicRunPack.fixture, publicFixturePath);
+    assert.equal(publicRunPack.runs.length, 12);
+    assert.ok(publicRunPack.runs.every((item) => item.inputFormat === "markdown"));
+    assert.ok(publicRunPack.runs.every((item) => item.sampleInput[0].includes("数据说明：以下客户、项目、人员、地点、日期、金额、编号均为虚构。")));
+  } finally {
+    await fs.rm(runPackPath, { force: true });
+    await fs.rm(publicRunPackPath, { force: true });
+  }
+}
+
+async function testValidatePromptRunResultsCommand() {
+  const scriptPath = path.join(repoRoot, "scripts", "validate-prompt-run-results.mjs");
+  const resultsPath = path.join(repoRoot, "prompts", "evaluations", ".tmp-run-results.json");
+  const relativeResultsPath = path.relative(repoRoot, resultsPath);
+
+  await fs.rm(resultsPath, { force: true });
+
+  try {
+    const templateCheck = runNodeScriptWithArgs(scriptPath, ["--check-template"]);
+    assert.equal(templateCheck.status, 0, `${templateCheck.stdout}\n${templateCheck.stderr}`);
+    assert.match(templateCheck.stdout, /Prompt run results template validation passed/);
+
+    const init = runNodeScriptWithArgs(scriptPath, ["--init", relativeResultsPath]);
+    assert.equal(init.status, 0, `${init.stdout}\n${init.stderr}`);
+    assert.match(init.stdout, /Prompt run results template written/);
+
+    const emptyTemplate = runNodeScriptWithArgs(scriptPath, ["--file", relativeResultsPath]);
+    assert.notEqual(emptyTemplate.status, 0);
+    assert.match(emptyTemplate.stderr, /output must be a non-empty string or string array/);
+
+    const results = await readJson(resultsPath);
+    for (const item of results.outputs) {
+      item.model = "test-model";
+      item.ranAt = "2026-06-16T00:00:00+08:00";
+      item.notes = "Test fixture output.";
+      if (item.variant === "basic") {
+        item.output = item.expectedStrongSections.map((section) => `## ${section}\n- checked`);
+      } else {
+        item.output = ["普通回答摘要。", "仍需人工复核。"];
+      }
+    }
+    await fs.writeFile(resultsPath, `${JSON.stringify(results, null, 2)}\n`, "utf8");
+
+    const validResults = runNodeScriptWithArgs(scriptPath, ["--file", relativeResultsPath]);
+    assert.equal(validResults.status, 0, `${validResults.stdout}\n${validResults.stderr}`);
+    assert.match(validResults.stdout, /Prompt run results validation passed/);
+    assert.match(validResults.stdout, /Weak output diagnostics/);
+  } finally {
+    await fs.rm(resultsPath, { force: true });
+  }
+}
+
+async function testAnalyzePromptRunResultsCommand() {
+  const validatorPath = path.join(repoRoot, "scripts", "validate-prompt-run-results.mjs");
+  const analyzerPath = path.join(repoRoot, "scripts", "analyze-prompt-run-results.mjs");
+  const resultsPath = path.join(repoRoot, "prompts", "evaluations", ".tmp-run-results-analysis.json");
+  const reportPath = path.join(repoRoot, "prompts", "evaluations", ".tmp-run-results-analysis.md");
+  const relativeResultsPath = path.relative(repoRoot, resultsPath);
+  const relativeReportPath = path.relative(repoRoot, reportPath);
+
+  await fs.rm(resultsPath, { force: true });
+  await fs.rm(reportPath, { force: true });
+
+  try {
+    const init = runNodeScriptWithArgs(validatorPath, ["--init", relativeResultsPath]);
+    assert.equal(init.status, 0, `${init.stdout}\n${init.stderr}`);
+
+    const results = await readJson(resultsPath);
+    for (const item of results.outputs) {
+      item.model = "test-model";
+      item.ranAt = "2026-06-16T00:00:00+08:00";
+      item.notes = "Test fixture output.";
+      if (item.variant === "basic") {
+        item.output = item.expectedStrongSections.map((section) => `## ${section}\n- checked`);
+      } else {
+        item.output = ["普通回答摘要。", "仍需人工复核。"];
+      }
+    }
+    await fs.writeFile(resultsPath, `${JSON.stringify(results, null, 2)}\n`, "utf8");
+
+    const analyze = runNodeScriptWithArgs(analyzerPath, ["--file", relativeResultsPath, "--out", relativeReportPath]);
+    assert.equal(analyze.status, 0, `${analyze.stdout}\n${analyze.stderr}`);
+    assert.match(analyze.stdout, /Prompt run results analysis written/);
+
+    const report = await fs.readFile(reportPath, "utf8");
+    assert.match(report, /工程业务基础提示词运行结果分析/);
+    assert.match(report, /覆盖 case：6/);
+    assert.match(report, /基础提示词通过门禁：6\/6/);
+    assert.match(report, /scorecard 判定基础提示词更优：6\/6/);
+  } finally {
+    await fs.rm(resultsPath, { force: true });
+    await fs.rm(reportPath, { force: true });
+  }
+}
+
+async function testInitPromptModelOutputTemplateCommand() {
+  const scriptPath = path.join(repoRoot, "scripts", "validate-prompt-model-outputs.mjs");
+  const templatePath = path.join(repoRoot, "prompts", "evaluations", ".tmp-model-output-run.json");
+  const relativeTemplatePath = path.relative(repoRoot, templatePath);
+
+  await fs.rm(templatePath, { force: true });
+
+  try {
+    const init = runNodeScriptWithArgs(scriptPath, ["--init", relativeTemplatePath]);
+    assert.equal(init.status, 0, `${init.stdout}\n${init.stderr}`);
+    assert.match(init.stdout, /Prompt model output template written/);
+
+    const template = await readJson(templatePath);
+    assert.equal(template.isExample, false);
+    assert.equal(template.outputs.length, 6);
+    assert.ok(template.outputs.every((item) => Array.isArray(item.output) && item.output.length === 0));
+    assert.ok(template.outputs.every((item) => Array.isArray(item.expectedSections) && item.expectedSections.length > 0));
+
+    const validateEmptyTemplate = runNodeScriptWithArgs(scriptPath, ["--file", relativeTemplatePath]);
+    assert.notEqual(validateEmptyTemplate.status, 0);
+    assert.match(validateEmptyTemplate.stderr, /output must be a non-empty string or string array/);
+  } finally {
+    await fs.rm(templatePath, { force: true });
+  }
 }
 
 async function testSkillsAvoidPromptTemplateShape() {
@@ -165,6 +366,7 @@ async function testInstallAntigravityUsesPluginByDefault() {
   const pluginJson = await readJson(path.join(pluginRoot, "plugin.json"));
   assert.equal(pluginJson.name, "archsight-aios");
   await fs.access(path.join(pluginRoot, "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(pluginRoot, "skills", "engineering-business-starter-kit.md"));
   await assert.rejects(fs.access(path.join(tempHome, ".gemini", "archsight-aios")));
   await assert.rejects(fs.access(path.join(tempHome, ".gemini", "antigravity", "skills")));
 
@@ -195,8 +397,43 @@ async function testInstallWorkBuddyWritesPersonalSkills() {
   assert.match(result.stdout, /workbuddy skills/);
 
   await fs.access(path.join(tempHome, ".workbuddy", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".workbuddy", "skills", "engineering-business-starter-kit.md"));
   await assert.rejects(fs.access(path.join(tempHome, ".gemini", "archsight-aios")));
   await assert.rejects(fs.access(path.join(tempHome, ".codex", "skills", skillName, "SKILL.md")));
+
+  await fs.rm(tempHome, { recursive: true, force: true });
+}
+
+async function testInstallOpenCodeWritesPersonalSkills() {
+  const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-opencode-"));
+  const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
+  const skillName = manifest.skills[0].id;
+
+  const result = runWithHome(["install", "--target", "opencode", "--scope", "user"], tempHome);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /opencode skills/);
+
+  await fs.access(path.join(tempHome, ".opencode", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".opencode", "skills", "engineering-business-starter-kit.md"));
+  await assert.rejects(fs.access(path.join(tempHome, ".codex", "skills", skillName, "SKILL.md")));
+  await assert.rejects(fs.access(path.join(tempHome, ".claude", "skills", skillName, "SKILL.md")));
+
+  await fs.rm(tempHome, { recursive: true, force: true });
+}
+
+async function testInstallClaudeCodeWritesPersonalSkills() {
+  const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-claude-code-"));
+  const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
+  const skillName = manifest.skills[0].id;
+
+  const result = runWithHome(["install", "--target", "claudecode", "--scope", "user"], tempHome);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /claude-code skills/);
+
+  await fs.access(path.join(tempHome, ".claude", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".claude", "skills", "engineering-business-starter-kit.md"));
+  await assert.rejects(fs.access(path.join(tempHome, ".codex", "skills", skillName, "SKILL.md")));
+  await assert.rejects(fs.access(path.join(tempHome, ".opencode", "skills", skillName, "SKILL.md")));
 
   await fs.rm(tempHome, { recursive: true, force: true });
 }
@@ -212,7 +449,14 @@ async function testInstallAllIncludesWorkBuddy() {
 
   await fs.access(path.join(tempHome, ".workbuddy", "skills", skillName, "SKILL.md"));
   await fs.access(path.join(tempHome, ".codex", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".opencode", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".claude", "skills", skillName, "SKILL.md"));
   await fs.access(path.join(tempHome, ".gemini", "archsight-aios", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".workbuddy", "skills", "engineering-business-starter-kit.md"));
+  await fs.access(path.join(tempHome, ".codex", "skills", "engineering-business-starter-kit.md"));
+  await fs.access(path.join(tempHome, ".opencode", "skills", "engineering-business-starter-kit.md"));
+  await fs.access(path.join(tempHome, ".claude", "skills", "engineering-business-starter-kit.md"));
+  await fs.access(path.join(tempHome, ".gemini", "archsight-aios", "skills", "engineering-business-starter-kit.md"));
 
   await fs.rm(tempHome, { recursive: true, force: true });
 }
@@ -228,6 +472,7 @@ async function testInstallAntigravityUsesLegacyWhenDetected() {
   assert.match(result.stdout, /antigravity 1\.x legacy skills/);
 
   await fs.access(path.join(tempHome, ".gemini", "antigravity", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".gemini", "antigravity", "skills", "engineering-business-starter-kit.md"));
   await assert.rejects(fs.access(path.join(tempHome, ".gemini", "config", "plugins", "archsight-aios")));
 
   await fs.rm(tempHome, { recursive: true, force: true });
@@ -248,6 +493,8 @@ async function testInstallAntigravityInstallsPluginWhen2ConfigDetected() {
 
   await fs.access(path.join(tempHome, ".gemini", "antigravity", "skills", skillName, "SKILL.md"));
   await fs.access(path.join(tempHome, ".gemini", "config", "plugins", "archsight-aios", "skills", skillName, "SKILL.md"));
+  await fs.access(path.join(tempHome, ".gemini", "antigravity", "skills", "engineering-business-starter-kit.md"));
+  await fs.access(path.join(tempHome, ".gemini", "config", "plugins", "archsight-aios", "skills", "engineering-business-starter-kit.md"));
 
   await fs.rm(tempHome, { recursive: true, force: true });
 }
@@ -267,6 +514,7 @@ async function testInitProjectDefaultsToCurrentDirectory() {
   await fs.access(path.join(tempRoot, "AI_CODING_RULES.md"));
   await fs.access(path.join(tempRoot, "CLAUDE.md"));
   await fs.access(path.join(tempRoot, "GEMINI.md"));
+  await fs.access(path.join(tempRoot, "OPENCODE.md"));
   await fs.access(path.join(tempRoot, ".ai", "ARCHSIGHT_AIOS_RULES.md"));
   await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
 
@@ -303,6 +551,7 @@ async function testInitProjectAiOnlyMode() {
   await assert.rejects(fs.access(path.join(tempRoot, "AI_CODING_RULES.md")));
   await assert.rejects(fs.access(path.join(tempRoot, "CLAUDE.md")));
   await assert.rejects(fs.access(path.join(tempRoot, "GEMINI.md")));
+  await assert.rejects(fs.access(path.join(tempRoot, "OPENCODE.md")));
   await fs.access(path.join(tempRoot, ".ai", "ARCHSIGHT_AIOS_RULES.md"));
   await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
   await fs.access(path.join(tempRoot, ".ai", "agent-routing.md"));
@@ -314,7 +563,7 @@ async function testInitProjectAiOnlyMode() {
 
 async function testInitProjectLinkedModeReferencesAiFiles() {
   const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-init-linked-"));
-  const rootFiles = ["AGENTS.md", "CLAUDE.md", "GEMINI.md"];
+  const rootFiles = ["AGENTS.md", "CLAUDE.md", "GEMINI.md", "OPENCODE.md"];
   const codingRulesPath = path.join(tempRoot, "AI_CODING_RULES.md");
 
   for (const fileName of rootFiles) {
@@ -349,7 +598,7 @@ async function testInitProjectLinkedModeCopiesMissingToolEntrypoints() {
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
 
   await assert.rejects(fs.access(path.join(tempRoot, "AI_CODING_RULES.md")));
-  for (const fileName of ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]) {
+  for (const fileName of ["AGENTS.md", "CLAUDE.md", "GEMINI.md", "OPENCODE.md"]) {
     const content = await fs.readFile(path.join(tempRoot, fileName), "utf8");
     assert.match(content, /\.ai\/ARCHSIGHT_AIOS_RULES\.md/);
     assert.doesNotMatch(content, /ARCHSIGHT-AIOS:START/);
@@ -602,10 +851,19 @@ const tests = [
   testManifestCoversRepositoryAssets,
   testPublicDiscoveryMetadata,
   testValidateSkillsCommand,
+  testValidatePromptFixturesCommand,
+  testValidatePromptModelOutputsCommand,
+  testValidatePromptScorecardCommand,
+  testBuildPromptRunPackCommand,
+  testValidatePromptRunResultsCommand,
+  testAnalyzePromptRunResultsCommand,
+  testInitPromptModelOutputTemplateCommand,
   testSkillsAvoidPromptTemplateShape,
   testInstallAntigravityUsesPluginByDefault,
   testInstallGeminiWritesGeminiSupportAssets,
   testInstallWorkBuddyWritesPersonalSkills,
+  testInstallOpenCodeWritesPersonalSkills,
+  testInstallClaudeCodeWritesPersonalSkills,
   testInstallAllIncludesWorkBuddy,
   testInstallAntigravityUsesLegacyWhenDetected,
   testInstallAntigravityInstallsPluginWhen2ConfigDetected,

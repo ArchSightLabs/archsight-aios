@@ -29,7 +29,10 @@ Workspace Binding 定义启用 Hermes / 飞书 Adapter 时，任务如何绑定�
 ```text
 templates/project-ai/
 ├── AGENTS.md
+├── CLAUDE.md
 ├── GEMINI.md
+├── OPENCODE.md
+├── AI_CODING_RULES.md
 └── .ai/
     ├── project-context.md
     ├── agent-routing.md

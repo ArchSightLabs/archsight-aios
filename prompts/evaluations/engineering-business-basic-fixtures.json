@@ -1,0 +1,375 @@
+{
+  "schema": 1,
+  "name": "engineering-business-basic-fixtures",
+  "version": "0.1",
+  "dataBoundary": "De-identified fixtures derived from internal engineering-business prompt comparisons. Do not include customer names, contacts, project names, exact amounts, or raw source documents.",
+  "sourceBoundary": "Source signals are abstracted from advisory prompt validation records and source inventory. They preserve task shape only, not raw documents or identifiable project facts.",
+  "cases": [
+    {
+      "id": "commercial-tender-response-matrix",
+      "skillId": "aios-commercial-tender",
+      "promptPath": "skills/aios-commercial-tender/prompts/basic-prompt.md",
+      "scenario": "AI 标书工具试用后的人工检查问题和评分点结构整理",
+      "sourceSignals": [
+        "advisory:source/prompts/01 tender response matrix prompt",
+        "advisory:source/prompt-runs weak-vs-optimized comparison case 1",
+        "source-shape:AI technical-bid tool review issues plus scoring-point structure",
+        "boundary-shape:not a complete tender-original reading task"
+      ],
+      "advisoryComparison": [
+        "普通提示词容易转向工具建议或泛泛投标建议。",
+        "优化提示词把同一类输入固定为输入类型判断、问题回应矩阵、评分点响应矩阵和人工复核岗位。"
+      ],
+      "weakPrompt": "请分析这些技术标问题，给出建议。",
+      "inputSummary": [
+        "输入不是完整招标文件，而是技术标生成后的人工检查问题清单。",
+        "资料包含评分点结构、技术标章节、图表和工具能力问题。",
+        "缺少招标原文、评标办法页码、废标条款和完整投标文件成稿。"
+      ],
+      "sampleInput": [
+        "资料类型：AI 技术标工具试用后的人工检查问题清单。",
+        "问题片段：AI 生成技术标时页数不可控，分章节生成后合并格式容易错乱；总平面布置图、航拍图识别和施工效果图仍需人工复核。",
+        "评分点结构片段：工程概况、施工总体部署、施工进度计划、主要分部分项工程施工方案、资源配置、质量安全文明施工。",
+        "资料缺口：未提供招标文件原文、评分办法页码、废标条款、AI 生成技术标成稿和最终人工修改稿。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "输入类型",
+        "缺少可验证招标依据",
+        "AI 技术标复核问题回应矩阵",
+        "评分点响应矩阵",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "先判断输入类型和资料状态。",
+        "缺少招标原文时输出问题回应矩阵和响应矩阵模板。",
+        "评分点、废标项、资格条件和分值缺证据时标为需补充确认。",
+        "列出投标负责人、经营人员、技术负责人、法务或造价复核事项。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "输入类型和资料状态判断",
+        "AI 技术标复核问题回应矩阵",
+        "评分点响应矩阵",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "直接推荐 AI 标书工具或采购路径。",
+        "默认已经完成真实读标。",
+        "编造废标项、资格条件、分值或页码。"
+      ],
+      "bannedClaims": [
+        "中标概率",
+        "评标结论",
+        "保证中标",
+        "工具采购建议",
+        "串标规避建议"
+      ]
+    },
+    {
+      "id": "commercial-contract-obligation-nodes",
+      "skillId": "aios-commercial-contract",
+      "promptPath": "skills/aios-commercial-contract/prompts/basic-prompt.md",
+      "scenario": "工程合同履约节点、付款结算和空白字段核对",
+      "sourceSignals": [
+        "advisory:source/prompts/02 contract obligation nodes prompt",
+        "advisory:source/prompt-runs weak-vs-optimized comparison case 2",
+        "source-shape:engineering subcontract or procurement contract fragment",
+        "boundary-shape:contract fields may be blank and cannot support legal conclusions"
+      ],
+      "advisoryComparison": [
+        "普通提示词能总结风险，但容易停留在摘要。",
+        "优化提示词把合同片段改造成空白字段核对、履约节点、付款结算条件和人工复核分流。"
+      ],
+      "weakPrompt": "请总结这份合同的重点和风险。",
+      "inputSummary": [
+        "输入为工程分包或采购合同片段。",
+        "合同包含付款、验收、资料提交、工资或结算等节点。",
+        "部分主体、项目、金额、期限或代表字段为空白。"
+      ],
+      "sampleInput": [
+        "资料类型：工程分包合同片段。",
+        "合同片段：承包方每月固定日期前提交月完成工程量清单、考勤记录和工资表，经发包方审核后作为月度结算依据。",
+        "合同片段：分项工程完成并验收合格后，双方在约定期限内办理分包总价款结算。",
+        "合同缺口：工程名称、工程地点、合同价款、双方现场代表和部分签章信息为空白。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "合同基本信息",
+        "空白字段优先核对表",
+        "关键履约节点",
+        "付款和结算条款",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "先列合同基本信息和空白字段。",
+        "把节点拆成触发条件、期限、责任方、原文依据、需准备资料和复核提示。",
+        "风险提示使用建议复核口径。",
+        "保留法务、商务、造价、财务或项目负责人复核边界。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "合同基本信息",
+        "空白字段优先核对表",
+        "关键履约节点",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "只输出合同风险摘要。",
+        "忽略空白字段。",
+        "把风险提示写成法律意见或违约责任结论。"
+      ],
+      "bannedClaims": [
+        "法律意见",
+        "违约定性",
+        "索赔金额",
+        "结算金额结论",
+        "责任归属结论"
+      ]
+    },
+    {
+      "id": "construction-daily-issue-tracking",
+      "skillId": "aios-construction-daily",
+      "promptPath": "skills/aios-construction-daily/prompts/basic-prompt.md",
+      "scenario": "施工日报管理摘要、问题台账和模板质量诊断",
+      "sourceSignals": [
+        "advisory:source/prompts/03 daily issue tracking prompt",
+        "advisory:source/prompt-runs weak-vs-optimized comparison case 3",
+        "source-shape:single-day construction daily with populated work content and blank resource fields",
+        "boundary-shape:blank fields are data-quality gaps, not site-fact conclusions"
+      ],
+      "advisoryComparison": [
+        "普通提示词能概括日报，但容易混淆现场事实和模板空白。",
+        "优化提示词固定输出管理摘要、问题跟踪表、模板质量诊断和需补充确认事项。"
+      ],
+      "weakPrompt": "请总结这份项目日报并指出问题。",
+      "inputSummary": [
+        "输入为单日施工日报或周报素材。",
+        "日报包含天气、人员、施工内容、明日计划和部分空白表格。",
+        "材料、机械、照片、滞后措施或完成率可能为空。"
+      ],
+      "sampleInput": [
+        "资料类型：单日施工日报片段。",
+        "日报片段：天气晴；当日施工内容包括内墙施工、安装作业、外立面作业和现场清理；明日计划继续相关工序。",
+        "资源片段：人员工种有记录，机械数量为空；主要材料进场表为空。",
+        "模板片段：外部检查写暂无，图纸变更写暂无，现场照片区域保留序号但未见图片。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "当日管理摘要",
+        "问题跟踪表",
+        "日报模板质量诊断",
+        "需补充确认事项",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "区分已明确事项、异常或风险提示、需补充确认。",
+        "把空白字段归入模板质量诊断。",
+        "不把未提及事项写成现场不合格。",
+        "输出适合项目台账和周报复用的字段。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "当日管理摘要",
+        "问题跟踪表",
+        "日报模板质量诊断",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "把材料表为空写成现场没有材料进场。",
+        "把照片缺失写成现场无留痕结论。",
+        "直接判断项目进度或质量不合格。"
+      ],
+      "bannedClaims": [
+        "项目进度不合格",
+        "质量验收结论",
+        "安全合规结论",
+        "签证成立",
+        "索赔成立"
+      ]
+    },
+    {
+      "id": "construction-meeting-action-closure",
+      "skillId": "aios-construction-meeting",
+      "promptPath": "skills/aios-construction-meeting/prompts/basic-prompt.md",
+      "scenario": "工程会议纪要待办闭环和责任线索整理",
+      "sourceSignals": [
+        "advisory:source/prompts/04 meeting action closure prompt",
+        "advisory:source/prompt-runs weak-vs-optimized comparison case 4",
+        "source-shape:meeting minutes with speakers, follow-up statuses, and missing deadlines",
+        "boundary-shape:speaker is a responsibility clue, not necessarily final owner"
+      ],
+      "advisoryComparison": [
+        "普通提示词容易只生成会议摘要。",
+        "优化提示词把会议内容拆成待办闭环表、责任线索、需确认责任人和需确认期限。"
+      ],
+      "weakPrompt": "请整理这份会议纪要的重点和待办。",
+      "inputSummary": [
+        "输入为工程会议纪要、协调会记录或录音转写摘要。",
+        "资料包含多个发言人、过程状态、未完成事项和下次跟进内容。",
+        "部分事项没有明确最终责任人或截止时间。"
+      ],
+      "sampleInput": [
+        "资料类型：工程会议纪要片段。",
+        "纪要片段：参会人员讨论资质资料、证书继续教育、项目问题整改、资料提交和下次会议准备。",
+        "过程状态：部分事项写明仍在跟进、待提交、有待确认。",
+        "资料缺口：部分事项只有发言人，没有明确最终责任部门；多数事项没有截止时间。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "会议核心结论",
+        "待办闭环表",
+        "责任线索与需确认表",
+        "下次会议建议关注",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "只提取会议资料明确出现的决定、问题、待办和分工。",
+        "责任人不明确时写需确认责任人。",
+        "期限不明确时写需确认期限。",
+        "发言人只作为责任线索，不自动等同最终责任人。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "会议核心结论",
+        "待办闭环表",
+        "责任线索与需确认表",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "把发言人写成最终责任人。",
+        "自行补截止日期。",
+        "把讨论事项改写成正式会议决议。"
+      ],
+      "bannedClaims": [
+        "最终责任归属",
+        "正式会议决议",
+        "合同通知效力",
+        "审批通过",
+        "签证成立"
+      ]
+    },
+    {
+      "id": "commercial-variation-evidence-chain",
+      "skillId": "aios-commercial-variation",
+      "promptPath": "skills/aios-commercial-variation/prompts/basic-prompt.md",
+      "scenario": "变更签证资料链、公开样表字段和过程线索整理",
+      "sourceSignals": [
+        "advisory:source/prompts/05 variation evidence chain prompt",
+        "advisory:source/prompt-runs weak-vs-optimized comparison case 5",
+        "source-shape:public variation form fields plus process clues from contract, daily, and meeting materials",
+        "boundary-shape:public sample fields do not establish project facts or settlement conclusions"
+      ],
+      "advisoryComparison": [
+        "普通提示词容易把样表、过程线索和正式依据混在一起。",
+        "优化提示词先判断资料链完整度，再区分样表字段、过程线索、合同依据、正式依据缺口和复核岗位。"
+      ],
+      "weakPrompt": "请分析这份变更签证资料是否完整。",
+      "inputSummary": [
+        "输入可能包含公开签证样表、联系单、合同条款、会议纪要、日报或照片说明。",
+        "资料可能只有字段结构和过程线索，没有完整签认链。",
+        "缺少具体签证单、审核书、工程量计算或业主确认资料时不能判断金额。"
+      ],
+      "sampleInput": [
+        "资料类型：工程变更签证资料链片段。",
+        "公开样表字段：工程名称、编号、变更项目名称、变更原因及内容、单位、数量、监理核定量、建设单位核定量、签章日期。",
+        "过程线索：会议纪要提到现场条件调整；日报记录相关施工活动；合同片段提到变更和结算需按流程确认。",
+        "资料缺口：未提供正式签证单、联系单编号、图纸变更单、工程量计算书、审核书和完整签认状态。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "资料来源和演示边界",
+        "资料链完整度判断",
+        "资料链清单",
+        "合同和流程依据",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "先判断资料链完整度。",
+        "区分事实记录、合同依据、过程线索和正式依据待确认。",
+        "公开样表只能说明字段结构，不能代表项目事实。",
+        "输出经营、项目、造价、合同、法务和资料员复核分流。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "资料链完整度判断",
+        "样表字段结构",
+        "资料链清单",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "把公开样表当成项目事实。",
+        "把会议纪要或日报直接写成结算依据。",
+        "判断签证成立、索赔成立或金额倾向。"
+      ],
+      "bannedClaims": [
+        "签证成立",
+        "索赔成立",
+        "责任归属",
+        "最终金额",
+        "结算通过"
+      ]
+    },
+    {
+      "id": "construction-scheme-assistive-review",
+      "skillId": "aios-construction-scheme",
+      "promptPath": "skills/aios-construction-scheme/prompts/basic-prompt.md",
+      "scenario": "专项施工方案辅助复核、专家意见回查和 AI 生成失准复盘",
+      "sourceSignals": [
+        "advisory:source/prompts/06 scheme assistive review prompt",
+        "advisory:source/prompt-runs weak-vs-optimized comparison case 6",
+        "source-shape:special construction scheme feedback with calculation, figure, local-standard, and special-part issues",
+        "boundary-shape:assistant can produce review checklists but cannot confirm calculation correctness or approval outcome"
+      ],
+      "advisoryComparison": [
+        "普通提示词能总结 AI 方案问题，但不形成技术负责人可用的回查清单。",
+        "优化提示词把场景收口为失准复盘、专家修改说明回查、危险源控制和人工复核清单。"
+      ],
+      "weakPrompt": "请分析施工方案应用难点并给建议。",
+      "inputSummary": [
+        "输入为专项施工方案片段、专家修改说明、计算书目录或 AI 方案生成反馈。",
+        "资料可能包含地方标准、参数表、附图、计算书和特殊部位。",
+        "附图、扫描件和计算书公式需要专业人员或确定性工具复核。"
+      ],
+      "sampleInput": [
+        "资料类型：专项施工方案和 AI 方案生成反馈片段。",
+        "反馈片段：AI 生成方案中的参数表与计算书不一致，配图与项目无关，地方标准引用不完整。",
+        "方案片段：方案涉及关键工序、危险源、检查验收、应急措施、专家修改说明、附图和计算书。",
+        "资料缺口：附图、扫描页和计算书公式未经过专业人员或确定性工具复核。"
+      ],
+      "requiredPromptTerms": [
+        "资料来源 / Source Map",
+        "AI 生成失准原因复盘",
+        "专家修改说明回查清单",
+        "危险源和控制措施",
+        "需人工复核问题清单",
+        "不能下结论"
+      ],
+      "expectedOutputShape": [
+        "使用 AI 辅助施工方案复核口径。",
+        "输入为 AI 试用反馈时先输出失准原因复盘。",
+        "专家修改说明要回查正文、附图、计算书和验收要求。",
+        "不确认计算正确，不输出方案合格或专家论证通过。"
+      ],
+      "expectedStrongSections": [
+        "资料来源 / Source Map",
+        "AI 生成失准原因复盘",
+        "专家修改说明回查清单",
+        "危险源和控制措施",
+        "不能下结论的事项"
+      ],
+      "weakFailureModes": [
+        "使用 AI 审查施工方案口径。",
+        "输出方案合格或不合格。",
+        "确认计算书公式正确或专家论证通过。"
+      ],
+      "bannedClaims": [
+        "方案合格",
+        "计算正确",
+        "专家论证通过",
+        "审批通过",
+        "现场安全满足"
+      ]
+    }
+  ]
+}

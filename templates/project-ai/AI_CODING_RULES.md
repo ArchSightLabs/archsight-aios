@@ -3,7 +3,7 @@
 > 真正工程师的编程素养准则（Skills for Real Engineers）
 >
 > 本文件是当前业务项目的通用 AI 编码规则主体。  
-> `AGENTS.md`、`CLAUDE.md`、`GEMINI.md` 等入口文件只引用本文件，不复制规范正文。  
+> `AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md` 等入口文件只引用本文件，不复制规范正文。
 > ArchSight AIOS 的专属补充规则位于 `.ai/ARCHSIGHT_AIOS_RULES.md`。
 
 状态：项目基线  

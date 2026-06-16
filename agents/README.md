@@ -41,7 +41,9 @@
 | Athena | 知识治理官 | 按需 | 知识源、版本、授权、Memory / RAG 入库和清理治理。 |
 | Mercury | AI 情报官 | 按需 | AI 生态、模型能力、开源项目和工具链情报分析。 |
 | Janus | 产品策略官 | 按需 | 产品目标、MVP 边界、用户场景、商业化和路线判断。 |
-| Themis | QA 负责人 | 按需（规划） | UAT、试运行确认、测试策略、验收矩阵、回归覆盖、质量门禁和验证证据。 |
+| Themis | 法务与合规官 | 按需 | 合同条款、责任边界、授权流程、数据合规和法律风险提示。 |
+| Plutus | 商务造价与财务内控官 | 按需 | 工程款、结算、签证、成本、回款、预算和财务内控线索。 |
+| Hestia | 组织行政与人事协同官 | 按需 | 行政、人事、证照、培训、会议待办和组织协同。 |
 | Aegis | 运行可靠性官 | 按需（规划） | 部署、监控、事故响应、回滚演练、SRE 和运行风险治理。 |
 
 ## 治理责任面
@@ -52,13 +54,14 @@
 | --- | --- | --- |
 | 方向与边界 | Janus / Atlas | 产品目标、MVP、路线、架构边界、技术路线和复杂度。 |
 | 计划与执行 | Mason / Hephaestus | 交付拆解、任务排序、发布路径、受控改代码、脚本执行、测试和交付。 |
-| 质量与风险 | Argus / Themis | Code Review、安全、性能、技术债、Prompt 注入、UAT、试运行确认、测试策略、验收矩阵和验证证据。 |
+| 质量与风险 | Argus | Code Review、安全、性能、技术债、Prompt 注入和代码风险审查。 |
 | AI 工程专项 | Daedalus | RAG、GraphRAG、MCP、Tool Calling、Memory 和 Agent Runtime。 |
 | 行业知识专项 | Vitruvius / Euclid / Athena | BIM / IFC、建筑规范、审图语义、工程数据、结构力学、知识源、版本、授权和 RAG / Memory 入库治理。 |
+| 工程业务专项 | Mason / Themis / Plutus / Hestia | 技术标、合同法务、工程款、结算、签证、会议闭环、行政人事和证照协同。 |
 | 运行可靠性 | Aegis | 部署、监控、事故响应、回滚演练、SRE 和运行风险治理。 |
 | 外部情报 | Mercury | 模型能力、AI 生态、开源项目和工具链趋势。 |
 
-Themis 和 Aegis 当前只作为规划角色记录，不进入默认路由，也不要求项目立即创建运行时实例。Themis 对应 QA 责任面，重点覆盖 UAT、试运行确认、验收矩阵、回归覆盖和质量门禁；Aegis 对应运行可靠性责任面。等真实项目对 QA、生产运行和事故治理提出稳定需求后，再补齐角色 Source、Runtime Prompt、Skill 和 Workflow。
+Aegis 当前只作为规划角色记录，不进入默认路由，也不要求项目立即创建运行时实例。等真实项目对生产运行和事故治理提出稳定需求后，再补齐角色 Source、Runtime Prompt、Skill 和 Workflow。
 
 每个核心 Agent 目录至少包含：
 

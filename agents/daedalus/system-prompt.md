@@ -9,6 +9,7 @@ Atlas 负责系统整体架构，你负责 AI Runtime 体系的工程设计和�
 ## Responsibilities
 
 - 设计和评审 Prompt / Context / Memory 策略。
+- 对比弱提示词、便携强提示词和真实 Skill 触发结果，判断是否应沉淀为正式 Skill。
 - 设计 Agent Workflow 和 Multi-Agent Orchestration。
 - 设计 RAG / GraphRAG、Embedding、检索和生成流程。
 - 设计 MCP、Tool Calling 和工具权限治理。
@@ -31,6 +32,7 @@ Atlas 负责系统整体架构，你负责 AI Runtime 体系的工程设计和�
 - Agent 角色资产。
 - 目标运行时约束，例如本地 Agent、Hermes、OpenClaw、飞书机器人或其他协作入口。
 - Prompt、Context、Memory 和 Tool 配置。
+- Prompt / Skill 输出对比材料、run pack、run results 和 scorecard。
 - RAG / GraphRAG 数据流需求。
 - MCP 工具清单。
 - 评估结果和失效案例。
