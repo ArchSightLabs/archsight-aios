@@ -62,6 +62,97 @@ const skillAliases = {
   "aios-construction-scheme": ["aios-scheme", "archsight-scheme"]
 };
 
+const profileDetectionRules = {
+  "bim-platform": [
+    "bim",
+    "ifc",
+    "revit",
+    "cad",
+    "dynamo",
+    "autocad",
+    "rvt",
+    "dwg",
+    "dxf",
+    "模型",
+    "构件",
+    "族",
+    "楼层",
+    "建模",
+    "模型质检"
+  ],
+  "construction-vision": [
+    "yolo",
+    "sam",
+    "segment anything",
+    "segmentation",
+    "detect",
+    "detection",
+    "图像",
+    "视频",
+    "照片",
+    "裂缝",
+    "焊缝",
+    "点云",
+    "深度估计",
+    "巡检",
+    "缺陷",
+    "标注",
+    "数据集",
+    "jpg",
+    "png",
+    "mp4"
+  ],
+  "rag-knowledge": [
+    "rag",
+    "graphrag",
+    "knowledge graph",
+    "知识库",
+    "知识图谱",
+    "规范",
+    "条文",
+    "审图",
+    "标准",
+    "检索",
+    "向量",
+    "embedding",
+    "问答",
+    "评估问题"
+  ]
+};
+
+const skillDetectionRules = {
+  "aios-arch": ["架构", "服务边界", "技术选型", "系统设计"],
+  "aios-design": ["界面", "ui", "ux", "工作台", "交互", "原型"],
+  "aios-plan": ["计划", "排期", "里程碑", "任务拆解", "交付"],
+  "aios-review": ["code review", "代码审查", "安全审查", "技术债"],
+  "aios-knowledge": ["bim", "ifc", "规范", "审图", "条文", "知识结构化"],
+  "aios-structural": ["结构", "荷载", "挠度", "fem", "有限元", "计算书"],
+  "aios-runtime": ["rag", "graphrag", "mcp", "tool calling", "memory", "agent runtime"],
+  "aios-prompt-compare": ["提示词", "prompt", "对比", "skill 输出", "weak", "basic"],
+  "aios-commercial-tender": ["招标", "投标", "技术标", "商务标", "评分", "废标", "招采", "资格"],
+  "aios-commercial-contract": ["合同", "协议", "付款", "履约", "违约", "分包", "采购", "结算条款"],
+  "aios-construction-daily": ["日报", "周报", "现场记录", "施工日志", "进度", "材料进场", "机械", "劳务"],
+  "aios-construction-meeting": ["会议纪要", "例会", "协调会", "专题会", "待办", "责任人"],
+  "aios-commercial-variation": ["变更", "签证", "联系单", "索赔", "洽商", "工程量"],
+  "aios-construction-scheme": ["施工方案", "专项方案", "危大", "交底", "危险源", "专家论证"]
+};
+
+const ignoredDetectionDirs = new Set([
+  ".git",
+  ".hg",
+  ".svn",
+  ".ai",
+  "node_modules",
+  "dist",
+  "build",
+  "coverage",
+  ".next",
+  ".nuxt",
+  ".venv",
+  "venv",
+  "__pycache__"
+]);
+
 function usage() {
   return [
     "ArchSight AIOS",
@@ -70,8 +161,8 @@ function usage() {
     "  archsight-aios help",
     "  archsight-aios install --target <codex|agents|gemini|antigravity|workbuddy|opencode|claude-code|all> --scope user",
     "  archsight-aios doctor",
-    "  archsight-aios init [--cwd <path>] [--mode <auto|full|linked|ai-only>] [--profile <name>]",
-    "  archsight-aios validate [--cwd <path>] [--profile <name>] [--temp]",
+    "  archsight-aios init [--cwd <path>] [--mode <auto|full|linked|ai-only>] [--profile <auto|none|all|name>]",
+    "  archsight-aios validate [--cwd <path>] [--profile <auto|none|all|name>] [--temp]",
     "  archsight-aios capability:call --capability <id> --agent <id> --skill <id> --input <json-file>",
     "  archsight-aios hermes:validate",
     "  archsight-aios hermes:sync-dry-run",
@@ -822,7 +913,7 @@ function userInstructionBlock(contentRoot) {
     `- Runtime routing: ${p(path.join(contentRoot, "runtime"))}`,
     `- Project template: ${p(path.join(contentRoot, "templates", "project-ai"))}`,
     "",
-    "Use enabled `aios-*` skills for architecture review, design review, delivery planning, code review, runtime design, controlled execution, and building knowledge when the project profile or task requires it.",
+    "Use enabled `aios-*` skills for architecture review, design review, delivery planning, code review, runtime design, controlled execution, and building knowledge when project profile detection or the task requires it.",
     "Keep Agent, Skill, Workflow, and Runtime boundaries separate.",
     "Hermes, Feishu, and other runtime adapters are optional; do not assume they are enabled unless the project says so.",
     "Do not claim code changes, tests, builds, or deployments were completed unless verified in the bound project workspace.",
@@ -838,14 +929,15 @@ function projectInstructionBlock() {
     "",
     "本项目接入 ArchSight AIOS 作为补充治理层，不替代本项目已有通用 AI 编码规则。",
     "",
-    "当任务涉及 Agent 路由、Skill 选择、Workflow、交付验证、AI Runtime、Code Review，或项目明确启用的 BIM / IFC / 建筑行业 profile 时，先阅读：",
+    "当任务涉及 Agent 路由、Skill 选择、Workflow、交付验证、AI Runtime、Code Review，或 AIOS 自动识别 / 用户明确启用的建筑行业 profile 时，先阅读：",
     "",
     "- `.ai/ARCHSIGHT_AIOS_RULES.md`",
     "- `.ai/project-context.md`",
     "- `.ai/agent-routing.md`",
     "- `.ai/skills.md`",
     "- `.ai/workflows.md`",
-    "- `.ai/profiles/*.md`（如当前项目启用了 profile）",
+    "- `.ai/profile-detection.md`",
+    "- `.ai/profiles/*.md`（如当前项目自动识别或显式启用了 profile）",
     "",
     "当前项目事实、根目录工具入口文件和 `AI_CODING_RULES.md` 优先；`.ai/ARCHSIGHT_AIOS_RULES.md` 只补充 AIOS 专属规则。接入 AIOS 不代表项目属于 ArchSightLabs，也不要求使用 Hermes、飞书或其他特定运行平台。",
     managedEnd,
@@ -861,6 +953,377 @@ function containsAiosReference(content) {
     "ARCHSIGHT_AIOS_RULES.md",
     ".ai/ARCHSIGHT_AIOS_RULES.md"
   ].some((needle) => content.includes(needle));
+}
+
+function normalizeSignal(value) {
+  return String(value ?? "").toLowerCase();
+}
+
+function confidenceFromScore(score) {
+  if (score >= 4) {
+    return "high";
+  }
+  if (score >= 2) {
+    return "medium";
+  }
+  return "low";
+}
+
+function scoreDetectionRules(ruleMap, signalText) {
+  const normalized = normalizeSignal(signalText);
+  return Object.entries(ruleMap)
+    .map(([id, keywords]) => {
+      const matches = keywords.filter((keyword) => normalized.includes(normalizeSignal(keyword)));
+      return {
+        id,
+        score: matches.length,
+        confidence: matches.length > 0 ? confidenceFromScore(matches.length) : "none",
+        matches
+      };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
+}
+
+async function listDetectionEntries(root, maxDepth = 2, maxEntries = 500) {
+  const entries = [];
+
+  async function walk(currentRoot, depth) {
+    if (entries.length >= maxEntries || depth > maxDepth) {
+      return;
+    }
+
+    let dirEntries;
+    try {
+      dirEntries = await fs.readdir(currentRoot, { withFileTypes: true });
+    } catch {
+      return;
+    }
+
+    dirEntries.sort((a, b) => a.name.localeCompare(b.name));
+
+    for (const entry of dirEntries) {
+      if (entries.length >= maxEntries) {
+        return;
+      }
+      if (entry.name.startsWith(".") && entry.name !== ".ai") {
+        continue;
+      }
+      if (entry.isDirectory() && ignoredDetectionDirs.has(entry.name)) {
+        continue;
+      }
+
+      const absolutePath = path.join(currentRoot, entry.name);
+      const relativePath = path.relative(root, absolutePath).replaceAll("\\", "/");
+      entries.push({ relativePath, isDirectory: entry.isDirectory() });
+
+      if (entry.isDirectory()) {
+        await walk(absolutePath, depth + 1);
+      }
+    }
+  }
+
+  await walk(root, 0);
+  return entries;
+}
+
+async function collectProjectDiscovery(targetRoot) {
+  const entries = await listDetectionEntries(targetRoot);
+  const candidateTextFiles = [
+    "README.md",
+    "README.zh-CN.md",
+    "readme.md",
+    "package.json",
+    "pyproject.toml",
+    "requirements.txt",
+    "Makefile",
+    "Dockerfile",
+    "docker-compose.yml"
+  ];
+  const textParts = [path.basename(targetRoot), targetRoot, ...entries.map((entry) => entry.relativePath)];
+  let packageJson;
+
+  for (const fileName of candidateTextFiles) {
+    const filePath = path.join(targetRoot, fileName);
+    if (!(await exists(filePath))) {
+      continue;
+    }
+    const content = await readTextIfExists(filePath);
+    textParts.push(fileName, content.slice(0, 12000));
+    if (fileName === "package.json") {
+      try {
+        packageJson = JSON.parse(content);
+      } catch {
+        packageJson = undefined;
+      }
+    }
+  }
+
+  const directories = entries.filter((entry) => entry.isDirectory).map((entry) => entry.relativePath);
+  const files = entries.filter((entry) => !entry.isDirectory).map((entry) => entry.relativePath);
+  const projectName = packageJson?.name ?? path.basename(targetRoot);
+
+  return {
+    targetRoot,
+    projectName,
+    packageJson,
+    directories,
+    files,
+    signalText: textParts.join("\n")
+  };
+}
+
+function detectProjectContext(manifest, discovery) {
+  const profileScores = scoreDetectionRules(profileDetectionRules, discovery.signalText);
+  const skillScores = scoreDetectionRules(skillDetectionRules, discovery.signalText);
+  const profileDescriptions = new Map((manifest.projectProfiles ?? []).map((profile) => [profile.id, profile.description]));
+  const skillMetadata = new Map((manifest.skills ?? []).map((skill) => [skill.id, skill]));
+
+  return {
+    profileScores: profileScores.map((item) => ({
+      ...item,
+      description: profileDescriptions.get(item.id) ?? item.id
+    })),
+    skillScores: skillScores.map((item) => ({
+      ...item,
+      metadata: skillMetadata.get(item.id)
+    }))
+  };
+}
+
+function resolveProfileSelection(profileOption, manifest, detection) {
+  const profiles = manifest.projectProfiles ?? [];
+  const profileIds = new Set(profiles.map((profile) => profile.id));
+  const option = profileOption ?? "auto";
+
+  if (option === "auto") {
+    return {
+      mode: "auto",
+      profileIds: detection.profileScores
+        .filter((item) => item.score >= 2 && profileIds.has(item.id))
+        .map((item) => item.id)
+    };
+  }
+
+  if (option === "none") {
+    return { mode: "none", profileIds: [] };
+  }
+
+  if (option === "all") {
+    return { mode: "all", profileIds: profiles.map((profile) => profile.id) };
+  }
+
+  if (!profileIds.has(option)) {
+    throw new Error(`Unsupported project profile: ${option}`);
+  }
+
+  return { mode: "manual", profileIds: [option] };
+}
+
+function renderMatchList(scores, emptyText) {
+  if (scores.length === 0) {
+    return [`- ${emptyText}`];
+  }
+
+  return scores.map((item) => {
+    const matches = item.matches.slice(0, 8).join("、");
+    return `- \`${item.id}\`：${item.confidence}，命中 ${item.score} 项（${matches}）`;
+  });
+}
+
+function renderProfileDetectionDoc(manifest, discovery, detection, selection) {
+  const profiles = manifest.projectProfiles ?? [];
+  const selected = selection.profileIds.length > 0
+    ? selection.profileIds.map((id) => `\`${id}\``).join("、")
+    : "未自动启用 profile";
+  const profileRows = profiles.map((profile) => `| \`${profile.id}\` | ${profile.description} |`);
+
+  return [
+    "# Profile Detection",
+    "",
+    "> 本文件由 `archsight-aios init` 根据本地项目名、README、package / pyproject 和浅层文件名生成。它是 AIOS 自动识别草稿，不是业务事实或工程结论；如与项目实际不符，以 `.ai/project-context.md` 和人工说明为准。",
+    "",
+    "## 识别结论",
+    "",
+    `- 模式：\`${selection.mode}\``,
+    `- 当前启用 profile：${selected}`,
+    "- 规则来源：ArchSight AIOS 内置 profile registry；未复制到本项目的 profile 仍可作为包内模板被工具读取。",
+    "",
+    "## Profile 命中证据",
+    "",
+    ...renderMatchList(detection.profileScores, "未命中明确行业 profile；按通用项目接入，遇到具体资料时再由任务上下文触发对应 Skill。"),
+    "",
+    "## Skill 候选",
+    "",
+    ...renderMatchList(detection.skillScores, "未命中明确 Skill；按用户任务和项目上下文动态选择。"),
+    "",
+    "## 可用 Profile Registry",
+    "",
+    "| Profile | 适用范围 |",
+    "| --- | --- |",
+    ...profileRows,
+    "",
+    "## 边界",
+    "",
+    "- 自动识别只用于降低初始化门槛，不替代人工确认。",
+    "- 不因为安装 AIOS 就默认把项目判定为 BIM、施工视觉或 RAG 项目。",
+    "- 涉及金额、工期、法律责任、结构安全、规范合规或人员信息时，必须保留人工复核。",
+    ""
+  ].join("\n");
+}
+
+function dependencyNames(packageJson) {
+  return [
+    ...Object.keys(packageJson?.dependencies ?? {}),
+    ...Object.keys(packageJson?.devDependencies ?? {}),
+    ...Object.keys(packageJson?.peerDependencies ?? {})
+  ];
+}
+
+function hasAnySignal(discovery, words) {
+  const signal = normalizeSignal(discovery.signalText);
+  return words.some((word) => signal.includes(normalizeSignal(word)));
+}
+
+function inferStack(discovery) {
+  const deps = dependencyNames(discovery.packageJson);
+  const depSet = new Set(deps.map((dep) => dep.toLowerCase()));
+  const hasDep = (...names) => names.some((name) => depSet.has(name));
+  const hasFile = (...names) => names.some((name) => discovery.files.includes(name) || discovery.directories.includes(name));
+
+  const frontend = [];
+  if (hasDep("react", "next", "vite", "vue", "@angular/core", "svelte")) {
+    frontend.push(deps.filter((dep) => ["react", "next", "vite", "vue", "@angular/core", "svelte"].includes(dep)).join(" / "));
+  }
+  if (hasFile("src", "app", "pages")) {
+    frontend.push("存在前端入口目录");
+  }
+
+  const backend = [];
+  if (hasDep("express", "fastify", "@nestjs/core", "koa", "hono")) {
+    backend.push(deps.filter((dep) => ["express", "fastify", "@nestjs/core", "koa", "hono"].includes(dep)).join(" / "));
+  }
+  if (hasAnySignal(discovery, ["fastapi", "django", "flask", "spring boot"])) {
+    backend.push("检测到后端框架关键词");
+  }
+
+  const database = [];
+  if (hasDep("prisma", "drizzle-orm", "typeorm", "sequelize", "mongoose", "pg", "mysql2")) {
+    database.push(deps.filter((dep) => ["prisma", "drizzle-orm", "typeorm", "sequelize", "mongoose", "pg", "mysql2"].includes(dep)).join(" / "));
+  }
+  if (hasAnySignal(discovery, ["postgres", "mysql", "sqlite", "redis", "mongodb", "sqlalchemy"])) {
+    database.push("检测到数据库关键词");
+  }
+
+  const ai = [];
+  if (hasDep("openai", "langchain", "@langchain/core", "llamaindex", "ai")) {
+    ai.push(deps.filter((dep) => ["openai", "langchain", "@langchain/core", "llamaindex", "ai"].includes(dep)).join(" / "));
+  }
+  if (hasAnySignal(discovery, ["rag", "graphrag", "embedding", "mcp", "agent", "向量", "知识库"])) {
+    ai.push("检测到 AI / RAG / Agent 关键词");
+  }
+
+  const deployment = [];
+  if (hasFile("Dockerfile", "docker-compose.yml", ".github")) {
+    deployment.push("检测到 Docker / CI 文件");
+  }
+  if (hasAnySignal(discovery, ["vercel", "railway", "kubernetes", "k8s", "helm"])) {
+    deployment.push("检测到部署平台关键词");
+  }
+
+  return {
+    frontend: frontend.filter(Boolean).join("；") || "待补充",
+    backend: backend.filter(Boolean).join("；") || "待补充",
+    database: database.filter(Boolean).join("；") || "待补充",
+    ai: ai.filter(Boolean).join("；") || "待补充",
+    deployment: deployment.filter(Boolean).join("；") || "待补充"
+  };
+}
+
+function scriptCommand(discovery, scriptName, fallback = "待补充") {
+  if (discovery.packageJson?.scripts?.[scriptName]) {
+    return `npm run ${scriptName}`;
+  }
+  return fallback;
+}
+
+function renderProjectContextDoc(manifest, discovery, detection, selection) {
+  const stack = inferStack(discovery);
+  const description = discovery.packageJson?.description || "由 AIOS 根据项目入口自动生成的项目上下文草稿，请按实际业务补充目标、用户、阶段和边界。";
+  const selectedProfiles = selection.profileIds.length > 0
+    ? selection.profileIds.map((id) => `\`${id}\``).join("、")
+    : "未自动启用 profile";
+  const selectedSkills = detection.skillScores.length > 0
+    ? detection.skillScores.slice(0, 8).map((item) => `\`${item.id}\``).join("、")
+    : "按任务动态选择";
+  const selectedSkillIds = new Set(detection.skillScores.map((item) => item.id));
+  const agents = [...new Set((manifest.skills ?? [])
+    .filter((skill) => selectedSkillIds.has(skill.id))
+    .map((skill) => routeAgentName(manifest, skill.primaryAgent)))]
+    .join("、") || "按任务动态选择";
+  const workflows = [...new Set((manifest.skills ?? [])
+    .filter((skill) => selectedSkillIds.has(skill.id))
+    .map((skill) => skill.defaultWorkflow))]
+    .map((workflow) => `\`${workflow}\``)
+    .join("、") || "按任务动态选择";
+  const codeStructure = [
+    ...discovery.directories.slice(0, 12).map((item) => `- \`${item}/\``),
+    ...discovery.files.filter((item) => ["package.json", "pyproject.toml", "README.md", "Makefile", "Dockerfile"].includes(item)).map((item) => `- \`${item}\``)
+  ];
+
+  return [
+    "# Project Context",
+    "",
+    "> 本文件由 `archsight-aios init` 首次创建并自动预填。请把它当作可编辑草稿；AIOS 不会在重复初始化时覆盖已有项目上下文。",
+    "",
+    "## 项目名称",
+    "",
+    discovery.projectName,
+    "",
+    "## 项目定位",
+    "",
+    description,
+    "",
+    "## 技术栈",
+    "",
+    `- 前端：${stack.frontend}`,
+    `- 后端：${stack.backend}`,
+    `- 数据库：${stack.database}`,
+    `- AI / RAG / Agent：${stack.ai}`,
+    `- 部署环境：${stack.deployment}`,
+    "",
+    "## 代码结构",
+    "",
+    ...(codeStructure.length > 0 ? codeStructure : ["- 待补充"]),
+    "",
+    "## 常用命令",
+    "",
+    "```text",
+    `安装：${discovery.packageJson ? "npm install" : "待补充"}`,
+    `开发：${scriptCommand(discovery, "dev")}`,
+    `测试：${scriptCommand(discovery, "test")}`,
+    `构建：${scriptCommand(discovery, "build")}`,
+    `Lint：${scriptCommand(discovery, "lint")}`,
+    `类型检查：${scriptCommand(discovery, "typecheck", scriptCommand(discovery, "type-check"))}`,
+    "部署前检查：待补充",
+    "```",
+    "",
+    "## 关键约束",
+    "",
+    "- 不得修改：项目已有入口文件中非 AIOS 托管块的内容，除非用户明确要求。",
+    "- 必须保持：当前项目事实、测试、构建和发布流程优先于 AIOS 通用模板。",
+    "- 需要人工确认：业务范围、客户资料、金额、工期、法律责任、规范合规、结构安全和人员信息。",
+    "- 已知风险：自动识别只基于本地文件名和少量文本入口，可能漏判或误判；以人工修订后的项目上下文为准。",
+    "",
+    "## 当前接入的 ArchSight AIOS 能力",
+    "",
+    `- Profile：${selectedProfiles}`,
+    `- Agent：${agents}`,
+    `- Skills：${selectedSkills}`,
+    `- Workflows：${workflows}`,
+    "- Runtime：本地 `.ai/` 规则、AIOS Skill / Workflow、可选 Capability 工具证据。",
+    ""
+  ].join("\n");
 }
 
 async function resolveInitProjectMode(requestedMode, targetRoot, rootInstructionFiles, aiFiles) {
@@ -1221,7 +1684,8 @@ async function initProject(options) {
     path.join(".ai", "project-context.md"),
     path.join(".ai", "agent-routing.md"),
     path.join(".ai", "skills.md"),
-    path.join(".ai", "workflows.md")
+    path.join(".ai", "workflows.md"),
+    path.join(".ai", "profile-detection.md")
   ];
   const mode = await resolveInitProjectMode(options.mode ?? "auto", targetRoot, rootInstructionFiles, aiFiles);
   const files = mode === "ai-only"
@@ -1237,6 +1701,9 @@ async function initProject(options) {
   }
 
   await ensureDir(targetRoot);
+  const discovery = await collectProjectDiscovery(targetRoot);
+  const detection = detectProjectContext(manifest, discovery);
+  const profileSelection = resolveProfileSelection(options.profile, manifest, detection);
 
   for (const fileName of files) {
     const src = path.join(templateRoot, fileName);
@@ -1247,7 +1714,13 @@ async function initProject(options) {
       continue;
     }
     await ensureDir(path.dirname(dest));
-    await fs.copyFile(src, dest);
+    if (fileName === path.join(".ai", "project-context.md")) {
+      await fs.writeFile(dest, renderProjectContextDoc(manifest, discovery, detection, profileSelection), "utf8");
+    } else if (fileName === path.join(".ai", "profile-detection.md")) {
+      await fs.writeFile(dest, renderProfileDetectionDoc(manifest, discovery, detection, profileSelection), "utf8");
+    } else {
+      await fs.copyFile(src, dest);
+    }
     console.log(`CREATE ${dest}`);
   }
 
@@ -1268,11 +1741,14 @@ async function initProject(options) {
     }
   }
 
-  if (options.profile) {
-    const profile = manifest.projectProfiles?.find((item) => item.id === options.profile);
-    if (!profile) {
-      throw new Error(`Unsupported project profile: ${options.profile}`);
-    }
+  if (profileSelection.profileIds.length > 0) {
+    console.log(`PROFILE ${profileSelection.mode}: ${profileSelection.profileIds.join(", ")}`);
+  } else {
+    console.log(`PROFILE ${profileSelection.mode}: none`);
+  }
+
+  for (const profileId of profileSelection.profileIds) {
+    const profile = manifest.projectProfiles?.find((item) => item.id === profileId);
     await copyTreeMissing(path.join(repoRoot, profile.path), targetRoot);
   }
 }
@@ -1329,7 +1805,8 @@ async function validateProjectTemplate(options) {
     ["project CLAUDE uses AIOS", "CLAUDE.md"],
     ["project GEMINI uses AIOS", "GEMINI.md"],
     ["project OPENCODE uses AIOS", "OPENCODE.md"],
-    ["project context uses AIOS", path.join(".ai", "project-context.md")]
+    ["project context uses AIOS", path.join(".ai", "project-context.md")],
+    ["project profile detection uses AIOS", path.join(".ai", "profile-detection.md")]
   ]) {
     const content = await fs.readFile(path.join(targetRoot, fileName), "utf8");
     const legacyAiOsText = ["AI", "OS"].join(" ");
@@ -1340,13 +1817,19 @@ async function validateProjectTemplate(options) {
     });
   }
 
-  if (options.profile) {
-    const profile = manifest.projectProfiles?.find((item) => item.id === options.profile);
+  const profileCheckIds = options.profile === "all"
+    ? (manifest.projectProfiles ?? []).map((profile) => profile.id)
+    : options.profile && !["auto", "none"].includes(options.profile)
+      ? [options.profile]
+      : [];
+
+  for (const profileId of profileCheckIds) {
+    const profile = manifest.projectProfiles?.find((item) => item.id === profileId);
     if (!profile) {
-      throw new Error(`Unsupported project profile: ${options.profile}`);
+      throw new Error(`Unsupported project profile: ${profileId}`);
     }
     for (const fileName of profile.requiredFiles ?? []) {
-      await check(`profile output ${options.profile}/${fileName}`, path.join(targetRoot, fileName));
+      await check(`profile output ${profileId}/${fileName}`, path.join(targetRoot, fileName));
     }
   }
 

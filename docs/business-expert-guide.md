@@ -46,7 +46,7 @@ AIOS 不是替代专家判断，而是把专家判断变成可复用、可审查
 1. 选一个具体主题，例如“地下室焊缝检测”“防火分区审查”“IFC 构件分类”。
 2. 准备 5 到 20 个真实样例，包括正确样例和错误样例。
 3. 写清楚术语、判断口径、通过条件和人工复核点。
-4. 让工程团队使用 `archsight-aios init --profile <name>` 接入项目规则。
+4. 让工程团队使用 `archsight-aios init` 接入项目规则，并检查 `.ai/profile-detection.md` 和 `.ai/project-context.md` 的自动识别结果。
 5. 根据 AI 输出的错误和遗漏，补充反例、规则和评估问题。
 
 ## 不应让 AIOS 做什么
@@ -58,10 +58,12 @@ AIOS 不是替代专家判断，而是把专家判断变成可复用、可审查
 
 ## 常见项目类型
 
-| 项目 | 推荐 profile |
+默认由 `archsight-aios init` 自动识别。只有自动识别明显不符合项目实际时，再让工程团队显式覆盖 profile。
+
+| 项目 | 自动识别或覆盖 profile |
 | --- | --- |
 | BIM / IFC / Revit / CAD 平台 | `bim-platform` |
 | 施工现场图像、视频、缺陷检测 | `construction-vision` |
 | 建筑规范知识库、RAG、GraphRAG | `rag-knowledge` |
 
-业务专家只需要关注 `.ai/project-context.md`、`.ai/profiles/*.md` 和评估样例是否真实、准确、可复核。工程师负责把这些材料接入代码、脚本、测试和发布流程。
+业务专家只需要关注 `.ai/profile-detection.md`、`.ai/project-context.md`、`.ai/profiles/*.md` 和评估样例是否真实、准确、可复核。工程师负责把这些材料接入代码、脚本、测试和发布流程。

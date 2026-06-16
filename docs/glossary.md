@@ -6,7 +6,7 @@ ArchSight AIOS 是一套 AI 规则、Agent、Skill、Workflow 和运行治理工
 
 ## Agent
 
-Agent 是一个内部角色标签，例如建筑数字化专家、代码审查官、AI 研发工程师。Agent 定义职责、边界、输入和输出。普通使用者通常不需要记住 Agent 名字，也不需要手动指定 Agent；AIOS 会根据任务类型、profile、Skill 和 Workflow 做路由。
+Agent 是一个内部角色标签，例如建筑数字化专家、代码审查官、AI 研发工程师。Agent 定义职责、边界、输入和输出。普通使用者通常不需要记住 Agent 名字，也不需要手动指定 Agent；AIOS 会根据任务类型、自动识别 profile、Skill 和 Workflow 做路由。
 
 ## Skill
 
@@ -18,7 +18,7 @@ Workflow 是多步骤工作流，说明一个任务从输入、执行、检查�
 
 ## Profile
 
-Profile 是某类业务项目的补充规则。当前包括：
+Profile 是某类业务项目的补充规则。AIOS 默认把 profile 作为包内 registry 提供，`archsight-aios init` 会生成 `.ai/profile-detection.md` 做自动识别；用户通常不需要手动选择。当前包括：
 
 - `bim-platform`
 - `construction-vision`
@@ -26,7 +26,11 @@ Profile 是某类业务项目的补充规则。当前包括：
 
 ## `.ai/`
 
-业务项目中的 AI 规则目录。它保存项目事实、AIOS 补充规则、Agent 路由、Skills、Workflows 和行业 profile。
+业务项目中的 AI 规则目录。它保存项目事实、AIOS 补充规则、自动识别结果、Agent 路由、Skills、Workflows 和行业 profile。
+
+## `.ai/profile-detection.md`
+
+AIOS 初始化时生成的自动识别草稿，记录命中的 profile、Skill 候选、证据关键词和人工复核边界。
 
 ## `AGENTS.md`
 

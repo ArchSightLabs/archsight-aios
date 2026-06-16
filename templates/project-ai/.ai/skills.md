@@ -29,28 +29,30 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 | 工程变更签证资料链 / 联系单 / 图纸变更 / 索赔线索 | `aios-commercial-variation` | Plutus |
 | 专项施工方案 / 危险源 / 交底要点 / 规范和计算书复核 | `aios-construction-scheme` | Vitruvius |
 
-## 本项目启用的 Skills
+## 本项目可用的 Skills
 
-- [ ] `aios-arch`
-- [ ] `aios-ceo`
-- [ ] `aios-design`
-- [ ] `aios-plan`
-- [ ] `aios-review`
-- [ ] `aios-knowledge`
-- [ ] `aios-structural`
-- [ ] `aios-runtime`
-- [ ] `aios-prompt-compare`
-- [ ] `aios-exec`
-- [ ] `aios-commercial-tender`
-- [ ] `aios-commercial-contract`
-- [ ] `aios-construction-daily`
-- [ ] `aios-construction-meeting`
-- [ ] `aios-commercial-variation`
-- [ ] `aios-construction-scheme`
+默认不要求用户手动勾选 Skill。`archsight-aios init` 会生成 `.ai/profile-detection.md` 和 `.ai/project-context.md`，当前 AI 工具应结合项目事实、用户任务、资料类型和自动识别结果选择合适的 Skill。
+
+- `aios-arch`
+- `aios-ceo`
+- `aios-design`
+- `aios-plan`
+- `aios-review`
+- `aios-knowledge`
+- `aios-structural`
+- `aios-runtime`
+- `aios-prompt-compare`
+- `aios-exec`
+- `aios-commercial-tender`
+- `aios-commercial-contract`
+- `aios-construction-daily`
+- `aios-construction-meeting`
+- `aios-commercial-variation`
+- `aios-construction-scheme`
 
 ## 启用规则
 
-- 只勾选当前项目真实安装或可访问的 Skill。
+- 优先读取 `.ai/profile-detection.md` 和 `.ai/project-context.md`，再按任务类型选择 Skill。
 - 涉及建筑行业软件 / 系统评价、项目立项、产品定位、商业目标、范围取舍或阶段路线时，优先启用 `aios-ceo`。
 - 涉及建筑行业平台 UI / UX 方案、工作台体验、交互状态、响应式或前端实现交接时，优先启用 `aios-design`。
 - 只有启用建筑、BIM、IFC、规范知识库、GraphRAG 或智能审图 profile 时，才默认启用 `aios-knowledge`。

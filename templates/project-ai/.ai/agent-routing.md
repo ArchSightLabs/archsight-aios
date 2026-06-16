@@ -24,7 +24,7 @@
 
 - 当前项目事实优先于 AIOS 通用角色说明。
 - Hermes、飞书、OpenClaw、Codex、Claude、Gemini 等都是可选运行入口；未启用时不得写入项目假设。
-- 建筑、BIM、IFC、规范、审图和 RAG / GraphRAG 知识工程能力通过 profile 或明确任务触发；普通项目不默认启用这些语义。
+- 建筑、BIM、IFC、规范、审图和 RAG / GraphRAG 知识工程能力通过 `.ai/profile-detection.md`、profile 或明确任务触发；普通项目不默认启用这些语义。
 - AIOS 是建筑行业增强层；普通非建筑任务优先使用宿主工具的通用能力，不因为安装了 AIOS 就强制套用 `aios-*` Skill。
 - 冲突仲裁按证据等级处理：人类硬约束、确定性工具、项目事实、结构化知识优先于 Agent 自然语言判断。
 

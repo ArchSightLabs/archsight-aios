@@ -42,7 +42,7 @@
 - Skill 使用 `aios-*` 前缀，避免与通用技能包混淆。
 - 所有 `aios-*` Skill 都服务建筑行业平台研发；差异在任务分工，而不是行业归属。
 - AIOS 是建筑行业增强层，不是通用任务替代器；普通非建筑任务优先使用宿主工具的通用能力，不强行套用 BIM、IFC、规范、审图或工程证据链假设。
-- 是否启用行业增强，先看项目 profile、`.ai/project-context.md`、README 和当前任务；不确定时先核验上下文，不凭 Skill 名称硬套。
+- 是否启用行业增强，先看 `.ai/profile-detection.md`、项目 profile、`.ai/project-context.md`、README 和当前任务；不确定时先核验上下文，不凭 Skill 名称硬套。
 - `aios-ceo` 用于一把手视角的建筑行业软件 / 系统深度评价，把产品定位、行业专业性、工程可信度、证据链、商业验证和范围取舍放到同一决策框架里；它可以引用架构和行业语义事实作为 CEO 判断依据，但不替代 `aios-arch` 或 `aios-knowledge` 的专项设计与专业结论。
 - `aios-design` 用于实现前判断界面方案是否支撑建筑行业审查、定位、复核、追溯和交付；不替代 `frontend-generation` 的 UI 实现、布局验证和交互验证，也不替代通用 `frontend-design` 的视觉风格和前端代码美化评审。
 - `aios-arch` 应补足通用架构评审缺失的建筑行业平台视角，包括 BIM / IFC、规范知识链路、审图证据链、RAG / GraphRAG、任务编排、审计和后端运行可靠性。
@@ -73,7 +73,7 @@
 
 ## 项目接入
 
-业务项目接入时，应复制 `templates/project-ai/`，并在 `.ai/skills.md` 中按项目实际情况启用 Skills。
+业务项目接入时，应运行 `archsight-aios init`。CLI 默认创建通用 `.ai/` 底座、自动生成 `.ai/profile-detection.md` 和预填 `.ai/project-context.md`，再由当前任务和识别结果路由到对应 Skill；不要求用户先手动勾选 Skill。
 
 ## 维护规则
 

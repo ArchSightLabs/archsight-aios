@@ -378,7 +378,8 @@
       ".ai/project-context.md",
       ".ai/agent-routing.md",
       ".ai/skills.md",
-      ".ai/workflows.md"
+      ".ai/workflows.md",
+      ".ai/profile-detection.md"
     ]
   },
   "projectProfiles": [

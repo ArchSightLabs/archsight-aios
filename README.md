@@ -10,7 +10,7 @@ AIOS 不是全行业项目模板集合。它保留通用的 AI 编码规则、Ag
 
 AIOS 的目标不是替代 Codex、Claude Code 或 Gemini 自带的通用工程能力，而是让它们在建筑行业平台研发中做出更专业的判断。它面向建筑行业架构师、博士 / 研究型团队和后端开发，把通用架构评审补足为面向 BIM / IFC、建筑规范、审图链路、知识库、RAG / GraphRAG、任务编排、审计证据和长期平台演进的工作方法。
 
-没有 `.ai/` 目录时，AIOS Skill 仍应可直接使用：优先读取代码、接口、schema、配置、测试和部署入口；只有项目明确启用 profile 或任务本身涉及建筑行业语义时，才加载 BIM、IFC、规范知识或智能审图假设。
+没有 `.ai/` 目录时，AIOS Skill 仍应可直接使用：优先读取代码、接口、schema、配置、测试和部署入口；只有 `.ai/profile-detection.md`、项目显式 profile 或任务本身涉及建筑行业语义时，才加载 BIM、IFC、规范知识或智能审图假设。
 
 AIOS 是建筑行业增强层，不是通用任务替代器。装了 AIOS 后，建筑行业相关任务应得到更专业的证据、边界、验证和行业判断；普通非建筑任务不应被强行套用 BIM、IFC、规范、审图或工程证据链假设，必要时直接使用宿主工具的通用能力。
 
@@ -31,7 +31,7 @@ AIOS 是建筑行业增强层，不是通用任务替代器。装了 AIOS 后，
 
 - 不同 AI 工具各读各的规则，导致输出风格和边界不一致。
 - 项目里缺少明确的 `.ai/` 上下文目录，AI 不知道行业知识、验收标准和人工复核点。
-- 建筑行业项目涉及规范、BIM、图纸、模型、施工现场、知识库和 AI 检测，容易把模型推断误当成工程结论；AIOS 通过 profile 叠加这些行业规则，而不是把它们写成所有项目的默认事实。
+- 建筑行业项目涉及规范、BIM、图纸、模型、施工现场、知识库和 AI 检测，容易把模型推断误当成工程结论；AIOS 默认内置 profile registry，并通过自动识别结果和任务上下文启用行业规则，而不是让用户先手动合并规则文件。
 - AI 生成代码、文档或规则后，缺少统一的 review、验证和发布检查路径。
 - 普通提示词、便携强提示词和正式 Skill 的效果容易混在一起；`aios-prompt-compare` 用同一输入做 weak / portable / skill-runtime 三栏对照，帮助团队判断哪些能力应沉淀为 Skill。
 
@@ -47,13 +47,24 @@ npx @archsight/aios init
 
 执行后，当前业务项目会获得统一的 AI 入口文件和 `.ai/` 项目治理目录。已有 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md` 或 `AI_CODING_RULES.md` 的项目不会被覆盖；CLI 会补充缺失文件，并在合适的位置追加 ArchSight AIOS 引用。
 
+`init` 默认会读取项目名、README、package / pyproject 和浅层文件名，自动生成 `.ai/profile-detection.md`，并在首次创建 `.ai/project-context.md` 时预填项目名、技术栈、常用命令、代码结构和候选 AIOS 能力。用户不需要先理解 profile，也不需要手动合并 AI 规则文件。
+
 如果你不写代码，只参与业务判断，可以先看 [业务专家指南](docs/business-expert-guide.md)。如果你需要一步一步安装和验证，可以看 [快速上手](docs/quickstart.md)。
 
-## 行业能力 Profile
+## 自动行业识别
 
-可以按建筑 AI 能力方向叠加行业规则：
+AIOS 默认内置所有行业 profile 模板。`init` 默认使用 `--profile auto`，根据当前项目和资料线索自动识别是否启用 profile：
 
 ```bash
+npx @archsight/aios init
+```
+
+如果需要人工覆盖，也可以显式指定：
+
+```bash
+npx @archsight/aios init --profile auto
+npx @archsight/aios init --profile none
+npx @archsight/aios init --profile all
 npx @archsight/aios init --profile bim-platform
 npx @archsight/aios init --profile construction-vision
 npx @archsight/aios init --profile rag-knowledge
@@ -76,6 +87,7 @@ npx @archsight/aios init --profile rag-knowledge
 | `AI_CODING_RULES.md` | 项目通用 AI 编码规则。 |
 | `.ai/ARCHSIGHT_AIOS_RULES.md` | ArchSight AIOS 补充规则。 |
 | `.ai/project-context.md` | 项目事实、业务背景和边界。 |
+| `.ai/profile-detection.md` | 自动识别的 profile / Skill 候选、命中证据和人工复核边界。 |
 | `.ai/agent-routing.md` | 不同任务该交给哪个 Agent / Skill。 |
 | `.ai/skills.md` | 当前项目可用的 ArchSight Skills。 |
 | `.ai/workflows.md` | 当前项目可用的 Workflow 和验收路径。 |
@@ -96,7 +108,7 @@ AIOS 的多 Agent 协作不应停留在 Prompt 角色扮演。Agent 提出架构
 | `help` | 查看 CLI 帮助、可用命令和示例。 |
 | `install` | 安装 ArchSight AIOS 用户级资产到 Codex、Claude Code、OpenCode、Antigravity 2.0、Gemini、WorkBuddy 和共享目录。 |
 | `doctor` | 检查仓库资产、manifest、用户级安装、Skill 和 Workflow 是否一致。 |
-| `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录和可选行业 profile。 |
+| `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录、自动 profile 识别和项目上下文草稿。 |
 | `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
 | `validate:skills` | 校验公共 skill 发现入口、frontmatter、跨 host manifest 和 npm metadata 是否一致。 |
 | `capability:call` | 按 Capability Registry 权限边界调用本地 MCP Adapter，并输出 Tool Result 与仲裁 Decision。 |
@@ -159,12 +171,22 @@ npx skills add ArchSightLabs/archsight-aios --skill aios-arch --global
 
 - 新项目或没有 AI 工具入口文件时，创建 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md` 和 `.ai/` 模板文件。
 - 已存在 `AGENTS.md`、`AI_CODING_RULES.md`、`CLAUDE.md`、`GEMINI.md` 或 `OPENCODE.md` 时，创建缺失的 `.ai/` 文件，并在 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md` 中追加或刷新 ArchSight AIOS 托管引用块。
+- 默认使用 `--profile auto`：根据项目名、README、package / pyproject、浅层目录和资料文件名生成 `.ai/profile-detection.md`，并自动复制高置信度命中的 profile。
+- 首次创建 `.ai/project-context.md` 时，会自动预填项目名、技术栈、常用命令、代码结构和候选 Skills；重复执行不会覆盖人工修订后的项目上下文。
 - 重复执行不会重复追加托管块，也不会覆盖已有项目规则。
 - 自动模式不修改已有 `AI_CODING_RULES.md` 正文。
 
 ## 行业边界
 
-建筑行业能力通过 `--profile` 或明确任务触发。未启用相关 profile 的项目，不应默认加载 BIM、IFC、GraphRAG、审图或建筑规范假设。
+建筑行业能力通过 `.ai/profile-detection.md`、显式 `--profile` 或明确任务触发。未启用相关 profile 的项目，不应默认加载 BIM、IFC、GraphRAG、审图或建筑规范假设。
+
+如需覆盖自动识别：
+
+```bash
+npx @archsight/aios init --profile none
+npx @archsight/aios init --profile all
+npx @archsight/aios init --profile bim-platform
+```
 
 前端应用、后端服务、CLI 工具、数据管道等工程形态优先由 Workflow / Skill / Agent 路由处理，不默认扩展为 profile。只有当某类项目存在稳定的行业语义、证据链、评估集或人工复核差异时，才应考虑新增 profile。
 

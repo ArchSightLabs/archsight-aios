@@ -18,12 +18,26 @@
 
 ## 项目 Profile
 
-`project-ai/` 是通用 AIOS 接入底座。具体行业项目通过 `--profile` 叠加差异规则：
+`project-ai/` 是通用 AIOS 接入底座。行业 profile 默认作为 AIOS 包内 registry 存在，用户通常不需要先理解或选择 profile。`init` 默认使用 `--profile auto`，根据项目名、README、package / pyproject 和浅层文件名生成 `.ai/profile-detection.md`，并在首次创建 `.ai/project-context.md` 时预填项目事实草稿。
 
 ```bash
+archsight-aios init --cwd /path/to/project
+```
+
+需要人工覆盖自动识别时再指定：
+
+```bash
+archsight-aios init --cwd /path/to/project --profile auto
+archsight-aios init --cwd /path/to/project --profile none
+archsight-aios init --cwd /path/to/project --profile all
 archsight-aios init --cwd /path/to/project --profile bim-platform
 archsight-aios init --cwd /path/to/project --profile construction-vision
 archsight-aios init --cwd /path/to/project --profile rag-knowledge
 ```
 
-`init` 默认使用 `--mode auto`：新项目补齐根目录入口（`AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md`、`AI_CODING_RULES.md`）和 `.ai/`，已有 AI 工具入口文件的项目自动追加或刷新 ArchSight AIOS 托管引用块。Profile 只补充 `.ai/profiles/*.md`，不复制公共入口规则。
+`init` 默认使用 `--mode auto`：新项目补齐根目录入口（`AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md`、`AI_CODING_RULES.md`）和 `.ai/`，已有 AI 工具入口文件的项目自动追加或刷新 ArchSight AIOS 托管引用块。Profile 只在自动识别或显式指定后补充 `.ai/profiles/*.md`，不复制公共入口规则，也不修改已有 `AI_CODING_RULES.md` 正文。
+
+自动生成文件：
+
+- `.ai/profile-detection.md`：记录识别模式、命中证据、启用 profile 和 Skill 候选。
+- `.ai/project-context.md`：首次创建时预填项目名、技术栈、常用命令、代码结构、候选 Agent / Skill / Workflow。

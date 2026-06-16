@@ -37,11 +37,16 @@ npx @archsight/aios init
 
 `init` 不指定 `--cwd` 时默认使用当前目录。已有 `AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md` 或 `AI_CODING_RULES.md` 的项目不会被覆盖。
 
-## 4. 选择行业 profile
+## 4. 查看自动识别结果
 
-如果项目属于特定类型，可以叠加 profile：
+`init` 默认会自动生成 `.ai/profile-detection.md` 和预填 `.ai/project-context.md`。你可以直接打开这两个文件检查 AIOS 是否识别到了合适的 profile、Skill 候选、技术栈和常用命令。
+
+通常不需要手动选择 profile。如果自动识别不符合项目实际，可以用下面的命令覆盖：
 
 ```bash
+npx @archsight/aios init --profile auto
+npx @archsight/aios init --profile none
+npx @archsight/aios init --profile all
 npx @archsight/aios init --profile bim-platform
 npx @archsight/aios init --profile construction-vision
 npx @archsight/aios init --profile rag-knowledge
@@ -84,6 +89,14 @@ npm test
 不会。默认模式只创建缺失文件，并在合适的入口文件中追加或刷新 ArchSight AIOS 托管块。
 
 ### 我应该用哪个 profile？
+
+默认不用选。先运行：
+
+```bash
+npx @archsight/aios init
+```
+
+然后看 `.ai/profile-detection.md` 的识别结果。只有自动识别明显不符合项目实际时，再显式覆盖：
 
 - BIM / Revit / CAD / IFC 平台：`bim-platform`
 - 施工视觉 AI、检测、分割、深度估计：`construction-vision`

@@ -517,6 +517,7 @@ async function testInitProjectDefaultsToCurrentDirectory() {
   await fs.access(path.join(tempRoot, "OPENCODE.md"));
   await fs.access(path.join(tempRoot, ".ai", "ARCHSIGHT_AIOS_RULES.md"));
   await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
+  await fs.access(path.join(tempRoot, ".ai", "profile-detection.md"));
 
   await fs.rm(tempRoot, { recursive: true, force: true });
 }
@@ -557,6 +558,7 @@ async function testInitProjectAiOnlyMode() {
   await fs.access(path.join(tempRoot, ".ai", "agent-routing.md"));
   await fs.access(path.join(tempRoot, ".ai", "skills.md"));
   await fs.access(path.join(tempRoot, ".ai", "workflows.md"));
+  await fs.access(path.join(tempRoot, ".ai", "profile-detection.md"));
 
   await fs.rm(tempRoot, { recursive: true, force: true });
 }
@@ -587,6 +589,7 @@ async function testInitProjectLinkedModeReferencesAiFiles() {
   assert.equal(codingRules, "# Existing coding rules\n");
   await fs.access(path.join(tempRoot, ".ai", "ARCHSIGHT_AIOS_RULES.md"));
   await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
+  await fs.access(path.join(tempRoot, ".ai", "profile-detection.md"));
 
   await fs.rm(tempRoot, { recursive: true, force: true });
 }
@@ -606,6 +609,51 @@ async function testInitProjectLinkedModeCopiesMissingToolEntrypoints() {
 
   await fs.access(path.join(tempRoot, ".ai", "ARCHSIGHT_AIOS_RULES.md"));
   await fs.access(path.join(tempRoot, ".ai", "project-context.md"));
+  await fs.access(path.join(tempRoot, ".ai", "profile-detection.md"));
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testInitProjectAutoDetectsProfilesAndContext() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-auto-profile-"));
+  await fs.writeFile(
+    path.join(tempRoot, "README.md"),
+    "# 智能 BIM RAG 平台\n\n本项目涉及 Revit、IFC、建筑规范知识库、GraphRAG 和审图规则评估。\n",
+    "utf8"
+  );
+  await fs.writeFile(
+    path.join(tempRoot, "package.json"),
+    JSON.stringify({
+      name: "smart-bim-rag",
+      description: "BIM 与规范知识库平台",
+      scripts: {
+        dev: "vite --host 0.0.0.0",
+        test: "node --test",
+        build: "vite build"
+      },
+      dependencies: {
+        react: "^18.0.0",
+        openai: "^4.0.0"
+      }
+    }, null, 2),
+    "utf8"
+  );
+
+  const result = run(["init", "--cwd", tempRoot]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /PROFILE auto/);
+
+  const detection = await fs.readFile(path.join(tempRoot, ".ai", "profile-detection.md"), "utf8");
+  assert.match(detection, /bim-platform/);
+  assert.match(detection, /rag-knowledge/);
+  await fs.access(path.join(tempRoot, ".ai", "profiles", "bim-platform.md"));
+  await fs.access(path.join(tempRoot, ".ai", "profiles", "rag-knowledge.md"));
+
+  const context = await fs.readFile(path.join(tempRoot, ".ai", "project-context.md"), "utf8");
+  assert.match(context, /smart-bim-rag/);
+  assert.match(context, /npm run dev/);
+  assert.match(context, /npm run test/);
+  assert.match(context, /aios-knowledge/);
 
   await fs.rm(tempRoot, { recursive: true, force: true });
 }
@@ -873,6 +921,7 @@ const tests = [
   testInitProjectAiOnlyMode,
   testInitProjectLinkedModeReferencesAiFiles,
   testInitProjectLinkedModeCopiesMissingToolEntrypoints,
+  testInitProjectAutoDetectsProfilesAndContext,
   testProjectProfiles,
   testGenericProjectBoundaryText,
   testCapabilityCallUsesRegisteredMcpAdapter,

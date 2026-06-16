@@ -55,7 +55,7 @@
 - 工程款、结算、签证金额、成本、回款和财务内控线索先走 Plutus。
 - 行政、人事、证照、继续教育、实名制和组织协同待办先走 Hestia。
 - AIOS 是建筑行业增强层；普通非建筑任务不强行套用 BIM、IFC、规范、审图或工程证据链假设，优先使用宿主工具的通用能力。
-- 是否启用行业增强，先看项目 profile、`.ai/project-context.md`、README 和当前任务事实。
+- 是否启用行业增强，先看 `.ai/profile-detection.md`、项目 profile、`.ai/project-context.md`、README 和当前任务事实。
 
 ---
 
