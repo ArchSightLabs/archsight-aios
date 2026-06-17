@@ -1,5 +1,40 @@
 # 变更记录
 
+## 1.3.0
+
+### 发布说明
+
+本版本把 AIOS 从通用建筑行业技能包进一步扩展为可评测、可对比、可初始化到项目上下文的工程业务管理与 Prompt 治理工具包。重点补齐工程商务、合同、施工日报、会议、变更签证和专项方案场景的基础提示词资产，并新增 prompt 对比与评测脚本，让团队可以用同一套 fixture、run pack、结果校验和 scorecard 判断提示词是否值得沉淀为正式 Skill。
+
+### 新增
+
+- 新增 `aios-prompt-compare` Skill，用于对比弱提示词、便携强提示词和真实 Skill runtime 输出，并把结果纳入质量准入判断。
+- 新增工程业务管理基础提示词资产，覆盖招投标、合同履约、施工日报、工程会议、变更签证和专项施工方案。
+- 新增 Hestia、Plutus、Themis 等工程业务协同角色入口，强化行政人事协同、商务造价财务内控、法务合规的边界说明。
+- 新增 prompt 评测 fixtures、公开咨询样例、run pack 构建、结果校验、模型输出校验、scorecard 校验和分析脚本。
+
+### 调整
+
+- 版本升级到 `1.3.0`，同步更新 npm package、Gemini extension、Claude plugin、runtime manifest 和 CLI MCP clientInfo。
+- `init` 相关模板和 CLI 能力增强，可更好地根据项目线索推断 AIOS 项目上下文、profile 和入口文件。
+- README、quickstart、glossary、公共发现文档和 runtime 路由补充工程业务管理与 prompt 治理说明。
+- `validate:skills` 扩展校验范围，覆盖新增 skill、manifest、npm metadata 和工程业务管理资产。
+
+### 验证
+
+- `npm run validate:skills`
+- `npm run validate:prompts`
+- `npm run validate:prompt-run-pack`
+- `npm run validate:public-advisory-run-pack`
+- `npm run validate:prompt-run-results`
+- `npm run validate:prompt-outputs`
+- `npm run validate:prompt-scorecard`
+- `npm run doctor`
+- `npm run smoke:project`
+- `npm test`
+- `npx skills add . --list`
+- `npm pack --dry-run`
+
 ## 1.2.0
 
 ### 发布说明

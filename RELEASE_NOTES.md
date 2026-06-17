@@ -1,5 +1,30 @@
 # Release Notes
 
+## 1.3.0
+
+本版本把 AIOS 从通用建筑行业技能包进一步扩展为可评测、可对比、可初始化到项目上下文的工程业务管理与 Prompt 治理工具包。核心变化包括：
+
+- 新增 `aios-prompt-compare`，用于对比弱提示词、便携强提示词和真实 Skill runtime 输出。
+- 新增工程业务管理基础提示词资产，覆盖招投标、合同履约、施工日报、工程会议、变更签证和专项施工方案。
+- 新增 prompt 评测 fixtures、公开咨询样例、run pack 构建、结果校验、模型输出校验、scorecard 校验和分析脚本。
+- 增强项目初始化与模板推断能力，让 AIOS 能更稳定地写入项目上下文、profile 和入口文件。
+- 版本号同步升级到 `1.3.0`，覆盖 npm package、Gemini extension、Claude plugin、runtime manifest 和 CLI MCP clientInfo。
+
+发布前验证建议：
+
+- `npm run validate:skills`
+- `npm run validate:prompts`
+- `npm run validate:prompt-run-pack`
+- `npm run validate:public-advisory-run-pack`
+- `npm run validate:prompt-run-results`
+- `npm run validate:prompt-outputs`
+- `npm run validate:prompt-scorecard`
+- `npm run doctor`
+- `npm run smoke:project`
+- `npm test`
+- `npx skills add . --list`
+- `npm pack --dry-run`
+
 ## 1.2.0
 
 本版本把 AIOS 的定位从单纯“建筑 AI 研发工具包”扩展为面向建筑行业知识工作从业者与 AI 研发团队的技能包。除了 BIM / IFC、RAG / GraphRAG、智能审图、Runtime 和代码治理，也覆盖招投标、合同履约、施工日报、工程会议、变更签证和专项施工方案等工程资料证据链工作。
