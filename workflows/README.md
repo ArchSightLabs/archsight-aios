@@ -21,4 +21,4 @@
 
 每个 workflow 应明确参与角色、输入、输出、执行顺序、验收标准和回滚策略。
 
-涉及多 Agent 冲突、规范证据、结构计算、安全扫描、测试门禁或 Runtime 权限时，Workflow 还应输出 `Claim / Evidence / Tool Result / Decision`，并按 [Capability-Backed Arbitration Protocol](../governance/arbitration-protocol.md) 仲裁。
+涉及多 Agent 冲突、规范证据、结构计算、安全扫描、测试门禁或 Runtime 权限时，Workflow 面向用户应输出中文化的 `判断事项 / 证据 / 工具结果 / 处理建议`，并按 [Capability 证据仲裁协议](../governance/arbitration-protocol.md) 仲裁。

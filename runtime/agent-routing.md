@@ -47,7 +47,8 @@
 - 代码质量、安全和风险审查先走 Argus。
 - 建筑行业知识问题先走 Vitruvius。
 - RAG、MCP、Agent Runtime 问题先走 Daedalus。
-- Prompt 效果评估、weak/basic 对照和真实 Skill 输出比较先走 Daedalus。
+- 普通两份文档、两个版本或两个 AI 输出专业度对比先走 Daedalus，并使用 `aios-compare`。
+- Prompt 效果评估、weak/basic 对照和真实 Skill 输出比较仅在开发者明确调用 `aios-prompt-compare` 时先走 Daedalus。
 - 具体代码执行和脚本执行先走 Hephaestus。
 - AI 行业情报和开源趋势先走 Mercury。
 - 产品范围、MVP 和商业化路径先走 Janus。
@@ -72,7 +73,7 @@ Agent 之间的冲突不按“谁的模型更强”裁决，而按 `governance/a
 5. 专项 Agent 判断。
 6. LLM 自然语言推理。
 
-Runtime 可通过 `runtime/capability-registry.json` 声明 Capability。Agent 提出阻断或放行结论时，应输出 `Claim / Evidence / Tool Result / Decision`；没有工具实现或证据缺失时，只能标注 `Need verify`。
+Runtime 可通过 `runtime/capability-registry.json` 声明 Capability。Agent 提出阻断或放行结论时，面向用户应输出中文化的 `判断事项 / 证据 / 工具结果 / 处理建议`；没有工具实现或证据缺失时，只能标注 `需核验`。
 
 ---
 
@@ -142,5 +143,6 @@ Runtime 可通过 `runtime/capability-registry.json` 声明 Capability。Agent �
 
 需要升级到 Daedalus：
 
-- 涉及提示词回归、Prompt / Skill 输出对比、weak/basic/runtime 三栏评测。
+- 涉及普通文档 / AI 输出专业度对比，且用户明确调用 `aios-compare`。
+- 涉及提示词回归、Prompt / Skill 输出对比、weak/basic/runtime 三栏评测，且开发者明确调用 `aios-prompt-compare`。
 - 涉及判断普通提示词是否应沉淀为正式 Skill。

@@ -25,6 +25,14 @@ WorkBuddy 目标固定写入个人目录；不区分项目级目录。AIOS CLI �
 在 WorkBuddy 中按 skill 名称调用或明确指定要使用的 AIOS 工具：
 
 ```text
+使用 aios skill 分析这份工程资料。
+```
+
+```text
+使用 aios-compare skill 比较这两份输出哪份更专业、更适合交付。
+```
+
+```text
 使用 aios-arch skill 评审这个 BIM 平台方案的服务边界、数据归属和长期复杂度。
 ```
 
@@ -36,8 +44,10 @@ WorkBuddy 目标固定写入个人目录；不区分项目级目录。AIOS CLI �
 使用 aios-construction-daily skill 整理这份施工日报的异常、责任人和待确认事项。
 ```
 
+`aios-prompt-compare` 是内部 Prompt / Skill 测试工具，普通用户比较两份文档或两个 AI 输出时不要使用它。
+
 ## 维护建议
 
 - WorkBuddy 只需要读取 `SKILL.md`，不需要额外放宽工具权限。
 - AIOS 是建筑行业增强层；普通非建筑任务不要强行套 BIM、IFC、规范或审图假设。
-- 如果 WorkBuddy skill 列表过长，可只保留实际使用频率最高的 `aios-*` 目录。
+- 如果 WorkBuddy skill 列表过长，可只保留实际使用频率最高的 `aios`、`archsight-aios` 和具体 `aios-*` 目录。

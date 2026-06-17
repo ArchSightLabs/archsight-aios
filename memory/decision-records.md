@@ -7,14 +7,14 @@
 ## 格式
 
 ```text
-Title:
-Date:
-Context:
-Decision:
-Rejected:
-Consequences:
-Verification:
-Owner:
+标题：
+日期：
+背景：
+决策：
+已拒绝方案：
+影响：
+验证：
+负责人：
 ```
 
 ## 写入条件
@@ -23,4 +23,3 @@ Owner:
 - 拒绝了一个未来可能反复被提出的方案。
 - 改变了 Agent、Skill、Workflow 或 Runtime 边界。
 - 发布、权限或数据策略发生变化。
-

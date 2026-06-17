@@ -47,7 +47,7 @@ description: 代码审查和风险评审工作流。用于审查 diff、PR、AI 
 1. 阻断问题
 2. 非阻断建议
 3. 测试缺口
-4. Tool Result / Arbitration
+4. 工具结果 / 证据仲裁
 5. 剩余风险
 6. 结论
 

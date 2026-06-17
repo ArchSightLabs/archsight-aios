@@ -1,5 +1,17 @@
 # Release Notes
 
+## 1.3.1
+
+本版本聚焦“让使用者感觉简单”：新增 `aios` / `archsight-aios` 总入口，用户可以用短句调用 AIOS，由技能包根据资料类型自动路由；同时新增用户侧 `aios-compare`，并把内部 `aios-prompt-compare` 收紧为开发者显式调用的 Prompt 测试工具。
+
+工程业务管理 Skill 的用户可见输出模板已改为中文字段，默认使用 `资料来源清单`、`证据仲裁`、`证据`、`工具结果` 和 `处理建议：可继续 / 需核验 / 转人工复核`，不再把 `Source Map`、`Arbitration`、`Evidence`、`Decision`、`Need verify` 作为默认输出标题。
+
+发布前验证建议：
+
+- `npm run validate:skills`
+- `npm test`
+- `git diff --check`
+
 ## 1.3.0
 
 本版本把 AIOS 从通用建筑行业技能包进一步扩展为可评测、可对比、可初始化到项目上下文的工程业务管理与 Prompt 治理工具包。核心变化包括：

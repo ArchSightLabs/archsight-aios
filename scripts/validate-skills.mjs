@@ -5,6 +5,7 @@ import path from "node:path";
 
 const root = fs.realpathSync(process.cwd());
 const errors = [];
+const topLevelSkillNames = new Set(["aios", "archsight-aios"]);
 
 function repoPath(...parts) {
   const target = path.join(root, ...parts);
@@ -67,7 +68,7 @@ if (manifest) {
   const manifestSkillIds = new Set(manifest.skills.map((skill) => skill.id));
   const skillDirs = fs
     .readdirSync(repoPath("skills"), { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && entry.name.startsWith("aios-"))
+    .filter((entry) => entry.isDirectory() && (entry.name.startsWith("aios-") || topLevelSkillNames.has(entry.name)))
     .map((entry) => entry.name)
     .sort();
 

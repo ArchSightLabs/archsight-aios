@@ -1,5 +1,29 @@
 # 变更记录
 
+## 1.3.1
+
+### 发布说明
+
+本版本聚焦使用者体验：用户只需要记住 `aios` / `archsight-aios` 总入口，AIOS 自动按资料类型分流到合适 Skill；同时把工程业务管理 Skill 的用户可见输出模板改为中文字段，减少 `Source Map`、`Arbitration`、`Evidence`、`Decision`、`Need verify` 等英文标签对业务用户的干扰。
+
+### 新增
+
+- 新增 `aios` 和 `archsight-aios` 顶层路由 Skill，支持“请用 aios skill 分析该文档”这类短指令触发资料类型识别和自动分流。
+- 新增 `aios-compare` 用户侧对比 Skill，用于比较两份文档、两个版本或两个 AI 输出哪份更专业、更适合交付。
+
+### 调整
+
+- 版本升级到 `1.3.1`，同步更新 npm package、Gemini extension、Claude plugin、runtime manifest 和 CLI MCP clientInfo。
+- 将 `aios-prompt-compare` 收紧为内部 Prompt 测试工具，仅在明确调用 `aios-prompt-compare` 时触发，避免普通“对比”任务误路由。
+- 工程业务管理 Skill 输出模板统一中文化：`资料来源清单`、`证据仲裁`、`证据`、`工具结果`、`处理建议：可继续 / 需核验 / 转人工复核`。
+- README、WorkBuddy 适配说明、Skill 总览、运行时路由和项目模板补充总入口、对比 Skill 与内部测试 Skill 的边界说明。
+
+### 验证
+
+- `npm run validate:skills`
+- `npm test`
+- `git diff --check`
+
 ## 1.3.0
 
 ### 发布说明

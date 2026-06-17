@@ -1,4 +1,4 @@
-# Capability-Backed Arbitration Protocol
+# Capability 证据仲裁协议
 
 状态：治理基线草案  
 适用范围：ArchSight AIOS 多 Agent 冲突仲裁、工具证据裁决和人工升级
@@ -11,7 +11,7 @@
 
 核心原则：
 
-> Agent 可以提出 Claim，但不能只凭自然语言推理裁决事实。事实裁决必须回到项目证据、结构化知识、确定性工具或人工授权。
+> Agent 可以提出判断事项，但不能只凭自然语言推理裁决事实。事实裁决必须回到项目证据、结构化知识、确定性工具或人工授权。
 
 适用场景：
 
@@ -34,30 +34,30 @@
 | L4 | 专项 Agent 判断 | Atlas 的架构判断、Mason 的交付判断、Vitruvius 的领域判断、Euclid 的建模判断。 |
 | L5 | LLM 自然语言推理 | 只能作为假设、解释或建议，不能单独作为阻断或放行依据。 |
 
-工具结果优先，但不得盲信工具结果。L1/L3 证据必须带有输入、版本、适用条件和执行状态；缺失时只能进入 `Need verify`。
+工具结果优先，但不得盲信工具结果。L1/L3 证据必须带有输入、版本、适用条件和执行状态；缺失时只能进入 `需核验`。
 
 ---
 
-## 三、Claim 契约
+## 三、判断事项契约
 
-Agent 之间发生冲突时，不能只输出“我不同意”。每个参与方必须把意见转成 Claim：
+Agent 之间发生冲突时，不能只输出“我不同意”。每个参与方必须把意见转成判断事项：
 
 ```text
-Claim:
-  id:
-  owner_agent:
-  type: architecture | delivery | domain_semantics | structural | security | runtime | business
-  statement:
-  evidence_level: L0 | L1 | L2 | L3 | L4 | L5
-  evidence:
-  assumptions:
-  need_verify:
-  blocking: true | false
-  severity: P0 | P1 | P2
-  requested_action: proceed | revise | reduce | stop | human_escalation
+判断事项：
+  编号：
+  负责 Agent：
+  类型：架构 / 交付 / 行业语义 / 结构 / 安全 / runtime / 商业
+  表述：
+  证据等级：L0 / L1 / L2 / L3 / L4 / L5
+  证据：
+  假设：
+  需核验：
+  是否阻断：是 / 否
+  严重级别：P0 / P1 / P2
+  请求动作：继续 / 修订 / 收缩 / 停止 / 人工升级
 ```
 
-Claim 必须明确区分事实、判断、假设和待验证项。没有证据的 Claim 默认不具备阻断权。
+判断事项必须明确区分事实、判断、假设和待验证项。没有证据的判断事项默认不具备阻断权。
 
 ---
 
@@ -122,32 +122,32 @@ any -> human_escalation
 
 ---
 
-## 七、Decision Ledger
+## 七、决策记录
 
 每次仲裁必须沉淀为可复核记录。最小字段：
 
 ```text
-Decision:
-  id:
-  date:
-  conflict:
-  claims:
-  evidence:
-  tool_results:
-  decision: proceed | revise | reduce | stop | escalate
-  rejected:
-  owner:
-  follow_up:
+决策记录：
+  编号：
+  日期：
+  冲突：
+  判断事项：
+  证据：
+  工具结果：
+  决策：继续 / 修订 / 收缩 / 停止 / 升级人工
+  已拒绝方案：
+  负责人：
+  后续动作：
 ```
 
-Decision Ledger 可以写入 ADR、memory、PR 描述、issue 或项目 `.ai/` 目录，具体位置由项目接入规则决定。
+决策记录可以写入 ADR、memory、PR 描述、issue 或项目 `.ai/` 目录，具体位置由项目接入规则决定。
 
 ---
 
 ## 八、落地要求
 
-- Workflow 输出必须包含 `Claim / Evidence / Tool Result / Decision`。
+- Workflow 面向用户的输出必须包含中文化的 `判断事项 / 证据 / 工具结果 / 处理建议`。
 - Skill 需要声明可用 Capability、权限边界和证据契约。
 - Runtime Adapter 只负责调用工具和回传证据，不替代 Agent 判断。
 - 工具调用失败时必须暴露失败原因、输入摘要和可恢复路径。
-- 没有 Capability 实现时，必须标为 `declared-interface` 或 `Need verify`，不得伪造工具结果。
+- 没有 Capability 实现时，必须标为 `已声明接口` 或 `需核验`，不得伪造工具结果。

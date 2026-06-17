@@ -36,6 +36,7 @@ const assetDirs = [
 ];
 const assetFiles = ["README.md", "AI_CODING_RULES.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md", "OPENCODE.md"];
 const skillSupportFiles = ["README.md", "engineering-business-starter-kit.md"];
+const topLevelSkillNames = new Set(["aios", "archsight-aios"]);
 const skillAliases = {
   "aios-arch": ["aios-architecture-review", "archsight-architecture-review"],
   "aios-plan": ["aios-delivery-planning", "archsight-delivery-planning"],
@@ -128,7 +129,8 @@ const skillDetectionRules = {
   "aios-knowledge": ["bim", "ifc", "规范", "审图", "条文", "知识结构化"],
   "aios-structural": ["结构", "荷载", "挠度", "fem", "有限元", "计算书"],
   "aios-runtime": ["rag", "graphrag", "mcp", "tool calling", "memory", "agent runtime"],
-  "aios-prompt-compare": ["提示词", "prompt", "对比", "skill 输出", "weak", "basic"],
+  "aios-compare": ["aios-compare"],
+  "aios-prompt-compare": ["aios-prompt-compare"],
   "aios-commercial-tender": ["招标", "投标", "技术标", "商务标", "评分", "废标", "招采", "资格"],
   "aios-commercial-contract": ["合同", "协议", "付款", "履约", "违约", "分包", "采购", "结算条款"],
   "aios-construction-daily": ["日报", "周报", "现场记录", "施工日志", "进度", "材料进场", "机械", "劳务"],
@@ -330,7 +332,7 @@ async function listAiosWorkflowPaths() {
 async function listRepositoryAiosSkills() {
   const entries = await fs.readdir(path.join(repoRoot, "skills"), { withFileTypes: true });
   return entries
-    .filter((entry) => entry.isDirectory() && entry.name.startsWith("aios-"))
+    .filter((entry) => entry.isDirectory() && (entry.name.startsWith("aios-") || topLevelSkillNames.has(entry.name)))
     .map((entry) => entry.name)
     .sort();
 }
@@ -623,7 +625,7 @@ function callMcpStdio({ command, args, cwd, toolName, input, timeoutMs }) {
       params: {
         protocolVersion: "2025-06-18",
         capabilities: {},
-        clientInfo: { name: "archsight-aios", version: "1.3.0" }
+        clientInfo: { name: "archsight-aios", version: "1.3.1" }
       }
     };
     const callTool = {

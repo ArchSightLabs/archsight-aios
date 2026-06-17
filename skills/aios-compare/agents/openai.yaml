@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Compare"
+  short_description: "比较两份文档或 AI 输出哪份更专业、更适合交付"
+  default_prompt: "使用 aios-compare 比较两份文档或两个 AI 输出时，先判断是否同源可比，再从证据链、结构、行业表达、遗漏、边界风险、可执行性和交付可读性判断哪份更专业；不要误用为 weak/basic/runtime 提示词评测。"

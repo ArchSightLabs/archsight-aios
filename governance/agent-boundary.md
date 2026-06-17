@@ -1,4 +1,4 @@
-# Agent Boundary Policy
+# Agent 边界策略
 
 ## 基本关系
 
@@ -24,4 +24,3 @@
 - 建筑语义升级给 Vitruvius。
 - AI Runtime 升级给 Daedalus。
 - 受控执行交给 Hephaestus。
-

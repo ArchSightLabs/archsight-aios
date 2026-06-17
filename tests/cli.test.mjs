@@ -77,12 +77,13 @@ async function testProductIdentity() {
   const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
   const pkg = await readJson(path.join(repoRoot, "package.json"));
   const legacyManifest = path.join(repoRoot, "runtime", ["archsight", "ai", "os.manifest.json"].join("-"));
+  const topLevelSkillIds = new Set(["aios", "archsight-aios"]);
 
   assert.equal(manifest.name, "archsight-aios");
   assert.equal(pkg.name, "@archsight/aios");
   assert.equal(pkg.bin["archsight-aios"], "./bin/archsight-aios.mjs");
-  assert.ok(manifest.skills.every((skill) => skill.id.startsWith("aios-")));
-  assert.ok(manifest.skills.every((skill) => skill.path.startsWith("skills/aios-")));
+  assert.ok(manifest.skills.every((skill) => skill.id.startsWith("aios-") || topLevelSkillIds.has(skill.id)));
+  assert.ok(manifest.skills.every((skill) => skill.path.startsWith("skills/aios-") || topLevelSkillIds.has(skill.id)));
   assert.ok(manifest.skills.every((skill) => skill.id.split("-").length <= 3));
   assert.ok(manifest.workflows.every((workflow) => workflow.id.split("-").length <= 3));
   assert.equal(manifest.installTargets.codexSkills, "~/.codex/skills");
@@ -103,9 +104,10 @@ async function testManifestCoversRepositoryAssets() {
   const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
   const skillEntries = await fs.readdir(path.join(repoRoot, "skills"), { withFileTypes: true });
   const workflowEntries = await fs.readdir(path.join(repoRoot, "workflows"), { withFileTypes: true });
+  const topLevelSkillIds = new Set(["aios", "archsight-aios"]);
 
   const skillDirs = skillEntries
-    .filter((entry) => entry.isDirectory() && entry.name.startsWith("aios-"))
+    .filter((entry) => entry.isDirectory() && (entry.name.startsWith("aios-") || topLevelSkillIds.has(entry.name)))
     .map((entry) => entry.name)
     .sort();
   const workflowIds = workflowEntries

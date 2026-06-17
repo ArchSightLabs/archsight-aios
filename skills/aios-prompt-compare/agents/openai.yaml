@@ -1,4 +1,4 @@
 interface:
   display_name: "AIOS Prompt Compare"
-  short_description: "对比弱提示词、强提示词和真实 Skill 运行结果质量"
-  default_prompt: "使用 $aios-prompt-compare 对同一输入下的弱提示词、便携强提示词和真实 Skill 触发结果进行质量、边界和证据链对比，并在报告附录保留三类原始输出。"
+  short_description: "内部测试工具：评测 weak/basic/runtime Prompt 与 Skill 输出"
+  default_prompt: "仅在开发者明确调用 aios-prompt-compare 时使用；对同一输入下的弱提示词、便携强提示词和真实 Skill 触发结果进行质量、边界和证据链评测，并在报告附录保留三类原始输出。"

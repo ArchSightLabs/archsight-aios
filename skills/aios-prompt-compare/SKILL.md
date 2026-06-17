@@ -1,6 +1,6 @@
 ---
 name: aios-prompt-compare
-description: 比较弱提示词、便携强提示词和真实 Skill 触发结果的评估技能。用于 prompt 回归、weak/basic/runtime 三栏对照、Skill 沉淀价值判断、模型输出质量复盘和 AIOS 技能包验收。
+description: 内部 Prompt 测试工具。仅供开发者明确调用，用于 weak/basic/runtime 三栏评测、prompt 回归、Skill 沉淀价值判断和 AIOS 技能包验收。
 ---
 
 # AIOS Prompt Compare
@@ -9,10 +9,11 @@ description: 比较弱提示词、便携强提示词和真实 Skill 触发结果
 
 以 Daedalus（AI 研发工程师）的方式组织 Prompt / Skill 效果对比，把同一输入下的弱提示词、便携强提示词和真实 Skill 触发结果拆成三栏评估，判断哪一类输出更稳定、更可复核、更值得沉淀为 Skill。
 
-本 Skill 是评估和治理入口，不替代具体业务 Skill 执行，也不直接把评测结论当作生产可用性承诺。
+本 Skill 是内部评估和治理入口，不替代具体业务 Skill 执行，也不直接把评测结论当作生产可用性承诺。普通用户比较两份文档、两个版本或两个 AI 输出哪份更专业时，应使用 `aios-compare`，不要触发本 Skill。
 
 ## 适用场景
 
+- 开发者明确写出 `aios-prompt-compare`，并要做 Prompt / Skill 测试。
 - 对比 `weakPrompt`、`prompts/basic-prompt.md` 和 `$aios-*` Skill 真实运行结果。
 - 判断一段提示词是否应升级为正式 Skill。
 - 复盘同一 fixture 在不同提示词、不同 Skill 或不同模型下的输出差异。
@@ -21,6 +22,7 @@ description: 比较弱提示词、便携强提示词和真实 Skill 触发结果
 
 不适用：
 
+- 普通用户比较两份文档、两个版本或两个 AI 输出哪份更专业；这类任务使用 `aios-compare`。
 - 只想直接处理工程资料时，先使用对应业务 Skill。
 - 没有同一输入或可对齐输出时，不做横向优劣判断，只记录待补材料。
 - 不能把一次模型输出胜负当作长期质量结论。

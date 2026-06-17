@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Router"
+  short_description: "按资料类型自动路由到对应 ArchSight AIOS 技能"
+  default_prompt: "当用户只说使用 AIOS 或 AIOS 技能包分析文档时，先识别资料类型，再路由到合适的 aios-* 技能；不确定时先做资料状态判断，保留证据链、人工复核和不能下结论的边界。"
