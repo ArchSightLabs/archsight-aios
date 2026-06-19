@@ -1,6 +1,6 @@
 # 变更记录
 
-## 1.4.0（开发中）
+## 1.4.0
 
 ### 新增
 
@@ -20,7 +20,7 @@
 
 - `aios` / `archsight-aios` 总入口、CLI 自动识别、manifest、Skill 路由和项目接入模板补充写作型 Skill。
 - CLI Skill 自动识别改为对更具体的写作短语加权，减少“技术标生成 / 施工方案生成”误落到审核型 Skill 的概率。
-- v1.4.0 发布门槛明确：Codex / WorkBuddy 写作型 Skill raw output 与 scorecard 复核已具备，正式发布仍需版本号同步、最终发布验证、tag、push 和 GitHub Release。
+- v1.4.0 发布门槛明确：Codex / WorkBuddy 写作型 Skill raw output 与 scorecard 复核已具备；版本号已同步，正式发布仍需 tag、push 和 GitHub Release。
 - v1.4.0 路线图明确“工程文档生成、改写与复核闭环”：Markdown 是工作母版，Word / PDF / PPT 是交付格式；现有审核型 Skill 继续作为质量门禁。
 
 ## 1.3.2

@@ -1,6 +1,6 @@
 # Release Notes
 
-## 1.4.0（开发中）
+## 1.4.0
 
 本版本主线是把 AIOS 从“审核型 Skill”推进到“工程文档生成、改写与复核闭环”。新增写作型 Skill 负责初稿生成、历史素材复用和 Markdown 工作母版；现有审核型 Skill 继续负责响应性、证据链、风险和人工复核门禁。
 
@@ -18,7 +18,7 @@
 - 新增 WorkBuddy-first 快速使用说明、写作能力边界和 v1.4.0 release readiness 清单。
 - 写作型 Skill 必须保留资料来源、素材复用判断、待补占位、人工复核岗位和审核门禁，不得把历史项目事实直接套入当前项目。
 - CLI 自动识别对更具体的生成 / 改写短语加权，降低写作请求误入审核型 Skill 的概率。
-- 当前 skill-runtime 归档已记录 Codex / WorkBuddy 真实触发 raw output，并按写作型 scorecard 复核通过；正式发版前仍需完成版本号同步、最终发布验证、tag、push 和 GitHub Release。
+- 当前 skill-runtime 归档已记录 Codex / WorkBuddy 真实触发 raw output，并按写作型 scorecard 复核通过；版本号已同步到 `1.4.0`，正式发布仍需 tag、push 和 GitHub Release。
 
 发布前验证建议：
 
