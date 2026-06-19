@@ -1,5 +1,26 @@
 # 变更记录
 
+## 1.3.2
+
+### 发布说明
+
+本版本修复 v1.3.1 后在不同宿主中出现的 Skill 遵从度不一致问题。重点强化“短指令触发 AIOS”时的默认输出契约：用户只说“用 AIOS 分析该文档”且没有要求摘要时，默认输出标准详版报告，而不是几段概括性摘要。
+
+### 调整
+
+- 版本升级到 `1.3.2`，同步更新 npm package、Gemini extension、Claude plugin、runtime manifest 和 CLI MCP clientInfo。
+- `aios` / `archsight-aios` 总入口明确短指令默认走“标准详版报告”，路由后仍要展开专项 Skill 的主表、清单或台账。
+- 工程业务管理 Skill 增加“标准详版报告与输出自检”约束，覆盖招投标、合同、施工日报、会议纪要、变更签证和专项施工方案。
+- 各工程业务 Skill 的 `openai.yaml` 默认提示补充“不要压缩成摘要”“资料来源”“主分析表或台账”“资料缺口”“人工复核”“AI 不应下结论事项”和“输出自检”。
+- Prompt 评估策略新增“宿主遵从度受控评测”，用于区分 WorkBuddy、Codex、Gemini、Antigravity 等宿主差异和模型能力差异。
+
+### 验证
+
+- `npm run validate:skills`
+- `npm test`
+- `git diff --check`
+- `npm pack --dry-run`
+
 ## 1.3.1
 
 ### 发布说明

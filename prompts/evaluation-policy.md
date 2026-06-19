@@ -51,6 +51,41 @@ npm run build:public-advisory-run-pack
 
 若要评估“普通提示词、便携强提示词、真实 Skill 结果”三类差异，使用 `aios-prompt-compare`。其中 weak/basic 可以沿用 run pack；`skill-runtime` 需要由宿主工具真实触发对应 `$aios-*` Skill 后归档，再按同一 scorecard 做三栏比较。不要把 `SKILL.md` 直接作为普通 prompt 粘贴运行的输出称为真实 Skill 结果。
 
+## 宿主遵从度受控评测
+
+当需要比较 WorkBuddy、Codex、Gemini、Antigravity 等宿主的表现时，评测目标应先定义为“宿主 + Skill 加载方式 + 文档解析 + 模型 + 输出长度策略”的整体效果，不要直接推断某个模型长期更强。
+
+最小受控设计：
+
+1. 使用同一版 AIOS、同一批脱敏输入文档和同一句短指令，例如“请用 AIOS 技能包分析该文档”。
+2. 每个宿主都确认已安装同一版 `@archsight/aios`，并记录宿主名称、模型名称、运行时间、输入文件、是否真实触发 Skill。
+3. 原始输出全文归档，不只保存摘要；客户、项目、人员、地点、金额和编号先脱敏。
+4. 先按“是否触发正确 Skill、是否输出标准详版报告、是否包含输出自检”判断宿主遵从度。
+5. 再按 scorecard 比较证据链、可操作性、边界安全、资料缺口、人工交接和输出可读性。
+6. 结论只写到当前样本和当前宿主版本，不把一次输出胜负写成模型长期优劣。
+
+推荐记录字段：
+
+```text
+caseId：
+aiosVersion：
+host：
+model：
+ranAt：
+inputFile：
+triggerPrompt：
+skillTriggered：
+skillRuntimeConfirmed：是 / 否 / 不确定
+outputFile：
+notes：
+```
+
+判读口径：
+
+- 如果输出缺少资料来源、主分析表 / 台账、资料缺口、人工复核或 AI 不应下结论事项，优先判断为宿主遵从度或 Skill 加载问题。
+- 如果结构完整但行业术语、责任边界、工程语境或表格细度明显不足，再进入模型适配和中文工程语境能力讨论。
+- 如果宿主无法确认真实 Skill 触发，只能标为“疑似便携提示词效果”，不能归入 `skill-runtime`。
+
 weak/basic 成对运行后，用 run results 文件归档 12 条结果：
 
 ```bash

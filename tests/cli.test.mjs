@@ -354,6 +354,47 @@ async function testSkillsAvoidPromptTemplateShape() {
   }
 }
 
+async function testEngineeringBusinessSkillsRequireDetailedOutput() {
+  const routerSkills = ["aios", "archsight-aios"];
+  const businessSkills = [
+    "aios-commercial-tender",
+    "aios-commercial-contract",
+    "aios-construction-daily",
+    "aios-construction-meeting",
+    "aios-commercial-variation",
+    "aios-construction-scheme"
+  ];
+  const requiredSkillTerms = [
+    "标准详版报告",
+    "资料来源清单",
+    "主分析表 / 清单 / 台账",
+    "资料缺口",
+    "人工复核岗位",
+    "AI 不应下结论事项",
+    "输出自检",
+    "缺一项时先补齐"
+  ];
+  const requiredConfigTerms = ["默认输出标准详版报告", "不要压缩成摘要", "输出自检"];
+
+  for (const skillName of routerSkills) {
+    const skillContent = await fs.readFile(path.join(repoRoot, "skills", skillName, "SKILL.md"), "utf8");
+    assert.match(skillContent, /不是短摘要/);
+    for (const term of requiredSkillTerms) assert.ok(skillContent.includes(term), `${skillName}: missing ${term}`);
+
+    const configContent = await fs.readFile(path.join(repoRoot, "skills", skillName, "agents", "openai.yaml"), "utf8");
+    for (const term of requiredConfigTerms) assert.ok(configContent.includes(term), `${skillName} config: missing ${term}`);
+  }
+
+  for (const skillName of businessSkills) {
+    const skillContent = await fs.readFile(path.join(repoRoot, "skills", skillName, "SKILL.md"), "utf8");
+    assert.ok(skillContent.includes("## 标准详版报告与输出自检"), `${skillName}: missing detail contract section`);
+    for (const term of requiredSkillTerms) assert.ok(skillContent.includes(term), `${skillName}: missing ${term}`);
+
+    const configContent = await fs.readFile(path.join(repoRoot, "skills", skillName, "agents", "openai.yaml"), "utf8");
+    for (const term of requiredConfigTerms) assert.ok(configContent.includes(term), `${skillName} config: missing ${term}`);
+  }
+}
+
 async function testInstallAntigravityUsesPluginByDefault() {
   const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-antigravity-2-"));
   const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
@@ -909,6 +950,7 @@ const tests = [
   testAnalyzePromptRunResultsCommand,
   testInitPromptModelOutputTemplateCommand,
   testSkillsAvoidPromptTemplateShape,
+  testEngineeringBusinessSkillsRequireDetailedOutput,
   testInstallAntigravityUsesPluginByDefault,
   testInstallGeminiWritesGeminiSupportAssets,
   testInstallWorkBuddyWritesPersonalSkills,

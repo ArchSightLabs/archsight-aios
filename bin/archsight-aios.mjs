@@ -625,7 +625,7 @@ function callMcpStdio({ command, args, cwd, toolName, input, timeoutMs }) {
       params: {
         protocolVersion: "2025-06-18",
         capabilities: {},
-        clientInfo: { name: "archsight-aios", version: "1.3.1" }
+        clientInfo: { name: "archsight-aios", version: "1.3.2" }
       }
     };
     const callTool = {

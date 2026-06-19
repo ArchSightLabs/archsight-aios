@@ -1,5 +1,23 @@
 # Release Notes
 
+## 1.3.2
+
+本版本修复 v1.3.1 后在不同宿主中出现的 Skill 遵从度不一致问题。用户只说“用 AIOS 分析该文档”且没有要求摘要时，AIOS 默认应输出标准详版报告，而不是短摘要。
+
+核心变化：
+
+- `aios` / `archsight-aios` 总入口明确短指令默认走“标准详版报告”。
+- 招投标、合同、施工日报、会议纪要、变更签证和专项施工方案 Skill 增加“标准详版报告与输出自检”约束。
+- 各工程业务 Skill 的轻量 `openai.yaml` 默认提示同步补充详版报告、自检、资料来源、主表 / 台账、资料缺口、人工复核和 AI 不应下结论事项。
+- Prompt 评估策略增加宿主遵从度受控评测口径，避免把 WorkBuddy / Codex / Gemini / Antigravity 的整体效果差异直接归因到单一模型。
+
+发布前验证建议：
+
+- `npm run validate:skills`
+- `npm test`
+- `git diff --check`
+- `npm pack --dry-run`
+
 ## 1.3.1
 
 本版本聚焦“让使用者感觉简单”：新增 `aios` / `archsight-aios` 总入口，用户可以用短句调用 AIOS，由技能包根据资料类型自动路由；同时新增用户侧 `aios-compare`，并把内部 `aios-prompt-compare` 收紧为开发者显式调用的 Prompt 测试工具。

@@ -1,4 +1,4 @@
 interface:
   display_name: "ArchSight AIOS Router"
   short_description: "ArchSight AIOS 总入口别名，按资料类型路由到对应 aios-* 技能"
-  default_prompt: "当用户使用 ArchSight AIOS 或 AIOS 技能包这类自然叫法时，先识别资料类型，再按 aios 总路由规则选择具体 aios-* 技能；不确定时先做资料状态判断。"
+  default_prompt: "当用户使用 ArchSight AIOS 或 AIOS 技能包这类自然叫法时，先识别资料类型，再按 aios 总路由规则选择具体 aios-* 技能；默认输出标准详版报告，不要压缩成摘要；必须保留资料来源、主分析表或台账、资料缺口、人工复核、AI 不应下结论事项和输出自检。"
