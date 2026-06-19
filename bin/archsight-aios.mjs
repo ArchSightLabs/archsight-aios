@@ -168,7 +168,8 @@ function usage() {
     "  archsight-aios install --target <codex|agents|gemini|antigravity|workbuddy|opencode|claude-code|all> --scope user",
     "  archsight-aios doctor",
     "  archsight-aios init [--cwd <path>] [--mode <auto|full|linked|ai-only>] [--profile <auto|none|all|name>]",
-    "  archsight-aios writing:init [--cwd <path>] [--type <tender|scheme|general>] [--name <folder>]",
+    "  archsight-aios writing:init [--cwd <path>] [--type <tender|scheme|general>] [--name <folder>] [--sample]",
+    "  archsight-aios writing:validate [--cwd <path>] [--name <folder>]",
     "  archsight-aios validate [--cwd <path>] [--profile <auto|none|all|name>] [--temp]",
     "  archsight-aios capability:call --capability <id> --agent <id> --skill <id> --input <json-file>",
     "  archsight-aios hermes:validate",
@@ -181,6 +182,7 @@ function usage() {
     "  doctor                Check repository assets and user-level installation.",
     "  init                  Add AI rules and .ai governance files to a project.",
     "  writing:init          Create a Markdown document-writing workbench.",
+    "  writing:validate      Check a Markdown document-writing workbench.",
     "  validate              Validate the project AI template output.",
     "  capability:call       Authorize and call a registered local Capability adapter.",
     "  hermes:*              Validate or dry-run Hermes runtime prompt sync.",
@@ -193,6 +195,8 @@ function usage() {
     "  npx @archsight/aios install --target claude-code --scope user",
     "  npx @archsight/aios init",
     "  npx @archsight/aios writing:init --type tender",
+    "  npx @archsight/aios writing:init --type scheme --sample --name scheme-sample",
+    "  npx @archsight/aios writing:validate --name document-writing",
     "  npx @archsight/aios validate --temp",
     "  npx @archsight/aios doctor"
   ].join("\n");
@@ -215,6 +219,7 @@ function parseArgs(argv) {
     skill: undefined,
     documentType: "general",
     workspaceName: "document-writing",
+    sample: false,
     input: undefined,
     mcpCwd: undefined,
     mcpCommand: undefined,
@@ -246,6 +251,8 @@ function parseArgs(argv) {
       options.documentType = rest[++i];
     } else if (arg === "--name") {
       options.workspaceName = rest[++i];
+    } else if (arg === "--sample") {
+      options.sample = true;
     } else if (arg === "--input") {
       options.input = path.resolve(rest[++i]);
     } else if (arg === "--mcp-cwd") {
@@ -1879,8 +1886,11 @@ async function initDocumentWritingWorkspace(options) {
     throw new Error("--name must be a relative folder name");
   }
 
-  const type = resolveDocumentWritingType(options.documentType);
-  const templateRoot = path.join(repoRoot, "templates", "document-writing");
+  const requestedType = resolveDocumentWritingType(options.documentType);
+  const type = options.sample && requestedType === "general" ? "tender" : requestedType;
+  const templateRoot = options.sample
+    ? path.join(repoRoot, "templates", "document-writing-samples", type)
+    : path.join(repoRoot, "templates", "document-writing");
   const workspaceRoot = path.resolve(targetRoot, workspaceName);
   assertInside(workspaceRoot, targetRoot);
 
@@ -1897,6 +1907,93 @@ async function initDocumentWritingWorkspace(options) {
   }
 
   console.log(`WRITING ${type}: ${workspaceRoot}`);
+}
+
+const documentWritingFiles = [
+  "source-normalized.md",
+  "material-index.md",
+  "writing-brief.md",
+  "draft.md",
+  "review-notes.md",
+  "final.md"
+];
+
+async function resolveDocumentWritingWorkspaceRoot(options) {
+  const targetRoot = path.resolve(options.cwd);
+  const workspaceName = options.workspaceName ?? "document-writing";
+  if (!workspaceName || path.isAbsolute(workspaceName)) {
+    throw new Error("--name must be a relative folder name");
+  }
+
+  const namedRoot = path.resolve(targetRoot, workspaceName);
+  assertInside(namedRoot, targetRoot);
+  if (await exists(namedRoot)) {
+    return namedRoot;
+  }
+
+  let targetRootHasWorkbench = true;
+  for (const fileName of documentWritingFiles) {
+    if (!(await exists(path.join(targetRoot, fileName)))) {
+      targetRootHasWorkbench = false;
+      break;
+    }
+  }
+  if (targetRootHasWorkbench) {
+    return targetRoot;
+  }
+
+  return namedRoot;
+}
+
+async function validateDocumentWritingWorkspace(options) {
+  const workspaceRoot = await resolveDocumentWritingWorkspaceRoot(options);
+  const checks = [];
+
+  async function check(label, ok, detail = "") {
+    checks.push({ label, ok, detail });
+  }
+
+  await check("workspace directory", await exists(workspaceRoot), workspaceRoot);
+  for (const fileName of documentWritingFiles) {
+    const filePath = path.join(workspaceRoot, fileName);
+    const ok = await exists(filePath);
+    await check(`${fileName} exists`, ok, filePath);
+    if (!ok) {
+      continue;
+    }
+    const content = await fs.readFile(filePath, "utf8");
+    await check(`${fileName} is non-empty`, content.trim().length > 0, filePath);
+  }
+
+  const source = await readTextIfExists(path.join(workspaceRoot, "source-normalized.md"));
+  const materials = await readTextIfExists(path.join(workspaceRoot, "material-index.md"));
+  const brief = await readTextIfExists(path.join(workspaceRoot, "writing-brief.md"));
+  const draft = await readTextIfExists(path.join(workspaceRoot, "draft.md"));
+  const review = await readTextIfExists(path.join(workspaceRoot, "review-notes.md"));
+  const final = await readTextIfExists(path.join(workspaceRoot, "final.md"));
+
+  await check("source-normalized keeps source list", source.includes("资料来源清单"));
+  await check("material-index keeps reuse levels", materials.includes("复用级别"));
+  await check("writing-brief keeps banned claims", brief.includes("禁止承诺") || brief.includes("禁止结论"));
+  await check("draft keeps provenance placeholders", draft.includes("来源") && draft.includes("待补"));
+  await check(
+    "review-notes keeps audit gate",
+    review.includes("aios-commercial-tender") || review.includes("aios-construction-scheme")
+  );
+  await check("final keeps manual confirmation", final.includes("人工") && final.includes("定稿"));
+
+  const failed = checks.filter((item) => !item.ok);
+  for (const item of checks) {
+    console.log(`${item.ok ? "OK " : "MISS"} ${item.label}${item.detail ? `: ${item.detail}` : ""}`);
+  }
+
+  if (failed.length > 0) {
+    process.exitCode = 1;
+    console.error(`Writing workbench validation failed: ${failed.length} issue(s).`);
+    return;
+  }
+
+  console.log(`Writing workbench validation passed: ${workspaceRoot}`);
 }
 
 async function validateProjectTemplate(options) {
@@ -2095,6 +2192,8 @@ async function main() {
     await initProject(options);
   } else if (options.command === "writing:init") {
     await initDocumentWritingWorkspace(options);
+  } else if (options.command === "writing:validate") {
+    await validateDocumentWritingWorkspace(options);
   } else if (options.command === "validate") {
     await validateProjectTemplate(options);
   } else if (options.command === "capability:call") {

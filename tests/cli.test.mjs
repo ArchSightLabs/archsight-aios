@@ -56,6 +56,7 @@ async function testHelp() {
   assert.match(result.stdout, /archsight-aios doctor/);
   assert.match(result.stdout, /archsight-aios init /);
   assert.match(result.stdout, /archsight-aios writing:init/);
+  assert.match(result.stdout, /archsight-aios writing:validate/);
   assert.doesNotMatch(result.stdout, /init-project/);
   assert.doesNotMatch(result.stdout, /validate-project-template/);
   assert.doesNotMatch(result.stdout, new RegExp(["ai", "os"].join("-")));
@@ -133,6 +134,8 @@ async function testPublicDiscoveryMetadata() {
   const claudeMarketplace = await readJson(path.join(repoRoot, ".claude-plugin", "marketplace.json"));
 
   assert.equal(pkg.scripts["validate:skills"], "node ./scripts/validate-skills.mjs");
+  assert.equal(pkg.scripts["validate:skill-runtime-evidence"], "node ./scripts/validate-skill-runtime-evidence.mjs");
+  assert.ok(pkg.scripts["validate:document-writing-scorecard"].includes("validate-prompt-scorecard.mjs"));
   assert.ok(pkg.files.includes("skills/"));
   assert.ok(pkg.files.includes("scripts/"));
   assert.ok(pkg.files.includes(".claude-plugin/"));
@@ -175,6 +178,12 @@ async function testValidatePromptScorecardCommand() {
   const result = runNodeScript(path.join(repoRoot, "scripts", "validate-prompt-scorecard.mjs"));
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(result.stdout, /Prompt scorecard validation passed/);
+}
+
+async function testValidateSkillRuntimeEvidenceCommand() {
+  const result = runNodeScript(path.join(repoRoot, "scripts", "validate-skill-runtime-evidence.mjs"));
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /Skill runtime evidence validation passed/);
 }
 
 async function testBuildPromptRunPackCommand() {
@@ -461,7 +470,12 @@ async function testEngineeringWritingSkillsAreRoutedAndGuarded() {
     "final.md"
   ]) {
     await fs.access(path.join(repoRoot, "templates", "document-writing", fileName));
+    await fs.access(path.join(repoRoot, "templates", "document-writing-samples", "tender", fileName));
+    await fs.access(path.join(repoRoot, "templates", "document-writing-samples", "scheme", fileName));
   }
+
+  await fs.access(path.join(repoRoot, "prompts", "evaluations", "engineering-document-writing-scorecard.json"));
+  await fs.access(path.join(repoRoot, "prompts", "evaluations", "skill-runtime", "v1.4.0-writing-host-validation.json"));
 }
 
 async function testWritingInitCreatesMarkdownWorkbench() {
@@ -492,6 +506,33 @@ async function testWritingInitCreatesMarkdownWorkbench() {
   assert.equal(second.status, 0, `${second.stdout}\n${second.stderr}`);
   assert.match(second.stdout, /SKIP existing/);
 
+  const validate = run(["writing:validate", "--cwd", tempRoot, "--name", "bid-workbench"]);
+  assert.equal(validate.status, 0, `${validate.stdout}\n${validate.stderr}`);
+  assert.match(validate.stdout, /Writing workbench validation passed/);
+
+  const sample = run(["writing:init", "--cwd", tempRoot, "--type", "scheme", "--name", "scheme-sample", "--sample"]);
+  assert.equal(sample.status, 0, `${sample.stdout}\n${sample.stderr}`);
+  assert.match(sample.stdout, /WRITING scheme/);
+  const sampleDraft = await fs.readFile(path.join(tempRoot, "scheme-sample", "draft.md"), "utf8");
+  assert.match(sampleDraft, /危险源控制/);
+
+  const validateSample = run(["writing:validate", "--cwd", tempRoot, "--name", "scheme-sample"]);
+  assert.equal(validateSample.status, 0, `${validateSample.stdout}\n${validateSample.stderr}`);
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testWritingValidateRejectsIncompleteWorkbench() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-writing-validate-bad-"));
+  const workbench = path.join(tempRoot, "document-writing");
+  await fs.mkdir(workbench, { recursive: true });
+  await fs.writeFile(path.join(workbench, "source-normalized.md"), "# Source\n", "utf8");
+
+  const result = run(["writing:validate", "--cwd", tempRoot]);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Writing workbench validation failed/);
+  assert.match(result.stdout, /MISS material-index\.md exists/);
+
   await fs.rm(tempRoot, { recursive: true, force: true });
 }
 
@@ -504,8 +545,20 @@ async function testWritingIntentRoutesToWritingSkill() {
       fallback: "aios-commercial-tender"
     },
     {
+      name: "technical-bid-rewrite",
+      readme: "# 技术标改写\n\n请基于用户初稿和历史标书素材做技术标改写，并保留评分点响应。",
+      expected: "aios-tender-write",
+      fallback: "aios-commercial-tender"
+    },
+    {
       name: "construction-scheme",
       readme: "# 施工方案生成\n\n本项目需要根据历史方案做施工方案生成。",
+      expected: "aios-scheme-write",
+      fallback: "aios-construction-scheme"
+    },
+    {
+      name: "scheme-expert-comment-rewrite",
+      readme: "# 方案改写\n\n请根据专家意见回写专项施工方案初稿，保留危险源和计算书待补项。",
       expected: "aios-scheme-write",
       fallback: "aios-construction-scheme"
     }
@@ -1079,6 +1132,7 @@ const tests = [
   testValidatePromptFixturesCommand,
   testValidatePromptModelOutputsCommand,
   testValidatePromptScorecardCommand,
+  testValidateSkillRuntimeEvidenceCommand,
   testBuildPromptRunPackCommand,
   testValidatePromptRunResultsCommand,
   testAnalyzePromptRunResultsCommand,
@@ -1087,6 +1141,7 @@ const tests = [
   testEngineeringBusinessSkillsRequireDetailedOutput,
   testEngineeringWritingSkillsAreRoutedAndGuarded,
   testWritingInitCreatesMarkdownWorkbench,
+  testWritingValidateRejectsIncompleteWorkbench,
   testWritingIntentRoutesToWritingSkill,
   testInstallAntigravityUsesPluginByDefault,
   testInstallGeminiWritesGeminiSupportAssets,

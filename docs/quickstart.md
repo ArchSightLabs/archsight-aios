@@ -10,6 +10,14 @@ npx @archsight/aios install --target all --scope user
 
 这一步会把 ArchSight AIOS 的 Skills、Workflows、Runtime 和模板同步到当前用户目录，让 Codex、Claude Code、OpenCode、Gemini、Antigravity、WorkBuddy 等工具可以读取。
 
+如果只是想先在 WorkBuddy 中试用标书 / 方案写作能力，可以先走最短路径：
+
+```bash
+npx @archsight/aios install --target workbuddy --scope user
+```
+
+写作型工作流见 [v1.4.0 写作工作流快速使用](v1.4.0-writing-workflow-quickstart.md)。
+
 ## 2. 检查安装
 
 ```bash

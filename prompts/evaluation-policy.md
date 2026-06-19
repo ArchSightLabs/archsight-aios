@@ -51,6 +51,18 @@ npm run build:document-writing-run-pack
 
 写作运行包包含 2 个 case 的普通提示词和基础提示词两组输入，共 4 条 run item。该步骤只组织脱敏 / 虚构输入和 prompt 文本，不调用模型。
 
+写作型评分卡保存在 `prompts/evaluations/engineering-document-writing-scorecard.json`，用于固定来源链、历史素材复用、初稿可操作性、边界安全、审核门禁和交接可读性 6 个维度。修改写作 fixture、写作 prompt 或评分维度后，运行：
+
+```bash
+npm run validate:document-writing-scorecard
+```
+
+真实宿主触发证据保存在 `prompts/evaluations/skill-runtime/`。该目录允许记录 blocked / uncertain 状态，但不能把 blocked case 写成通过；只有原始输出已归档且能确认真实触发对应 Skill 时，才允许标记 `skillRuntimeConfirmed=yes`。
+
+```bash
+npm run validate:skill-runtime-evidence
+```
+
 普通提示词与基础提示词的结构化比较保存在 `prompts/evaluations/engineering-business-basic-scorecard.json`。修改 fixture、基础提示词或评分维度后，运行：
 
 ```bash

@@ -16,8 +16,10 @@ Prompt 会腐化，因此不能只保存文本本身，必须保存评估和维�
 对比验证记录见 [工程业务管理基础提示词对比验证](evaluations/engineering-business-basic-prompts-2026-06-16.md)。
 advisory 来源信号复核见 [工程业务基础提示词 advisory 复核说明](evaluations/engineering-business-basic-advisory-validation-2026-06-16.md)。
 结构化评分卡见 [工程业务管理基础提示词评分卡](evaluations/engineering-business-basic-scorecard.json)，可用 `npm run validate:prompt-scorecard` 校验。
+写作型评分卡见 [工程文档写作评分卡](evaluations/engineering-document-writing-scorecard.json)，同样由 `npm run validate:prompt-scorecard` 或 `npm run validate:document-writing-scorecard` 校验。
 weak/basic 运行包可用 `npm run build:prompt-run-pack` 生成，生成前可用 `npm run validate:prompt-run-pack` 校验。
 写作型 Skill 运行包使用 `npm run build:document-writing-run-pack` 生成，生成前可用 `npm run validate:document-writing-run-pack` 校验。
+真实宿主触发证据见 [Skill Runtime Evidence](evaluations/skill-runtime/)，可用 `npm run validate:skill-runtime-evidence` 校验归档结构。
 weak/basic 运行结果模板可用 `node ./scripts/validate-prompt-run-results.mjs --init <file>` 生成，模板和真实结果可用 `npm run validate:prompt-run-results` 或 `--file` 校验。
 weak/basic 运行结果报告可用 `npm run analyze:prompt-run-results -- --file <results> --out <report>` 生成。
 输出结构样例见 [工程业务管理基础模型输出样例](evaluations/engineering-business-basic-model-output.example.json)，可用 `npm run validate:prompt-outputs` 校验。

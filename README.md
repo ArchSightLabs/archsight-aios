@@ -110,6 +110,7 @@ AIOS 的多 Agent 协作不应停留在 Prompt 角色扮演。Agent 提出架构
 | `doctor` | 检查仓库资产、manifest、用户级安装、Skill 和 Workflow 是否一致。 |
 | `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录、自动 profile 识别和项目上下文草稿。 |
 | `writing:init` | 在业务项目中创建标书 / 方案写作 Markdown 工作台，用于写作型 Skill 生成和审核门禁交接。 |
+| `writing:validate` | 检查写作工作台的文件链、来源、复用、待补、审核门禁和人工定稿边界。 |
 | `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
 | `validate:skills` | 校验公共 skill 发现入口、frontmatter、跨 host manifest 和 npm metadata 是否一致。 |
 | `capability:call` | 按 Capability Registry 权限边界调用本地 MCP Adapter，并输出 Tool Result 与仲裁 Decision。 |
@@ -133,6 +134,7 @@ v1.4.0 开始，AIOS 提供写作型 Skill 和 Markdown 工作母版，用于标
 ```bash
 npx @archsight/aios writing:init --type tender
 npx @archsight/aios writing:init --type scheme --name scheme-workbench
+npx @archsight/aios writing:init --type tender --sample --name tender-sample
 ```
 
 生成目录默认包含：
@@ -143,6 +145,12 @@ npx @archsight/aios writing:init --type scheme --name scheme-workbench
 - `draft.md`：AI 生成或改写的章节草稿。
 - `review-notes.md`：交给审核 Skill 后的复核记录。
 - `final.md`：人工确认后的最终 Markdown 母版。
+
+检查工作台完整性：
+
+```bash
+npx @archsight/aios writing:validate --name document-writing
+```
 
 推荐路由：
 
@@ -251,6 +259,8 @@ npm test
 - [Templates](templates/README.md)
 - [Runtime 路由](runtime/agent-routing.md)
 - [WorkBuddy 适配说明](adapters/workbuddy/README.md)
+- [v1.4.0 写作工作流快速使用](docs/v1.4.0-writing-workflow-quickstart.md)
+- [v1.4.0 写作能力边界](docs/v1.4.0-writing-boundary.md)
 - [公共发现与上架清单](docs/PUBLIC_DISCOVERY.md)
 
 ## 开源协作

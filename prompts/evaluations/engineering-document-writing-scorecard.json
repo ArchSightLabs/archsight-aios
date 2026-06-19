@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "name": "engineering-document-writing-scorecard",
+  "version": "0.1",
+  "fixture": "prompts/evaluations/engineering-document-writing-fixtures.json",
+  "dataBoundary": "Structured comparison derived from de-identified engineering document writing fixtures. Do not include customer names, contacts, project names, exact amounts, or raw source documents.",
+  "minimumWeightedDelta": 1.2,
+  "criteria": [
+    {
+      "id": "source_traceability",
+      "weight": 20,
+      "description": "Keeps source list, provenance comments, and missing evidence visible instead of writing unsupported facts."
+    },
+    {
+      "id": "material_reuse",
+      "weight": 18,
+      "description": "Classifies historical material reuse and prevents old project facts, parameters, people, equipment, dates, or claims from being copied."
+    },
+    {
+      "id": "draft_actionability",
+      "weight": 17,
+      "description": "Produces a Markdown working draft and tables that engineering staff can continue editing."
+    },
+    {
+      "id": "boundary_safety",
+      "weight": 18,
+      "description": "Avoids tender decisions, approval outcomes, calculation correctness, compliance conclusions, and other over-claims."
+    },
+    {
+      "id": "review_gate",
+      "weight": 17,
+      "description": "Hands the generated draft to the correct review Skill with concrete issues to verify."
+    },
+    {
+      "id": "handoff_readability",
+      "weight": 10,
+      "description": "Keeps the output readable for project, tender, technical, safety, and reviewer roles."
+    }
+  ],
+  "cases": [
+    {
+      "caseId": "tender-writing-historical-material-reuse",
+      "winner": "basic",
+      "decisionBasis": "The basic writing prompt turns loose source material into a traceable Markdown workbench with scoring-point mapping, material reuse judgment, blocked old facts, and a tender review gate.",
+      "observedWeakFailures": [
+        "直接套用旧项目事实。",
+        "不区分评分点、章节草稿和待补资料。",
+        "把生成内容当成正式投标定稿。"
+      ],
+      "basicPromptGains": [
+        "Keeps source list, writing brief, and historical material matching table before drafting.",
+        "Requires reuse levels and removes old project facts.",
+        "Hands scoring point response and bid-risk review to aios-commercial-tender."
+      ],
+      "weakScores": {
+        "source_traceability": 2,
+        "material_reuse": 1,
+        "draft_actionability": 3,
+        "boundary_safety": 2,
+        "review_gate": 1,
+        "handoff_readability": 3
+      },
+      "basicScores": {
+        "source_traceability": 5,
+        "material_reuse": 5,
+        "draft_actionability": 4,
+        "boundary_safety": 5,
+        "review_gate": 5,
+        "handoff_readability": 4
+      }
+    },
+    {
+      "caseId": "scheme-writing-expert-comments",
+      "winner": "basic",
+      "decisionBasis": "The basic writing prompt keeps calculations, drawings, expert comments, hazard controls, and approvals as evidence-bound placeholders, then routes the draft through the scheme review gate.",
+      "observedWeakFailures": [
+        "直接套用旧项目参数和设备配置。",
+        "忽略专家意见、危险源和计算书缺口。",
+        "把方案初稿写成已经通过审批的定稿。"
+      ],
+      "basicPromptGains": [
+        "Separates reusable wording from project-specific equipment and calculation facts.",
+        "Forces hazard-control placeholders and missing calculation evidence into the draft.",
+        "Hands calculation gaps, expert comments, and safety review to aios-construction-scheme."
+      ],
+      "weakScores": {
+        "source_traceability": 2,
+        "material_reuse": 1,
+        "draft_actionability": 3,
+        "boundary_safety": 1,
+        "review_gate": 1,
+        "handoff_readability": 3
+      },
+      "basicScores": {
+        "source_traceability": 5,
+        "material_reuse": 5,
+        "draft_actionability": 4,
+        "boundary_safety": 5,
+        "review_gate": 5,
+        "handoff_readability": 4
+      }
+    }
+  ],
+  "overallDecision": {
+    "winner": "basic",
+    "notAClaim": "This scorecard validates deterministic fixture design and prompt guardrails; it does not prove real model performance or customer-ready document quality without skill-runtime output review."
+  }
+}

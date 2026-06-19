@@ -52,9 +52,21 @@ archsight-aios init --cwd /path/to/project --profile rag-knowledge
 ```bash
 archsight-aios writing:init --cwd /path/to/project --type tender
 archsight-aios writing:init --cwd /path/to/project --type scheme --name scheme-workbench
+archsight-aios writing:init --cwd /path/to/project --type tender --sample --name tender-sample
 ```
 
 该命令会把模板复制到项目内的写作工作台目录，并生成类型化 README；已有文件不会被覆盖。
+
+工作台结构校验：
+
+```bash
+archsight-aios writing:validate --cwd /path/to/project --name document-writing
+```
+
+`document-writing-samples/` 提供两个端到端脱敏样板：
+
+- `tender/`：技术标写作样板。
+- `scheme/`：专项施工方案写作样板。
 
 推荐链路：
 

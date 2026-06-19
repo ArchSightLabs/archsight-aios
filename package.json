@@ -55,6 +55,8 @@
     "validate:prompt-run-results": "node ./scripts/validate-prompt-run-results.mjs --check-template",
     "validate:prompt-outputs": "node ./scripts/validate-prompt-model-outputs.mjs",
     "validate:prompt-scorecard": "node ./scripts/validate-prompt-scorecard.mjs",
+    "validate:document-writing-scorecard": "node ./scripts/validate-prompt-scorecard.mjs",
+    "validate:skill-runtime-evidence": "node ./scripts/validate-skill-runtime-evidence.mjs",
     "build:prompt-run-pack": "node ./scripts/build-prompt-run-pack.mjs --out prompts/evaluations/engineering-business-basic-run-pack.generated.json",
     "build:public-advisory-run-pack": "node ./scripts/build-prompt-run-pack.mjs --fixture prompts/evaluations/engineering-business-public-advisory-fixtures.json --out prompts/evaluations/engineering-business-public-advisory-run-pack.generated.json",
     "build:document-writing-run-pack": "node ./scripts/build-prompt-run-pack.mjs --fixture prompts/evaluations/engineering-document-writing-fixtures.json --out prompts/evaluations/engineering-document-writing-run-pack.generated.json",

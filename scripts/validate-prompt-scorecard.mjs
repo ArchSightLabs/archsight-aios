@@ -6,10 +6,16 @@ import path from "node:path";
 const root = fs.realpathSync(process.cwd());
 const errors = [];
 
-const fixturePath = repoPath("prompts/evaluations/engineering-business-basic-fixtures.json");
-const scorecardPath = repoPath("prompts/evaluations/engineering-business-basic-scorecard.json");
-const fixture = readJson(fixturePath);
-const scorecard = readJson(scorecardPath);
+const scorecardSpecs = [
+  {
+    fixturePath: "prompts/evaluations/engineering-business-basic-fixtures.json",
+    scorecardPath: "prompts/evaluations/engineering-business-basic-scorecard.json"
+  },
+  {
+    fixturePath: "prompts/evaluations/engineering-document-writing-fixtures.json",
+    scorecardPath: "prompts/evaluations/engineering-document-writing-scorecard.json"
+  }
+];
 
 const sensitiveTerms = [
   "立信",
@@ -64,10 +70,16 @@ function weightedScore(scores, criteria) {
   );
 }
 
-if (fixture && scorecard) {
+function validateScorecard(fixturePathValue, scorecardPathValue) {
+  const fixture = readJson(repoPath(fixturePathValue));
+  const scorecard = readJson(repoPath(scorecardPathValue));
+  if (!fixture || !scorecard) {
+    return;
+  }
+
   check(scorecard.schema === 1, "scorecard: schema must be 1");
   check(scorecard.version === fixture.version, `scorecard: version must match fixture version ${fixture.version}`);
-  check(scorecard.fixture === "prompts/evaluations/engineering-business-basic-fixtures.json", "scorecard: fixture path mismatch");
+  check(scorecard.fixture === fixturePathValue, `${scorecardPathValue}: fixture path mismatch`);
   check(Array.isArray(scorecard.criteria) && scorecard.criteria.length > 0, "scorecard: criteria must be a non-empty array");
   check(Array.isArray(scorecard.cases) && scorecard.cases.length === fixture.cases.length, "scorecard: case count mismatch");
 
@@ -122,6 +134,10 @@ if (fixture && scorecard) {
 
   check(scorecard.overallDecision?.winner === "basic", "scorecard: overall winner must be basic");
   check(typeof scorecard.overallDecision?.notAClaim === "string", "scorecard: overallDecision.notAClaim is required");
+}
+
+for (const spec of scorecardSpecs) {
+  validateScorecard(spec.fixturePath, spec.scorecardPath);
 }
 
 if (errors.length > 0) {

@@ -8,12 +8,18 @@
 - 新增 `aios-scheme-write` 写作型 Skill，用于专项施工方案、施工技术措施和交底材料生成 / 改写和历史方案素材复用；生成后必须交回 `aios-construction-scheme` 做危险源、规范 / 计算书、专家意见和交底要点门禁。
 - 新增 `templates/document-writing/` Markdown 工作母版，覆盖 `source-normalized.md`、`material-index.md`、`writing-brief.md`、`draft.md`、`review-notes.md` 和 `final.md`。
 - 新增 `archsight-aios writing:init`，可在业务项目中一键创建标书 / 方案写作工作台；默认不覆盖已有工作文件。
+- 新增 `archsight-aios writing:validate`，用于检查写作工作台的文件链、来源、历史素材复用、待补占位、审核门禁和人工定稿边界。
+- `writing:init` 支持 `--sample`，可生成技术标和专项施工方案的端到端脱敏样板工作台。
 - 新增 `prompts/evaluations/engineering-document-writing-fixtures.json` 及 `validate:document-writing-run-pack` / `build:document-writing-run-pack`，用于验证写作型 Skill 的脱敏 weak/basic 对照输入。
+- 新增 `engineering-document-writing-scorecard.json`，固定来源链、素材复用、初稿可操作性、边界安全、审核门禁和交接可读性评分维度。
+- 新增 `prompts/evaluations/skill-runtime/` 归档规范和 `validate:skill-runtime-evidence`，用于区分真实 Skill 触发、blocked 状态和 prompt paste 结果。
+- 新增 WorkBuddy-first 写作工作流快速使用说明、写作能力边界和 v1.4.0 release readiness 清单。
 
 ### 调整
 
 - `aios` / `archsight-aios` 总入口、CLI 自动识别、manifest、Skill 路由和项目接入模板补充写作型 Skill。
 - CLI Skill 自动识别改为对更具体的写作短语加权，减少“技术标生成 / 施工方案生成”误落到审核型 Skill 的概率。
+- v1.4.0 发布门槛明确：Codex / WorkBuddy 写作型 Skill 的真实 raw output 未归档前，不得宣称 skill-runtime 验证通过。
 - v1.4.0 路线图明确“工程文档生成、改写与复核闭环”：Markdown 是工作母版，Word / PDF / PPT 是交付格式；现有审核型 Skill 继续作为质量门禁。
 
 ## 1.3.2
