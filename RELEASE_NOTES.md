@@ -14,10 +14,11 @@
 - `writing:init --sample` 可生成技术标 / 专项施工方案端到端脱敏样板。
 - 新增写作型脱敏评测 fixture 和 run-pack 命令：`validate:document-writing-run-pack`、`build:document-writing-run-pack`。
 - 新增写作型 scorecard 和 skill-runtime 证据归档校验：`validate:document-writing-scorecard`、`validate:skill-runtime-evidence`。
+- 新增 Codex / WorkBuddy 写作型 Skill raw output 归档和 scorecard 复核记录，覆盖 `aios-tender-write` / `aios-scheme-write` 四个宿主样板 case。
 - 新增 WorkBuddy-first 快速使用说明、写作能力边界和 v1.4.0 release readiness 清单。
 - 写作型 Skill 必须保留资料来源、素材复用判断、待补占位、人工复核岗位和审核门禁，不得把历史项目事实直接套入当前项目。
 - CLI 自动识别对更具体的生成 / 改写短语加权，降低写作请求误入审核型 Skill 的概率。
-- 当前 skill-runtime 归档仍记录 Codex / WorkBuddy 真实触发输出为 blocked；正式发版前必须替换为真实 raw output。
+- 当前 skill-runtime 归档已记录 Codex / WorkBuddy 真实触发 raw output，并按写作型 scorecard 复核通过；正式发版前仍需完成版本号同步、最终发布验证、tag、push 和 GitHub Release。
 
 发布前验证建议：
 

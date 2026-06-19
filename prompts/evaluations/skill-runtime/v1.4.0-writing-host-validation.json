@@ -2,27 +2,31 @@
   "schema": 1,
   "name": "v1.4.0-writing-host-validation",
   "version": "0.1",
-  "aiosVersion": "1.3.2 + v1.4.0-dev commits de53884 and local follow-up",
+  "aiosVersion": "1.3.2 + v1.4.0-dev commits de53884, ef5404a, and current Codex raw-output follow-up",
   "evaluatedAt": "2026-06-19",
   "dataBoundary": "All sample workspaces are de-identified and synthetic. This file records host runtime evidence status only.",
   "evidencePolicy": "A case can be marked skillRuntimeConfirmed=yes only when the host actually loads and triggers the named aios-* Skill and a raw output file is archived. Prompt paste results are not accepted.",
   "hostChecks": [
     {
       "host": "codex",
-      "status": "blocked",
+      "status": "partial-confirmed",
       "evidence": [
-        "Get-Command codex found WindowsApps codex.exe.",
-        "codex --help failed from this workspace with Windows access denied.",
-        "npm run install:user installed aios-tender-write and aios-scheme-write into the Codex skills directory, but install evidence is not runtime trigger evidence."
+        "Get-Command -All codex found Codex desktop package resources under WindowsApps.",
+        "The packaged codex.exe and codex-command-runner.exe still fail from this workspace with Windows access denied.",
+        "The global @openai/codex Node entry exists but cannot run because @openai/codex-win32-x64 is missing.",
+        "The current Codex desktop thread loaded installed Skill files from C:\\Users\\white\\.codex\\skills and archived two raw writing outputs.",
+        "This confirms Codex current-thread Skill behavior, while CLI replay remains unavailable."
       ]
     },
     {
       "host": "workbuddy",
-      "status": "blocked",
+      "status": "confirmed",
       "evidence": [
-        "Get-Command workbuddy returned no command.",
+        "Get-Command workbuddy returned no PATH command.",
+        "WorkBuddy desktop is installed at C:\\Users\\white\\AppData\\Local\\Programs\\WorkBuddy\\WorkBuddy.exe.",
+        "The bundled non-interactive CLI runs through C:\\Users\\white\\AppData\\Local\\Programs\\WorkBuddy\\resources\\app.asar.unpacked\\cli\\bin\\codebuddy with WorkBuddy's bundled Node.",
         "npm run install:user installed aios-tender-write and aios-scheme-write into the WorkBuddy skills directory.",
-        "No WorkBuddy runtime command is available in this shell, so install evidence is not runtime trigger evidence."
+        "Two WorkBuddy --print raw outputs were archived under prompts/evaluations/skill-runtime/raw."
       ]
     }
   ],
@@ -34,13 +38,13 @@
       "expectedGateSkill": "aios-commercial-tender",
       "sampleWorkspacePath": "templates/document-writing-samples/tender",
       "triggerPrompt": "$aios-tender-write 请基于该工作台生成或改写 draft.md，并保留交给 aios-commercial-tender 的审核门禁。",
-      "skillRuntimeConfirmed": "blocked",
-      "rawOutputPath": null,
+      "skillRuntimeConfirmed": "yes",
+      "rawOutputPath": "prompts/evaluations/skill-runtime/raw/codex-tender-writing-sample.md",
       "evidence": [
-        "codex command is present but cannot be launched from the current PowerShell workspace due to Windows access denied.",
-        "No non-interactive Codex skill-runtime raw output export path was available in this run."
-      ],
-      "blocker": "Codex desktop runtime is available to the current conversation, but the local codex.exe command cannot be launched for an auditable raw-output run."
+        "The current Codex desktop thread loaded C:\\Users\\white\\.codex\\skills\\aios-tender-write\\SKILL.md.",
+        "The archived raw output includes aios-tender-write and the aios-commercial-tender gate.",
+        "Codex CLI replay is still unavailable, so this is current-thread host evidence rather than a standalone CLI transcript."
+      ]
     },
     {
       "caseId": "codex-scheme-writing-sample",
@@ -49,13 +53,13 @@
       "expectedGateSkill": "aios-construction-scheme",
       "sampleWorkspacePath": "templates/document-writing-samples/scheme",
       "triggerPrompt": "$aios-scheme-write 请基于该工作台生成或改写 draft.md，并保留交给 aios-construction-scheme 的审核门禁。",
-      "skillRuntimeConfirmed": "blocked",
-      "rawOutputPath": null,
+      "skillRuntimeConfirmed": "yes",
+      "rawOutputPath": "prompts/evaluations/skill-runtime/raw/codex-scheme-writing-sample.md",
       "evidence": [
-        "codex command is present but cannot be launched from the current PowerShell workspace due to Windows access denied.",
-        "No non-interactive Codex skill-runtime raw output export path was available in this run."
-      ],
-      "blocker": "Codex desktop runtime is available to the current conversation, but the local codex.exe command cannot be launched for an auditable raw-output run."
+        "The current Codex desktop thread loaded C:\\Users\\white\\.codex\\skills\\aios-scheme-write\\SKILL.md.",
+        "The archived raw output includes aios-scheme-write and the aios-construction-scheme gate.",
+        "Codex CLI replay is still unavailable, so this is current-thread host evidence rather than a standalone CLI transcript."
+      ]
     },
     {
       "caseId": "workbuddy-tender-writing-sample",
@@ -64,13 +68,13 @@
       "expectedGateSkill": "aios-commercial-tender",
       "sampleWorkspacePath": "templates/document-writing-samples/tender",
       "triggerPrompt": "$aios-tender-write 请基于该工作台生成或改写 draft.md，并保留交给 aios-commercial-tender 的审核门禁。",
-      "skillRuntimeConfirmed": "blocked",
-      "rawOutputPath": null,
+      "skillRuntimeConfirmed": "yes",
+      "rawOutputPath": "prompts/evaluations/skill-runtime/raw/workbuddy-tender-writing-sample.md",
       "evidence": [
-        "workbuddy command was not found in PATH.",
-        "npm run install:user installed the Skill files under the WorkBuddy skills directory, but that is install evidence, not runtime trigger evidence."
-      ],
-      "blocker": "No WorkBuddy runtime command is available in the current shell, so raw Skill output cannot be generated or confirmed."
+        "WorkBuddy bundled CodeBuddy CLI version 2.103.3 ran with --print --output-format text.",
+        "The archived raw output includes aios-tender-write and the aios-commercial-tender gate.",
+        "The prompt required no file modifications and the output states that no files were modified."
+      ]
     },
     {
       "caseId": "workbuddy-scheme-writing-sample",
@@ -79,18 +83,30 @@
       "expectedGateSkill": "aios-construction-scheme",
       "sampleWorkspacePath": "templates/document-writing-samples/scheme",
       "triggerPrompt": "$aios-scheme-write 请基于该工作台生成或改写 draft.md，并保留交给 aios-construction-scheme 的审核门禁。",
-      "skillRuntimeConfirmed": "blocked",
-      "rawOutputPath": null,
+      "skillRuntimeConfirmed": "yes",
+      "rawOutputPath": "prompts/evaluations/skill-runtime/raw/workbuddy-scheme-writing-sample.md",
       "evidence": [
-        "workbuddy command was not found in PATH.",
-        "npm run install:user installed the Skill files under the WorkBuddy skills directory, but that is install evidence, not runtime trigger evidence."
-      ],
-      "blocker": "No WorkBuddy runtime command is available in the current shell, so raw Skill output cannot be generated or confirmed."
+        "WorkBuddy bundled CodeBuddy CLI version 2.103.3 ran with --print --output-format text.",
+        "The archived raw output includes aios-scheme-write and the aios-construction-scheme gate.",
+        "The prompt required no file modifications and the output states that no files were modified."
+      ]
     }
   ],
+  "scorecardReview": {
+    "status": "passed",
+    "scorecardPath": "prompts/evaluations/engineering-document-writing-scorecard.json",
+    "reviewPath": "prompts/evaluations/skill-runtime/v1.4.0-writing-host-scorecard-review.md",
+    "reviewedCases": [
+      "codex-tender-writing-sample",
+      "codex-scheme-writing-sample",
+      "workbuddy-tender-writing-sample",
+      "workbuddy-scheme-writing-sample"
+    ],
+    "notAClaim": "The review proves pilot-readiness evidence quality, not customer-ready final document quality."
+  },
   "releaseGate": {
-    "status": "not-ready",
-    "notReadyUntil": "At least one Codex and one WorkBuddy raw output are archived for both aios-tender-write and aios-scheme-write, and each output is reviewed against engineering-document-writing-scorecard.json.",
-    "notAClaim": "Blocked cases do not count as successful skill-runtime validation."
+    "status": "evidence-ready",
+    "notReadyUntil": "The release metadata is bumped to 1.4.0, all version sync points are updated, the full release validation bundle passes on the final release commit, and v1.4.0 is tagged and published.",
+    "notAClaim": "Raw host evidence is ready for release preparation; it is not itself a published v1.4.0 release."
   }
 }

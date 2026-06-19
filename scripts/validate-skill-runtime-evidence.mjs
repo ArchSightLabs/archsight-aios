@@ -69,8 +69,12 @@ if (evidence) {
   check(typeof evidence.aiosVersion === "string" && evidence.aiosVersion.length > 0, "evidence: aiosVersion is required");
   check(Array.isArray(evidence.hostChecks) && evidence.hostChecks.length >= 2, "evidence: hostChecks must cover at least two hosts");
   check(Array.isArray(evidence.cases) && evidence.cases.length >= 4, "evidence: cases must cover host x writing skill matrix");
+  check(typeof evidence.scorecardReview?.reviewPath === "string", "evidence: scorecardReview.reviewPath is required");
+  check(exists(evidence.scorecardReview?.scorecardPath ?? ""), "evidence: scorecardReview.scorecardPath missing");
+  check(exists(evidence.scorecardReview?.reviewPath ?? ""), "evidence: scorecardReview.reviewPath missing");
   check(typeof evidence.releaseGate?.notReadyUntil === "string", "evidence: releaseGate.notReadyUntil is required");
   check(report.includes(evidence.name), "report: must reference evidence name");
+  const scorecardReview = evidence.scorecardReview?.reviewPath ? readText(evidence.scorecardReview.reviewPath) : "";
 
   const sensitiveHits = includesSensitiveTerm(evidence);
   check(sensitiveHits.length === 0, `evidence: sensitive terms leaked (${sensitiveHits.join(", ")})`);
@@ -100,6 +104,7 @@ if (evidence) {
       const raw = readText(item.rawOutputPath);
       check(raw.includes(item.skillId), `${item.caseId}: raw output must include skillId`);
       check(raw.includes(item.expectedGateSkill), `${item.caseId}: raw output must include expected gate skill`);
+      check(scorecardReview.includes(item.caseId), `${item.caseId}: scorecard review must mention caseId`);
     } else {
       check(item.rawOutputPath === null, `${item.caseId}: non-confirmed runtime must not point to raw output`);
       check(typeof item.blocker === "string" && item.blocker.length > 0, `${item.caseId}: blocker is required when runtime is not confirmed`);
