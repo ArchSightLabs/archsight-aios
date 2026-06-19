@@ -55,6 +55,7 @@ async function testHelp() {
   assert.match(result.stdout, /codex\|agents\|gemini\|antigravity\|workbuddy\|opencode\|claude-code\|all/);
   assert.match(result.stdout, /archsight-aios doctor/);
   assert.match(result.stdout, /archsight-aios init /);
+  assert.match(result.stdout, /archsight-aios writing:init/);
   assert.doesNotMatch(result.stdout, /init-project/);
   assert.doesNotMatch(result.stdout, /validate-project-template/);
   assert.doesNotMatch(result.stdout, new RegExp(["ai", "os"].join("-")));
@@ -180,12 +181,16 @@ async function testBuildPromptRunPackCommand() {
   const scriptPath = path.join(repoRoot, "scripts", "build-prompt-run-pack.mjs");
   const runPackPath = path.join(repoRoot, "prompts", "evaluations", ".tmp-run-pack.json");
   const publicRunPackPath = path.join(repoRoot, "prompts", "evaluations", ".tmp-public-run-pack.json");
+  const writingRunPackPath = path.join(repoRoot, "prompts", "evaluations", ".tmp-document-writing-run-pack.json");
   const relativeRunPackPath = path.relative(repoRoot, runPackPath);
   const relativePublicRunPackPath = path.relative(repoRoot, publicRunPackPath);
+  const relativeWritingRunPackPath = path.relative(repoRoot, writingRunPackPath);
   const publicFixturePath = "prompts/evaluations/engineering-business-public-advisory-fixtures.json";
+  const writingFixturePath = "prompts/evaluations/engineering-document-writing-fixtures.json";
 
   await fs.rm(runPackPath, { force: true });
   await fs.rm(publicRunPackPath, { force: true });
+  await fs.rm(writingRunPackPath, { force: true });
 
   try {
     const validate = runNodeScriptWithArgs(scriptPath, ["--check"]);
@@ -227,9 +232,25 @@ async function testBuildPromptRunPackCommand() {
     assert.equal(publicRunPack.runs.length, 12);
     assert.ok(publicRunPack.runs.every((item) => item.inputFormat === "markdown"));
     assert.ok(publicRunPack.runs.every((item) => item.sampleInput[0].includes("数据说明：以下客户、项目、人员、地点、日期、金额、编号均为虚构。")));
+
+    const validateWriting = runNodeScriptWithArgs(scriptPath, ["--fixture", writingFixturePath, "--check"]);
+    assert.equal(validateWriting.status, 0, `${validateWriting.stdout}\n${validateWriting.stderr}`);
+    assert.match(validateWriting.stdout, /Prompt run pack validation passed/);
+
+    const buildWriting = runNodeScriptWithArgs(scriptPath, ["--fixture", writingFixturePath, "--out", relativeWritingRunPackPath]);
+    assert.equal(buildWriting.status, 0, `${buildWriting.stdout}\n${buildWriting.stderr}`);
+    assert.match(buildWriting.stdout, /Prompt run pack written/);
+
+    const writingRunPack = await readJson(writingRunPackPath);
+    assert.equal(writingRunPack.fixture, writingFixturePath);
+    assert.equal(writingRunPack.runs.length, 4);
+    assert.ok(writingRunPack.runs.some((item) => item.skillId === "aios-tender-write"));
+    assert.ok(writingRunPack.runs.some((item) => item.skillId === "aios-scheme-write"));
+    assert.ok(writingRunPack.runInstructions.some((item) => item.includes("material reuse judgment")));
   } finally {
     await fs.rm(runPackPath, { force: true });
     await fs.rm(publicRunPackPath, { force: true });
+    await fs.rm(writingRunPackPath, { force: true });
   }
 }
 
@@ -440,6 +461,71 @@ async function testEngineeringWritingSkillsAreRoutedAndGuarded() {
     "final.md"
   ]) {
     await fs.access(path.join(repoRoot, "templates", "document-writing", fileName));
+  }
+}
+
+async function testWritingInitCreatesMarkdownWorkbench() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-writing-init-"));
+  const result = run(["writing:init", "--cwd", tempRoot, "--type", "tender", "--name", "bid-workbench"]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /WRITING tender/);
+
+  const workspaceRoot = path.join(tempRoot, "bid-workbench");
+  for (const fileName of [
+    "source-normalized.md",
+    "material-index.md",
+    "writing-brief.md",
+    "draft.md",
+    "review-notes.md",
+    "final.md",
+    "README.md"
+  ]) {
+    await fs.access(path.join(workspaceRoot, fileName));
+  }
+
+  const readme = await fs.readFile(path.join(workspaceRoot, "README.md"), "utf8");
+  assert.match(readme, /aios-tender-write/);
+  assert.match(readme, /aios-commercial-tender/);
+  assert.match(readme, /Markdown 工作母版/);
+
+  const second = run(["writing:init", "--cwd", tempRoot, "--type", "tender", "--name", "bid-workbench"]);
+  assert.equal(second.status, 0, `${second.stdout}\n${second.stderr}`);
+  assert.match(second.stdout, /SKIP existing/);
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testWritingIntentRoutesToWritingSkill() {
+  const cases = [
+    {
+      name: "technical-bid",
+      readme: "# 技术标生成\n\n本项目需要根据招标文件做技术标生成。",
+      expected: "aios-tender-write",
+      fallback: "aios-commercial-tender"
+    },
+    {
+      name: "construction-scheme",
+      readme: "# 施工方案生成\n\n本项目需要根据历史方案做施工方案生成。",
+      expected: "aios-scheme-write",
+      fallback: "aios-construction-scheme"
+    }
+  ];
+
+  for (const item of cases) {
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), `archsight-aios-writing-route-${item.name}-`));
+    await fs.writeFile(path.join(tempRoot, "README.md"), item.readme, "utf8");
+
+    const result = run(["init", "--cwd", tempRoot, "--mode", "ai-only"]);
+    assert.equal(result.status, 0, `${item.name}\n${result.stdout}\n${result.stderr}`);
+
+    const detection = await fs.readFile(path.join(tempRoot, ".ai", "profile-detection.md"), "utf8");
+    assert.match(detection, new RegExp(item.expected));
+    assert.ok(
+      detection.indexOf(item.expected) < detection.indexOf(item.fallback),
+      `${item.expected} should rank before ${item.fallback}`
+    );
+
+    await fs.rm(tempRoot, { recursive: true, force: true });
   }
 }
 
@@ -1000,6 +1086,8 @@ const tests = [
   testSkillsAvoidPromptTemplateShape,
   testEngineeringBusinessSkillsRequireDetailedOutput,
   testEngineeringWritingSkillsAreRoutedAndGuarded,
+  testWritingInitCreatesMarkdownWorkbench,
+  testWritingIntentRoutesToWritingSkill,
   testInstallAntigravityUsesPluginByDefault,
   testInstallGeminiWritesGeminiSupportAssets,
   testInstallWorkBuddyWritesPersonalSkills,

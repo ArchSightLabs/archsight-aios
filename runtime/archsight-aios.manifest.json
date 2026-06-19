@@ -529,6 +529,7 @@
     "prompts/evaluations/engineering-business-basic-prompts-2026-06-16.md",
     "prompts/evaluations/engineering-business-basic-scorecard.json",
     "prompts/evaluations/engineering-business-public-advisory-fixtures.json",
+    "prompts/evaluations/engineering-document-writing-fixtures.json",
     "prompts/evaluations/public-advisory-md/01-technical-bid.md",
     "prompts/evaluations/public-advisory-md/02-contract.md",
     "prompts/evaluations/public-advisory-md/03-daily.md",

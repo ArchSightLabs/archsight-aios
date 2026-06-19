@@ -30,6 +30,27 @@ npm run validate:prompts
 
 该检查不替代真实模型输出评估，但能保证 6 类基础场景、抽象来源信号、必备输出结构、禁止结论和敏感信息边界没有被破坏。
 
+## 工程文档写作提示词回归
+
+工程文档写作型提示词使用 `prompts/evaluations/engineering-document-writing-fixtures.json` 作为脱敏回归基线，覆盖 `aios-tender-write` 和 `aios-scheme-write` 两类生成 / 改写任务。
+
+该 fixture 不验证模型真实文采，也不证明可以直接交付客户；它只检查写作型 Skill 是否稳定保留：
+
+- Markdown 工作母版。
+- 资料来源、写作 brief 和历史素材复用判断。
+- 章节初稿 / 改写稿和待补占位。
+- 禁止编造、禁止越权结论和人工复核边界。
+- 生成后交回 `aios-commercial-tender` 或 `aios-construction-scheme` 的审核门禁。
+
+若需要批量运行写作 weak/basic 对照输入，使用：
+
+```bash
+npm run validate:document-writing-run-pack
+npm run build:document-writing-run-pack
+```
+
+写作运行包包含 2 个 case 的普通提示词和基础提示词两组输入，共 4 条 run item。该步骤只组织脱敏 / 虚构输入和 prompt 文本，不调用模型。
+
 普通提示词与基础提示词的结构化比较保存在 `prompts/evaluations/engineering-business-basic-scorecard.json`。修改 fixture、基础提示词或评分维度后，运行：
 
 ```bash

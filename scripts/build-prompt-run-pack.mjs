@@ -121,6 +121,31 @@ function runPackName() {
   return `${fixture?.name ?? "prompt-fixture"}-run-pack`;
 }
 
+function runPackDataBoundary() {
+  if (fixture?.name === "engineering-document-writing-fixtures") {
+    return "De-identified engineering document writing run pack. Inputs are synthetic or abstracted writing-task shapes; do not add real customer names, contacts, project names, amounts, dates, locations, or raw source documents.";
+  }
+
+  return "De-identified weak/basic prompt run pack. Public advisory fixtures use Markdown-normalized synthetic inputs; do not add real customer names, contacts, project names, amounts, dates, locations, or raw source documents.";
+}
+
+function runPackInstructions() {
+  const instructions = [
+    "For each item, use prompt as the instruction and sampleInput as the user-provided material.",
+    "When inputFormat is markdown, pass the Markdown text as the material under review.",
+    "Run weak and basic variants separately for the same caseId.",
+    "Save model outputs into the model-output JSON schema and validate with validate-prompt-model-outputs.mjs."
+  ];
+
+  if (fixture?.name === "engineering-document-writing-fixtures") {
+    instructions.push("Compare weak and basic outputs against expectedStrongSections, bannedClaims, source provenance, material reuse judgment, and review-gate handoff.");
+  } else {
+    instructions.push("Compare weak and basic outputs using engineering-business-basic-scorecard.json.");
+  }
+
+  return instructions;
+}
+
 function buildRunPack() {
   if (!fixture) return undefined;
 
@@ -163,15 +188,8 @@ function buildRunPack() {
     name: runPackName(),
     version: fixture.version,
     fixture: args.fixture,
-    dataBoundary:
-      "De-identified weak/basic prompt run pack. Public advisory fixtures use Markdown-normalized synthetic inputs; do not add real customer names, contacts, project names, amounts, dates, locations, or raw source documents.",
-    runInstructions: [
-      "For each item, use prompt as the instruction and sampleInput as the user-provided material.",
-      "When inputFormat is markdown, pass the Markdown text as the material under review.",
-      "Run weak and basic variants separately for the same caseId.",
-      "Save model outputs into the model-output JSON schema and validate with validate-prompt-model-outputs.mjs.",
-      "Compare weak and basic outputs using engineering-business-basic-scorecard.json."
-    ],
+    dataBoundary: runPackDataBoundary(),
+    runInstructions: runPackInstructions(),
     runs
   };
 }

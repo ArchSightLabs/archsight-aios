@@ -7,10 +7,13 @@
 - 新增 `aios-tender-write` 写作型 Skill，用于工程标书、技术标、投标响应章节生成 / 改写和历史标书素材复用；生成后必须交回 `aios-commercial-tender` 做响应性、废标风险、评分点缺口和人工复核门禁。
 - 新增 `aios-scheme-write` 写作型 Skill，用于专项施工方案、施工技术措施和交底材料生成 / 改写和历史方案素材复用；生成后必须交回 `aios-construction-scheme` 做危险源、规范 / 计算书、专家意见和交底要点门禁。
 - 新增 `templates/document-writing/` Markdown 工作母版，覆盖 `source-normalized.md`、`material-index.md`、`writing-brief.md`、`draft.md`、`review-notes.md` 和 `final.md`。
+- 新增 `archsight-aios writing:init`，可在业务项目中一键创建标书 / 方案写作工作台；默认不覆盖已有工作文件。
+- 新增 `prompts/evaluations/engineering-document-writing-fixtures.json` 及 `validate:document-writing-run-pack` / `build:document-writing-run-pack`，用于验证写作型 Skill 的脱敏 weak/basic 对照输入。
 
 ### 调整
 
 - `aios` / `archsight-aios` 总入口、CLI 自动识别、manifest、Skill 路由和项目接入模板补充写作型 Skill。
+- CLI Skill 自动识别改为对更具体的写作短语加权，减少“技术标生成 / 施工方案生成”误落到审核型 Skill 的概率。
 - v1.4.0 路线图明确“工程文档生成、改写与复核闭环”：Markdown 是工作母版，Word / PDF / PPT 是交付格式；现有审核型 Skill 继续作为质量门禁。
 
 ## 1.3.2

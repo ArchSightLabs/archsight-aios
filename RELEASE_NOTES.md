@@ -9,12 +9,16 @@
 - 新增 `aios-tender-write`：基于招标文件、评分办法、企业历史标书素材、类似项目案例和用户初稿生成 / 改写技术标章节。
 - 新增 `aios-scheme-write`：基于方案初稿、历史方案素材、工程概况、专家意见和用户模板生成 / 改写专项施工方案章节。
 - 新增 `templates/document-writing/`：提供 `source-normalized.md`、`material-index.md`、`writing-brief.md`、`draft.md`、`review-notes.md` 和 `final.md` 工作母版。
+- 新增 `archsight-aios writing:init`：在业务项目中创建标书 / 方案 Markdown 写作工作台，已有文件不覆盖。
+- 新增写作型脱敏评测 fixture 和 run-pack 命令：`validate:document-writing-run-pack`、`build:document-writing-run-pack`。
 - 写作型 Skill 必须保留资料来源、素材复用判断、待补占位、人工复核岗位和审核门禁，不得把历史项目事实直接套入当前项目。
+- CLI 自动识别对更具体的生成 / 改写短语加权，降低写作请求误入审核型 Skill 的概率。
 
 发布前验证建议：
 
 - `npm run validate:skills`
 - `npm run validate:prompts`
+- `npm run validate:document-writing-run-pack`
 - `npm test`
 - `git diff --check`
 - `npm pack --dry-run`

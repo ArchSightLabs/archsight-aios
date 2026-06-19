@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "name": "engineering-document-writing-fixtures",
+  "version": "0.1",
+  "dataBoundary": "De-identified engineering document writing fixtures. Customer names, people, locations, dates, amounts, project numbers, and raw source documents are synthetic or abstracted.",
+  "sourceBoundary": "Source signals preserve writing-task shape only: source normalization, historical material reuse, draft generation, and review-gate handoff.",
+  "cases": [
+    {
+      "id": "tender-writing-historical-material-reuse",
+      "skillId": "aios-tender-write",
+      "promptPath": "skills/aios-tender-write/prompts/basic-prompt.md",
+      "scenario": "基于招标要求、评分点、用户初稿和历史标书素材生成技术标章节工作母版",
+      "sourceSignals": [
+        "source-shape:technical bid writing task with scoring points and historical material snippets",
+        "source-shape:user draft needs rewriting into a markdown working draft",
+        "boundary-shape:historical project facts cannot be copied into the new project without evidence"
+      ],
+      "advisoryComparison": [
+        "普通提示词容易直接扩写成顺滑正文，忽略来源链和本项目事实缺口。",
+        "写作型基础提示词要求先建立资料来源、写作 brief、素材复用判断和审核门禁。"
+      ],
+      "weakPrompt": "请根据这些招标要求和历史标书，帮我写一版技术标章节。",
+      "inputSummary": [
+        "输入包含技术标要求、评分点摘要、用户初稿和历史标书片段。",
+        "历史标书含有旧项目名称、工期、人员和设备表述，需要先判断是否可复用。",
+        "缺少本项目图纸、组织机构、资源计划和证明材料时，只能输出待补占位。"
+      ],
+      "sampleInput": [
+        "资料类型：技术标章节生成任务。",
+        "招标要求摘要：需说明施工总体部署、进度计划、质量安全文明施工和资源配置；评分点要求章节与措施一一对应。",
+        "用户初稿：希望复用历史项目中的总体部署和安全文明施工段落，但本项目施工组织、设备、人员和工期尚未确认。",
+        "历史素材片段：旧项目写有项目名称、管理人员、设备型号、工期安排和现场布置描述。",
+        "资料缺口：未提供招标原文页码、图纸、项目组织架构、资源计划、证明材料和最终投标格式要求。"
+      ],
+      "requiredPromptTerms": [
+        "Markdown",
+        "复用级别",
+        "评分点到章节映射",
+        "审核门禁交接",
+        "aios-commercial-tender"
+      ],
+      "expectedOutputShape": [
+        "先列资料来源和写作 brief。",
+        "把历史素材按可复用改写、仅参考、不可套用、需人工确认分级。",
+        "输出评分点到章节映射和 Markdown 章节初稿。",
+        "缺少依据时写待补占位，并交给审核 Skill 复核。"
+      ],
+      "expectedStrongSections": [
+        "资料来源清单",
+        "写作 brief",
+        "历史素材匹配表",
+        "评分点到章节映射",
+        "章节初稿 / 改写稿",
+        "审核门禁交接"
+      ],
+      "weakFailureModes": [
+        "直接套用旧项目事实。",
+        "不区分评分点、章节草稿和待补资料。",
+        "把生成内容当成正式投标定稿。"
+      ],
+      "bannedClaims": [
+        "中标概率",
+        "评标结论",
+        "最终投标决策"
+      ]
+    },
+    {
+      "id": "scheme-writing-expert-comments",
+      "skillId": "aios-scheme-write",
+      "promptPath": "skills/aios-scheme-write/prompts/basic-prompt.md",
+      "scenario": "基于方案初稿、历史方案、工程概况和专家意见生成专项施工方案章节工作母版",
+      "sourceSignals": [
+        "source-shape:special construction scheme writing task with expert comments and historical scheme material",
+        "source-shape:scheme draft needs rewriting into a markdown working draft",
+        "boundary-shape:calculation correctness and approval outcomes require professional review"
+      ],
+      "advisoryComparison": [
+        "普通提示词容易把专家意见改成完整正文，并默认计算、附图和审批已经满足。",
+        "写作型基础提示词要求保留危险源、计算书缺口、专家意见回查和审核门禁。"
+      ],
+      "weakPrompt": "请根据方案初稿、专家意见和历史方案，帮我写一版专项施工方案。",
+      "inputSummary": [
+        "输入包含工程概况、专项施工方案初稿、历史方案素材和专家意见。",
+        "历史方案中的旧项目条件、设备参数和验收口径不能自动套入新项目。",
+        "缺少计算书、附图、危大工程审批或专业复核时，只能输出待补占位。"
+      ],
+      "sampleInput": [
+        "资料类型：专项施工方案章节生成任务。",
+        "工程概况摘要：本项目需要补充关键工序、危险源控制、检查验收、应急措施和交底要点。",
+        "专家意见摘要：需回查危险源识别、计算书目录、附图一致性、验收要求和应急措施。",
+        "历史方案片段：旧项目包含设备型号、荷载参数、平面布置和验收流程。",
+        "资料缺口：未提供本项目计算书全文、附图、设备厂家资料、专项审批记录和安全负责人确认意见。"
+      ],
+      "requiredPromptTerms": [
+        "Markdown",
+        "复用级别",
+        "方案章节结构",
+        "危险源和控制措施占位表",
+        "aios-construction-scheme"
+      ],
+      "expectedOutputShape": [
+        "先列资料来源和写作 brief。",
+        "把历史方案按可复用改写、仅参考、不可套用、需人工确认分级。",
+        "输出方案章节结构、Markdown 章节初稿、危险源占位表和待补资料。",
+        "不确认计算正确或审批通过，并交给审核 Skill 复核。"
+      ],
+      "expectedStrongSections": [
+        "资料来源清单",
+        "写作 brief",
+        "历史素材匹配表",
+        "方案章节结构",
+        "方案章节初稿 / 改写稿",
+        "危险源和控制措施占位表",
+        "审核门禁交接"
+      ],
+      "weakFailureModes": [
+        "直接套用旧项目参数和设备配置。",
+        "忽略专家意见、危险源和计算书缺口。",
+        "把方案初稿写成已经通过审批的定稿。"
+      ],
+      "bannedClaims": [
+        "方案合格",
+        "计算正确",
+        "专家论证通过",
+        "审批通过"
+      ]
+    }
+  ]
+}

@@ -109,6 +109,7 @@ AIOS 的多 Agent 协作不应停留在 Prompt 角色扮演。Agent 提出架构
 | `install` | 安装 ArchSight AIOS 用户级资产到 Codex、Claude Code、OpenCode、Antigravity 2.0、Gemini、WorkBuddy 和共享目录。 |
 | `doctor` | 检查仓库资产、manifest、用户级安装、Skill 和 Workflow 是否一致。 |
 | `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录、自动 profile 识别和项目上下文草稿。 |
+| `writing:init` | 在业务项目中创建标书 / 方案写作 Markdown 工作台，用于写作型 Skill 生成和审核门禁交接。 |
 | `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
 | `validate:skills` | 校验公共 skill 发现入口、frontmatter、跨 host manifest 和 npm metadata 是否一致。 |
 | `capability:call` | 按 Capability Registry 权限边界调用本地 MCP Adapter，并输出 Tool Result 与仲裁 Decision。 |
@@ -122,6 +123,33 @@ npx @archsight/aios capability:call --capability solver.beam_deflection_servicea
 ```
 
 如果 `archsight-aios` 和 `archsight-solver` 是同级目录，CLI 会默认尝试使用相邻的 `../archsight-solver`，通常无需设置 `ARCHSIGHT_SOLVER_HOME`。
+
+## 工程文档写作工作台
+
+v1.4.0 开始，AIOS 提供写作型 Skill 和 Markdown 工作母版，用于标书、技术标、专项施工方案和交底材料的生成 / 改写。Markdown 是 AIOS 工作母版，Word / PDF / PPT 只作为后续交付格式。
+
+在项目目录创建工作台：
+
+```bash
+npx @archsight/aios writing:init --type tender
+npx @archsight/aios writing:init --type scheme --name scheme-workbench
+```
+
+生成目录默认包含：
+
+- `source-normalized.md`：归一化输入资料和来源链。
+- `material-index.md`：历史素材、复用级别和不可套用原因。
+- `writing-brief.md`：写作任务、目标章节、禁止结论和人工复核岗位。
+- `draft.md`：AI 生成或改写的章节草稿。
+- `review-notes.md`：交给审核 Skill 后的复核记录。
+- `final.md`：人工确认后的最终 Markdown 母版。
+
+推荐路由：
+
+- 标书 / 技术标写作：先用 `aios-tender-write`，再交给 `aios-commercial-tender` 审核门禁。
+- 专项施工方案写作：先用 `aios-scheme-write`，再交给 `aios-construction-scheme` 审核门禁。
+
+`writing:init` 只创建缺失文件，重复执行不会覆盖已有工作台内容。
 
 ## 安装位置
 

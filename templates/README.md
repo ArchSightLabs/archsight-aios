@@ -47,6 +47,15 @@ archsight-aios init --cwd /path/to/project --profile rag-knowledge
 
 `document-writing/` 是 v1.4.0 写作型 Skill 的 Markdown 工作母版模板，用于标书、技术标、专项施工方案和交底材料的生成 / 改写流程。
 
+业务项目中可直接执行：
+
+```bash
+archsight-aios writing:init --cwd /path/to/project --type tender
+archsight-aios writing:init --cwd /path/to/project --type scheme --name scheme-workbench
+```
+
+该命令会把模板复制到项目内的写作工作台目录，并生成类型化 README；已有文件不会被覆盖。
+
 推荐链路：
 
 - `source-normalized.md`：原始资料归一化。

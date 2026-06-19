@@ -8,7 +8,8 @@ const errors = [];
 
 const fixturePaths = [
   "prompts/evaluations/engineering-business-basic-fixtures.json",
-  "prompts/evaluations/engineering-business-public-advisory-fixtures.json"
+  "prompts/evaluations/engineering-business-public-advisory-fixtures.json",
+  "prompts/evaluations/engineering-document-writing-fixtures.json"
 ];
 const fixtures = fixturePaths.map((fixturePath) => ({
   path: fixturePath,
@@ -143,9 +144,10 @@ function validateFixture(fixturePath, fixture) {
     return;
   }
 
+  const expectations = fixtureExpectations(fixturePath, fixture);
   check(fixture.schema === 1, `${fixturePath}: schema must be 1`);
   check(Array.isArray(fixture.cases), `${fixturePath}: cases must be an array`);
-  check(fixture.cases?.length === 6, `${fixturePath}: must cover 6 engineering-business cases`);
+  check(fixture.cases?.length === expectations.caseCount, `${fixturePath}: must cover ${expectations.caseCount} ${expectations.label} cases`);
 
   const seenIds = new Set();
   const seenSkills = new Set();
@@ -201,15 +203,34 @@ function validateFixture(fixturePath, fixture) {
     }
   }
 
-  const expectedSkills = [
-    "aios-commercial-tender",
-    "aios-commercial-contract",
-    "aios-construction-daily",
-    "aios-construction-meeting",
-    "aios-commercial-variation",
-    "aios-construction-scheme"
-  ].sort();
+  const expectedSkills = expectations.skillIds.sort();
   check(JSON.stringify([...seenSkills].sort()) === JSON.stringify(expectedSkills), `${fixturePath}: skill coverage mismatch`);
+}
+
+function fixtureExpectations(fixturePath, fixture) {
+  if (fixture.name === "engineering-document-writing-fixtures") {
+    return {
+      label: "engineering-document-writing",
+      caseCount: 2,
+      skillIds: [
+        "aios-tender-write",
+        "aios-scheme-write"
+      ]
+    };
+  }
+
+  return {
+    label: "engineering-business",
+    caseCount: 6,
+    skillIds: [
+      "aios-commercial-tender",
+      "aios-commercial-contract",
+      "aios-construction-daily",
+      "aios-construction-meeting",
+      "aios-commercial-variation",
+      "aios-construction-scheme"
+    ]
+  };
 }
 
 for (const fixture of fixtures) {

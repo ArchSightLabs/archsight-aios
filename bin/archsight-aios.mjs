@@ -134,13 +134,13 @@ const skillDetectionRules = {
   "aios-compare": ["aios-compare"],
   "aios-prompt-compare": ["aios-prompt-compare"],
   "aios-commercial-tender": ["招标", "投标", "技术标", "商务标", "评分", "废标", "招采", "资格"],
-  "aios-tender-write": ["标书编写", "技术标编写", "技术标生成", "投标文件生成", "标书优化", "标书改写", "历史标书", "评分点响应"],
+  "aios-tender-write": ["标书编写", "技术标编写", "技术标生成", "技术标改写", "投标文件生成", "投标响应生成", "标书优化", "标书改写", "历史标书", "评分点响应"],
   "aios-commercial-contract": ["合同", "协议", "付款", "履约", "违约", "分包", "采购", "结算条款"],
   "aios-construction-daily": ["日报", "周报", "现场记录", "施工日志", "进度", "材料进场", "机械", "劳务"],
   "aios-construction-meeting": ["会议纪要", "例会", "协调会", "专题会", "待办", "责任人"],
   "aios-commercial-variation": ["变更", "签证", "联系单", "索赔", "洽商", "工程量"],
   "aios-construction-scheme": ["施工方案", "专项方案", "危大", "交底", "危险源", "专家论证"],
-  "aios-scheme-write": ["方案编写", "方案生成", "方案改写", "方案优化", "历史方案", "专家意见回写", "施工方案初稿"]
+  "aios-scheme-write": ["方案编写", "方案生成", "施工方案生成", "专项施工方案生成", "方案改写", "施工方案改写", "方案优化", "历史方案", "专家意见回写", "施工方案初稿"]
 };
 
 const ignoredDetectionDirs = new Set([
@@ -168,6 +168,7 @@ function usage() {
     "  archsight-aios install --target <codex|agents|gemini|antigravity|workbuddy|opencode|claude-code|all> --scope user",
     "  archsight-aios doctor",
     "  archsight-aios init [--cwd <path>] [--mode <auto|full|linked|ai-only>] [--profile <auto|none|all|name>]",
+    "  archsight-aios writing:init [--cwd <path>] [--type <tender|scheme|general>] [--name <folder>]",
     "  archsight-aios validate [--cwd <path>] [--profile <auto|none|all|name>] [--temp]",
     "  archsight-aios capability:call --capability <id> --agent <id> --skill <id> --input <json-file>",
     "  archsight-aios hermes:validate",
@@ -179,6 +180,7 @@ function usage() {
     "  install               Install AIOS assets into user-level assistant locations.",
     "  doctor                Check repository assets and user-level installation.",
     "  init                  Add AI rules and .ai governance files to a project.",
+    "  writing:init          Create a Markdown document-writing workbench.",
     "  validate              Validate the project AI template output.",
     "  capability:call       Authorize and call a registered local Capability adapter.",
     "  hermes:*              Validate or dry-run Hermes runtime prompt sync.",
@@ -190,6 +192,7 @@ function usage() {
     "  npx @archsight/aios install --target opencode --scope user",
     "  npx @archsight/aios install --target claude-code --scope user",
     "  npx @archsight/aios init",
+    "  npx @archsight/aios writing:init --type tender",
     "  npx @archsight/aios validate --temp",
     "  npx @archsight/aios doctor"
   ].join("\n");
@@ -210,6 +213,8 @@ function parseArgs(argv) {
     capability: undefined,
     agent: undefined,
     skill: undefined,
+    documentType: "general",
+    workspaceName: "document-writing",
     input: undefined,
     mcpCwd: undefined,
     mcpCommand: undefined,
@@ -237,6 +242,10 @@ function parseArgs(argv) {
       options.agent = rest[++i];
     } else if (arg === "--skill") {
       options.skill = rest[++i];
+    } else if (arg === "--type") {
+      options.documentType = rest[++i];
+    } else if (arg === "--name") {
+      options.workspaceName = rest[++i];
     } else if (arg === "--input") {
       options.input = path.resolve(rest[++i]);
     } else if (arg === "--mcp-cwd") {
@@ -975,15 +984,32 @@ function confidenceFromScore(score) {
   return "low";
 }
 
-function scoreDetectionRules(ruleMap, signalText) {
+function detectionKeywordWeight(keyword, weighted) {
+  if (!weighted) {
+    return 1;
+  }
+
+  const length = normalizeSignal(keyword).trim().length;
+  if (length >= 8) {
+    return 4;
+  }
+  if (length >= 5) {
+    return 3;
+  }
+  return 1;
+}
+
+function scoreDetectionRules(ruleMap, signalText, options = {}) {
   const normalized = normalizeSignal(signalText);
   return Object.entries(ruleMap)
     .map(([id, keywords]) => {
       const matches = keywords.filter((keyword) => normalized.includes(normalizeSignal(keyword)));
+      const score = matches.reduce((sum, keyword) => sum + detectionKeywordWeight(keyword, options.weighted), 0);
       return {
         id,
-        score: matches.length,
-        confidence: matches.length > 0 ? confidenceFromScore(matches.length) : "none",
+        score,
+        matchCount: matches.length,
+        confidence: score > 0 ? confidenceFromScore(score) : "none",
         matches
       };
     })
@@ -1081,7 +1107,7 @@ async function collectProjectDiscovery(targetRoot) {
 
 function detectProjectContext(manifest, discovery) {
   const profileScores = scoreDetectionRules(profileDetectionRules, discovery.signalText);
-  const skillScores = scoreDetectionRules(skillDetectionRules, discovery.signalText);
+  const skillScores = scoreDetectionRules(skillDetectionRules, discovery.signalText, { weighted: true });
   const profileDescriptions = new Map((manifest.projectProfiles ?? []).map((profile) => [profile.id, profile.description]));
   const skillMetadata = new Map((manifest.skills ?? []).map((skill) => [skill.id, skill]));
 
@@ -1133,7 +1159,10 @@ function renderMatchList(scores, emptyText) {
 
   return scores.map((item) => {
     const matches = item.matches.slice(0, 8).join("、");
-    return `- \`${item.id}\`：${item.confidence}，命中 ${item.score} 项（${matches}）`;
+    const scoreText = item.matchCount && item.matchCount !== item.score
+      ? `命中 ${item.matchCount} 项，权重 ${item.score}`
+      : `命中 ${item.score} 项`;
+    return `- \`${item.id}\`：${item.confidence}，${scoreText}（${matches}）`;
   });
 }
 
@@ -1759,6 +1788,117 @@ async function initProject(options) {
   }
 }
 
+function resolveDocumentWritingType(value) {
+  const normalized = normalizeSignal(value ?? "general").replaceAll("_", "-");
+  const aliases = new Map([
+    ["general", "general"],
+    ["all", "general"],
+    ["通用", "general"],
+    ["tender", "tender"],
+    ["bid", "tender"],
+    ["technical-bid", "tender"],
+    ["标书", "tender"],
+    ["技术标", "tender"],
+    ["投标", "tender"],
+    ["scheme", "scheme"],
+    ["construction-scheme", "scheme"],
+    ["方案", "scheme"],
+    ["施工方案", "scheme"],
+    ["专项施工方案", "scheme"]
+  ]);
+
+  const type = aliases.get(normalized);
+  if (!type) {
+    throw new Error(`Unsupported writing workspace type: ${value}`);
+  }
+  return type;
+}
+
+function documentWritingTypeConfig(type) {
+  const configs = {
+    general: {
+      label: "工程文档写作",
+      skill: "aios-tender-write / aios-scheme-write",
+      gate: "aios-commercial-tender / aios-construction-scheme",
+      firstStep: "先在 writing-brief.md 明确是标书、技术标、专项施工方案还是交底材料。"
+    },
+    tender: {
+      label: "标书 / 技术标写作",
+      skill: "aios-tender-write",
+      gate: "aios-commercial-tender",
+      firstStep: "先把招标文件、评分办法、技术要求、用户初稿和历史标书索引写入工作母版。"
+    },
+    scheme: {
+      label: "专项施工方案写作",
+      skill: "aios-scheme-write",
+      gate: "aios-construction-scheme",
+      firstStep: "先把工程概况、方案初稿、历史方案、专家意见和计算书目录写入工作母版。"
+    }
+  };
+  return configs[type];
+}
+
+function renderDocumentWritingReadme(type) {
+  const config = documentWritingTypeConfig(type);
+  return [
+    "# AIOS Document Writing Workbench",
+    "",
+    `> 类型：${config.label}`,
+    "",
+    "## 使用顺序",
+    "",
+    "1. 在 `source-normalized.md` 中归一化输入资料，只写来源明确的事实。",
+    "2. 在 `material-index.md` 中登记历史素材、复用级别和不可复用原因。",
+    "3. 在 `writing-brief.md` 中明确写作任务、目标章节、人工复核岗位和禁止结论。",
+    "4. 使用对应写作 Skill 生成或改写 `draft.md`。",
+    "5. 把草稿交给审核门禁 Skill，审核结论写入 `review-notes.md`。",
+    "6. 人工确认后再整理 `final.md`，Word / PDF / PPT 只作为交付格式。",
+    "",
+    "## 推荐 Skill",
+    "",
+    `- 写作入口：\`${config.skill}\``,
+    `- 审核门禁：\`${config.gate}\``,
+    "",
+    "## 首步动作",
+    "",
+    config.firstStep,
+    "",
+    "## 边界",
+    "",
+    "- 不编造资质、业绩、人员、设备、工期、金额、奖项或项目事实。",
+    "- 缺少依据时写 `待补`、`需核验` 或 `转人工复核`。",
+    "- AI 输出是 Markdown 工作母版，不是正式交付定稿。",
+    ""
+  ].join("\n");
+}
+
+async function initDocumentWritingWorkspace(options) {
+  const targetRoot = path.resolve(options.cwd);
+  const workspaceName = options.workspaceName ?? "document-writing";
+  if (!workspaceName || path.isAbsolute(workspaceName)) {
+    throw new Error("--name must be a relative folder name");
+  }
+
+  const type = resolveDocumentWritingType(options.documentType);
+  const templateRoot = path.join(repoRoot, "templates", "document-writing");
+  const workspaceRoot = path.resolve(targetRoot, workspaceName);
+  assertInside(workspaceRoot, targetRoot);
+
+  await ensureDir(targetRoot);
+  await copyTreeMissing(templateRoot, workspaceRoot);
+
+  const readmePath = path.join(workspaceRoot, "README.md");
+  assertInside(readmePath, workspaceRoot);
+  if (await exists(readmePath)) {
+    console.log(`SKIP existing ${readmePath}`);
+  } else {
+    await fs.writeFile(readmePath, renderDocumentWritingReadme(type), "utf8");
+    console.log(`CREATE ${readmePath}`);
+  }
+
+  console.log(`WRITING ${type}: ${workspaceRoot}`);
+}
+
 async function validateProjectTemplate(options) {
   const manifest = await readManifest();
   const createdTemp = options.temp;
@@ -1953,6 +2093,8 @@ async function main() {
     await doctor();
   } else if (options.command === "init") {
     await initProject(options);
+  } else if (options.command === "writing:init") {
+    await initDocumentWritingWorkspace(options);
   } else if (options.command === "validate") {
     await validateProjectTemplate(options);
   } else if (options.command === "capability:call") {
