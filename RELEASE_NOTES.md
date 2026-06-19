@@ -1,5 +1,24 @@
 # Release Notes
 
+## 1.4.0（开发中）
+
+本版本主线是把 AIOS 从“审核型 Skill”推进到“工程文档生成、改写与复核闭环”。新增写作型 Skill 负责初稿生成、历史素材复用和 Markdown 工作母版；现有审核型 Skill 继续负责响应性、证据链、风险和人工复核门禁。
+
+核心变化：
+
+- 新增 `aios-tender-write`：基于招标文件、评分办法、企业历史标书素材、类似项目案例和用户初稿生成 / 改写技术标章节。
+- 新增 `aios-scheme-write`：基于方案初稿、历史方案素材、工程概况、专家意见和用户模板生成 / 改写专项施工方案章节。
+- 新增 `templates/document-writing/`：提供 `source-normalized.md`、`material-index.md`、`writing-brief.md`、`draft.md`、`review-notes.md` 和 `final.md` 工作母版。
+- 写作型 Skill 必须保留资料来源、素材复用判断、待补占位、人工复核岗位和审核门禁，不得把历史项目事实直接套入当前项目。
+
+发布前验证建议：
+
+- `npm run validate:skills`
+- `npm run validate:prompts`
+- `npm test`
+- `git diff --check`
+- `npm pack --dry-run`
+
 ## 1.3.2
 
 本版本修复 v1.3.1 后在不同宿主中出现的 Skill 遵从度不一致问题。用户只说“用 AIOS 分析该文档”且没有要求摘要时，AIOS 默认应输出标准详版报告，而不是短摘要。

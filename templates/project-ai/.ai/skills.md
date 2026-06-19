@@ -26,11 +26,13 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 | 内部 Prompt / Skill 测试、weak/basic/runtime 三栏评测 | `aios-prompt-compare` | Daedalus |
 | 建筑行业项目受控实现 / 测试 / 文档 / 脚本 | `aios-exec` | Hephaestus |
 | 工程招投标响应 / 评分点 / 废标风险 / 技术标资料矩阵 | `aios-commercial-tender` | Mason |
+| 工程标书 / 技术标生成、改写和历史素材复用 | `aios-tender-write` | Mason |
 | 工程合同履约节点 / 付款条件 / 责任边界 / 资料缺口 | `aios-commercial-contract` | Themis |
 | 施工日报 / 现场异常 / 项目群记录 / 问题追踪台账 | `aios-construction-daily` | Mason |
 | 工程会议纪要 / 待办闭环 / 遗留争议 / 下次追踪 | `aios-construction-meeting` | Mason |
 | 工程变更签证资料链 / 联系单 / 图纸变更 / 索赔线索 | `aios-commercial-variation` | Plutus |
 | 专项施工方案 / 危险源 / 交底要点 / 规范和计算书复核 | `aios-construction-scheme` | Vitruvius |
+| 专项施工方案 / 施工技术措施生成、改写和历史方案复用 | `aios-scheme-write` | Vitruvius |
 
 ## 本项目可用的 Skills
 
@@ -50,11 +52,13 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 - `aios-prompt-compare`
 - `aios-exec`
 - `aios-commercial-tender`
+- `aios-tender-write`
 - `aios-commercial-contract`
 - `aios-construction-daily`
 - `aios-construction-meeting`
 - `aios-commercial-variation`
 - `aios-construction-scheme`
+- `aios-scheme-write`
 
 ## 启用规则
 
@@ -63,7 +67,8 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 - 涉及建筑行业平台 UI / UX 方案、工作台体验、交互状态、响应式或前端实现交接时，优先启用 `aios-design`。
 - 只有启用建筑、BIM、IFC、规范知识库、GraphRAG 或智能审图 profile 时，才默认启用 `aios-knowledge`。
 - 涉及结构力学、荷载、FEM、结构计算工具链或工程安全风险时，启用 `aios-structural`；关键数值必须来自确定性求解器或项目已有计算书。
-- 涉及工程招投标、合同履约、施工日报、工程会议、变更签证或专项施工方案时，可按资料类型启用工程业务管理 Skill；这些 Skill 只做证据链整理和人工复核分流，不替代正式签审。
+- 涉及工程招投标、合同履约、施工日报、工程会议、变更签证或专项施工方案时，可按资料类型启用工程业务管理 Skill；这些 Skill 只做证据链整理、生成初稿和人工复核分流，不替代正式签审。
+- 涉及标书、技术标或专项施工方案的生成、改写、历史素材复用时，优先启用 `aios-tender-write` 或 `aios-scheme-write`；生成后必须回到 `aios-commercial-tender` 或 `aios-construction-scheme` 做审核门禁。
 - 涉及两份文档、两个版本或两个 AI 输出哪份更专业、更可复核、更适合交付时，启用 `aios-compare`。
 - 涉及提示词效果、weak/basic 对照、真实 Skill 输出比较或是否应沉淀为 Skill 时，只有开发者明确调用 `aios-prompt-compare` 才启用；真实 Skill 结果必须来自宿主工具触发对应 `$aios-*` Skill 后的输出。
 - 涉及规范、制度、结构计算、质量安全、金额、工期索赔或责任归属时，必须保留 `Claim / Evidence / Tool Result / Decision`；没有工具或人工证据时标注 `Need verify` 或 `Hold for human`。

@@ -12,4 +12,5 @@
 当前入口：
 
 - [Roadmap](roadmap.md)
+- [v1.4.0 工程文档生成、改写与复核闭环](v1.4.0-engineering-document-workflow.md)
 - [Strategy Principles](strategy-principles.md)

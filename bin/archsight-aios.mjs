@@ -56,11 +56,13 @@ const skillAliases = {
   ],
   "aios-exec": ["aios-controlled-execution", "archsight-controlled-execution"],
   "aios-commercial-tender": ["aios-tender", "archsight-tender"],
+  "aios-tender-write": ["aios-bid-write", "archsight-bid-write", "aios-technical-bid-write"],
   "aios-commercial-contract": ["aios-contract", "archsight-contract"],
   "aios-commercial-variation": ["aios-variation", "archsight-variation"],
   "aios-construction-daily": ["aios-daily", "archsight-daily"],
   "aios-construction-meeting": ["aios-meeting", "archsight-meeting"],
-  "aios-construction-scheme": ["aios-scheme", "archsight-scheme"]
+  "aios-construction-scheme": ["aios-scheme", "archsight-scheme"],
+  "aios-scheme-write": ["aios-construction-scheme-write", "archsight-scheme-write"]
 };
 
 const profileDetectionRules = {
@@ -132,11 +134,13 @@ const skillDetectionRules = {
   "aios-compare": ["aios-compare"],
   "aios-prompt-compare": ["aios-prompt-compare"],
   "aios-commercial-tender": ["招标", "投标", "技术标", "商务标", "评分", "废标", "招采", "资格"],
+  "aios-tender-write": ["标书编写", "技术标编写", "技术标生成", "投标文件生成", "标书优化", "标书改写", "历史标书", "评分点响应"],
   "aios-commercial-contract": ["合同", "协议", "付款", "履约", "违约", "分包", "采购", "结算条款"],
   "aios-construction-daily": ["日报", "周报", "现场记录", "施工日志", "进度", "材料进场", "机械", "劳务"],
   "aios-construction-meeting": ["会议纪要", "例会", "协调会", "专题会", "待办", "责任人"],
   "aios-commercial-variation": ["变更", "签证", "联系单", "索赔", "洽商", "工程量"],
-  "aios-construction-scheme": ["施工方案", "专项方案", "危大", "交底", "危险源", "专家论证"]
+  "aios-construction-scheme": ["施工方案", "专项方案", "危大", "交底", "危险源", "专家论证"],
+  "aios-scheme-write": ["方案编写", "方案生成", "方案改写", "方案优化", "历史方案", "专家意见回写", "施工方案初稿"]
 };
 
 const ignoredDetectionDirs = new Set([

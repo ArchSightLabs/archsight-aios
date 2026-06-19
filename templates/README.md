@@ -14,6 +14,7 @@
 - [BIM / CAD / Revit 平台项目 profile](project-bim-platform/)
 - [施工视觉 AI 项目 profile](project-construction-vision/)
 - [规范知识库 / RAG / GraphRAG 项目 profile](project-rag-knowledge/)
+- [工程文档写作 Markdown 工作母版](document-writing/)
 - [模板扩展备忘](template-expansion-backlog.md)
 
 ## 项目 Profile
@@ -41,3 +42,16 @@ archsight-aios init --cwd /path/to/project --profile rag-knowledge
 
 - `.ai/profile-detection.md`：记录识别模式、命中证据、启用 profile 和 Skill 候选。
 - `.ai/project-context.md`：首次创建时预填项目名、技术栈、常用命令、代码结构、候选 Agent / Skill / Workflow。
+
+## 工程文档写作
+
+`document-writing/` 是 v1.4.0 写作型 Skill 的 Markdown 工作母版模板，用于标书、技术标、专项施工方案和交底材料的生成 / 改写流程。
+
+推荐链路：
+
+- `source-normalized.md`：原始资料归一化。
+- `material-index.md`：历史标书 / 历史方案素材索引和复用判断。
+- `writing-brief.md`：本次写作目标、输出格式、人工复核和禁止承诺。
+- `draft.md`：AI 生成或改写的初稿。
+- `review-notes.md`：审核型 Skill 的响应性、风险和缺口复核。
+- `final.md`：人工定稿前版本，用于后续导出 Word / PDF / PPT。

@@ -395,6 +395,54 @@ async function testEngineeringBusinessSkillsRequireDetailedOutput() {
   }
 }
 
+async function testEngineeringWritingSkillsAreRoutedAndGuarded() {
+  const writingSkills = [
+    ["aios-tender-write", "aios-commercial-tender"],
+    ["aios-scheme-write", "aios-construction-scheme"]
+  ];
+  const requiredTerms = [
+    "Markdown 工作母版",
+    "source-normalized.md",
+    "material-index.md",
+    "writing-brief.md",
+    "draft.md",
+    "review-notes.md",
+    "final.md",
+    "素材复用判断",
+    "审核门禁",
+    "不编造"
+  ];
+
+  for (const [skillName, gateSkill] of writingSkills) {
+    const skillContent = await fs.readFile(path.join(repoRoot, "skills", skillName, "SKILL.md"), "utf8");
+    const configContent = await fs.readFile(path.join(repoRoot, "skills", skillName, "agents", "openai.yaml"), "utf8");
+    const promptContent = await fs.readFile(path.join(repoRoot, "skills", skillName, "prompts", "basic-prompt.md"), "utf8");
+
+    for (const term of requiredTerms) assert.ok(skillContent.includes(term), `${skillName}: missing ${term}`);
+    assert.ok(skillContent.includes(gateSkill), `${skillName}: missing gate ${gateSkill}`);
+    assert.ok(configContent.includes("Markdown"), `${skillName} config: missing Markdown`);
+    assert.ok(configContent.includes(gateSkill), `${skillName} config: missing gate ${gateSkill}`);
+    assert.ok(promptContent.includes("复用级别"), `${skillName} prompt: missing reuse levels`);
+    assert.ok(promptContent.includes(gateSkill), `${skillName} prompt: missing gate ${gateSkill}`);
+  }
+
+  const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
+  const manifestSkillIds = new Set(manifest.skills.map((skill) => skill.id));
+  assert.ok(manifestSkillIds.has("aios-tender-write"));
+  assert.ok(manifestSkillIds.has("aios-scheme-write"));
+
+  for (const fileName of [
+    "source-normalized.md",
+    "material-index.md",
+    "writing-brief.md",
+    "draft.md",
+    "review-notes.md",
+    "final.md"
+  ]) {
+    await fs.access(path.join(repoRoot, "templates", "document-writing", fileName));
+  }
+}
+
 async function testInstallAntigravityUsesPluginByDefault() {
   const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-antigravity-2-"));
   const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
@@ -951,6 +999,7 @@ const tests = [
   testInitPromptModelOutputTemplateCommand,
   testSkillsAvoidPromptTemplateShape,
   testEngineeringBusinessSkillsRequireDetailedOutput,
+  testEngineeringWritingSkillsAreRoutedAndGuarded,
   testInstallAntigravityUsesPluginByDefault,
   testInstallGeminiWritesGeminiSupportAssets,
   testInstallWorkBuddyWritesPersonalSkills,

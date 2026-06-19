@@ -196,6 +196,13 @@
       "openaiConfigPath": "skills/aios-commercial-tender/agents/openai.yaml"
     },
     {
+      "id": "aios-tender-write",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "feature-development",
+      "path": "skills/aios-tender-write/SKILL.md",
+      "openaiConfigPath": "skills/aios-tender-write/agents/openai.yaml"
+    },
+    {
       "id": "aios-commercial-contract",
       "primaryAgent": "themis",
       "defaultWorkflow": "review",
@@ -229,6 +236,13 @@
       "defaultWorkflow": "review",
       "path": "skills/aios-construction-scheme/SKILL.md",
       "openaiConfigPath": "skills/aios-construction-scheme/agents/openai.yaml"
+    },
+    {
+      "id": "aios-scheme-write",
+      "primaryAgent": "vitruvius",
+      "defaultWorkflow": "feature-development",
+      "path": "skills/aios-scheme-write/SKILL.md",
+      "openaiConfigPath": "skills/aios-scheme-write/agents/openai.yaml"
     }
   ],
   "workflows": [
@@ -375,6 +389,12 @@
       "workflow": "review"
     },
     {
+      "taskType": "工程标书、技术标、投标响应章节生成、改写和历史素材复用",
+      "skill": "aios-tender-write",
+      "agent": "mason",
+      "workflow": "feature-development"
+    },
+    {
       "taskType": "工程合同履约节点、付款条件、责任边界和资料缺口",
       "skill": "aios-commercial-contract",
       "agent": "themis",
@@ -403,6 +423,12 @@
       "skill": "aios-construction-scheme",
       "agent": "vitruvius",
       "workflow": "review"
+    },
+    {
+      "taskType": "专项施工方案、施工技术措施、交底材料生成、改写和历史方案复用",
+      "skill": "aios-scheme-write",
+      "agent": "vitruvius",
+      "workflow": "feature-development"
     }
   ],
   "projectTemplate": {
@@ -514,11 +540,19 @@
     "infra/service-boundaries.md",
     "skills/engineering-business-starter-kit.md",
     "skills/aios-commercial-tender/prompts/basic-prompt.md",
+    "skills/aios-tender-write/prompts/basic-prompt.md",
     "skills/aios-commercial-contract/prompts/basic-prompt.md",
     "skills/aios-construction-daily/prompts/basic-prompt.md",
     "skills/aios-construction-meeting/prompts/basic-prompt.md",
     "skills/aios-commercial-variation/prompts/basic-prompt.md",
     "skills/aios-construction-scheme/prompts/basic-prompt.md",
+    "skills/aios-scheme-write/prompts/basic-prompt.md",
+    "templates/document-writing/source-normalized.md",
+    "templates/document-writing/material-index.md",
+    "templates/document-writing/writing-brief.md",
+    "templates/document-writing/draft.md",
+    "templates/document-writing/review-notes.md",
+    "templates/document-writing/final.md",
     "scripts/analyze-prompt-run-results.mjs",
     "scripts/build-prompt-run-pack.mjs",
     "scripts/validate-prompt-fixtures.mjs",

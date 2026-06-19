@@ -33,11 +33,13 @@
 | 用户明确调用 `aios-compare` 时，比较两份文档、两个版本或两个 AI 输出哪份更专业 | `aios-compare` | Daedalus | `review` |
 | 建筑行业项目中的受控代码修改、文档、脚本、测试 | `aios-exec` | Hephaestus | `feature-development` |
 | 工程招投标响应、评分点、废标风险和技术标资料矩阵 | `aios-commercial-tender` | Mason | `review` |
+| 工程标书、技术标和投标响应章节生成 / 改写 / 历史素材复用 | `aios-tender-write` | Mason | `feature-development` |
 | 工程合同履约节点、付款条件、责任边界和资料缺口 | `aios-commercial-contract` | Themis | `review` |
 | 施工日报、现场异常、项目群记录和问题追踪台账 | `aios-construction-daily` | Mason | `site-daily-loop` |
 | 工程会议纪要、待办闭环、遗留争议和下次追踪 | `aios-construction-meeting` | Mason | `site-daily-loop` |
 | 工程变更签证资料链、联系单、图纸变更和索赔线索 | `aios-commercial-variation` | Plutus | `site-daily-loop` |
 | 专项施工方案、危险源、交底要点和规范 / 计算书复核清单 | `aios-construction-scheme` | Vitruvius | `review` |
+| 专项施工方案、施工技术措施和交底材料生成 / 改写 / 历史方案复用 | `aios-scheme-write` | Vitruvius | `feature-development` |
 
 ## 路由原则
 
@@ -51,7 +53,8 @@
 - `aios-design` 用于实现前判断界面方案是否支撑建筑行业审查、定位、复核、追溯和交付；不替代 `frontend-generation` 的 UI 实现、布局验证和交互验证，也不替代通用 `frontend-design` 的视觉风格和前端代码美化评审。
 - `aios-arch` 应补足通用架构评审缺失的建筑行业平台视角，包括 BIM / IFC、规范知识链路、审图证据链、RAG / GraphRAG、任务编排、审计和后端运行可靠性。
 - `aios-structural` 用于结构力学、荷载、边界条件、FEM 和求解器接口评审；它不能替代结构工程师签审，关键数值必须来自 Capability 或项目已有求解器证据。
-- `aios-commercial-tender`、`aios-commercial-contract`、`aios-construction-daily`、`aios-construction-meeting`、`aios-commercial-variation` 和 `aios-construction-scheme` 属于工程业务管理增强；它们只处理建筑工程资料的抽取、证据链整理、风险提示和人工复核分流，不扩展为通用 HR、行政、财务 Skill。
+- `aios-commercial-tender`、`aios-tender-write`、`aios-commercial-contract`、`aios-construction-daily`、`aios-construction-meeting`、`aios-commercial-variation`、`aios-construction-scheme` 和 `aios-scheme-write` 属于工程业务管理增强；它们只处理建筑工程资料的抽取、生成初稿、证据链整理、风险提示和人工复核分流，不扩展为通用 HR、行政、财务 Skill。
+- `aios-tender-write` 和 `aios-scheme-write` 是写作型 Skill，默认使用 Markdown 工作母版；生成后必须分别交回 `aios-commercial-tender` 和 `aios-construction-scheme` 做审核门禁。
 - 工程业务 Agent 分工：技术标以 Mason 为主；合同法律边界以 Themis 为主；变更签证、工程款、结算和成本线索以 Plutus 为主；会议纪要中的行政、人事、证照和组织协同事项由 Hestia 辅助分流；施工方案以 Vitruvius 为主，涉及结构计算时升级给 Euclid，涉及现场组织和交付时由 Mason 协同。
 - 工程业务管理基础场景可先参考 `skills/engineering-business-starter-kit.md` 和各 Skill 目录下的 `prompts/basic-prompt.md`，形成矩阵、清单、台账和复核问题；涉及金额、工期、责任、合规、质量安全、结构计算或法律意见时，再按对应 Skill 的证据链和人工复核规则升级。
 - `aios-compare` 用于普通两份文档 / 两个版本 / 两个 AI 输出的专业度对比；不做 weak / portable / skill-runtime 提示词评测。

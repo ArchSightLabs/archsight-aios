@@ -42,6 +42,8 @@
 | 建筑行业 RAG、GraphRAG、MCP、Memory、Tool Calling | Daedalus | AI 研发工程师 |
 | Prompt / Skill 输出对比、weak/basic/runtime 三栏评测 | Daedalus | AI 研发工程师 |
 | 建筑行业项目代码修改、脚本执行、测试、文档生成 | Hephaestus | 受控执行官 |
+| 工程标书 / 技术标生成、改写和历史素材复用 | Mason | 工程总工，使用 `aios-tender-write`，生成后回到 `aios-commercial-tender` 复核 |
+| 专项施工方案生成、改写和历史方案复用 | Vitruvius | 建筑数字化专家，使用 `aios-scheme-write`，生成后回到 `aios-construction-scheme` 复核 |
 
 ## 升级规则
 
@@ -49,8 +51,10 @@
 - 涉及立项、定位、商业目标、范围取舍：升级给 Janus。
 - 涉及页面方案、工作台体验、交互状态和前端实现交接：升级给 Janus，并使用 `aios-design`。
 - 涉及多模块交付、任务依赖、发布顺序：升级给 Mason。
+- 涉及标书、技术标、投标响应章节生成或历史标书素材复用：升级给 Mason，并使用 `aios-tender-write`；生成后必须交给 `aios-commercial-tender` 审核门禁。
 - 涉及权限、安全、生产发布、AI 生成代码：升级给 Argus。
 - 涉及行业规范、BIM / IFC、审图语义：升级给 Vitruvius。
+- 涉及专项施工方案、施工技术措施、交底材料生成或历史方案素材复用：升级给 Vitruvius，并使用 `aios-scheme-write`；生成后必须交给 `aios-construction-scheme` 审核门禁。
 - 涉及结构力学、荷载、边界条件、FEM 或结构计算工具链：升级给 Euclid。
 - 涉及 RAG、GraphRAG、MCP、Memory、Tool：升级给 Daedalus。
 - 涉及提示词效果、weak/basic 对照、真实 Skill 输出比较或是否应沉淀为 Skill：升级给 Daedalus，并使用 `aios-prompt-compare`。
