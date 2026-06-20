@@ -16,7 +16,7 @@ const home = os.homedir();
 const managedStart = "<!-- ARCHSIGHT-AIOS:START -->";
 const managedEnd = "<!-- ARCHSIGHT-AIOS:END -->";
 const antigravityPluginName = "archsight-aios";
-const aiosVersion = "1.5.0";
+const aiosVersion = "1.5.1";
 
 const assetDirs = [
   "skills",
