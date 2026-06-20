@@ -1,5 +1,25 @@
 # 变更记录
 
+## 1.5.1
+
+### 发布说明
+
+本版本是 v1.5.0 的维护修复版，保持 Knowledge Pack + 本地 Reference Runtime 主线不变，主要同步 npm patch 包元数据并收紧提示词评测与工程资料输入边界。
+
+### 调整
+
+- 版本同步到 1.5.1，覆盖 npm package、Gemini extension、Claude plugin、runtime manifest 和 CLI clientInfo。
+- 提示词评测辅助脚本改为读取本地忽略配置，避免开发环境配置进入源码或发布包。
+- 工程资料类提示词补充输入边界：资料应先在本地脱敏，未授权客户、人员、联系方式、证件、账号或完整内部原文不应直接进入实质分析。
+
+### 验证
+
+- npm run validate:prompts
+- npm run validate:skills
+- npm run test
+- git diff --check
+- npm pack --dry-run
+
 ## 1.5.0
 
 ### 发布说明

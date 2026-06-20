@@ -1,5 +1,23 @@
 # Release Notes
 
+## 1.5.1
+
+v1.5.1 is a maintenance patch for the v1.5.0 Knowledge Pack + local Reference Runtime release. It updates npm-facing version metadata and tightens local configuration and input-boundary handling for prompt evaluation and engineering document workflows.
+
+### Fixes
+
+- Synchronized npm package, CLI, Gemini extension, Claude plugin, and runtime manifest metadata to 1.5.1.
+- Updated prompt evaluation helpers to use local ignored configuration for development-only checks.
+- Added clearer de-identification guidance to engineering document prompts before substantive analysis.
+
+### Verification
+
+- npm run validate:prompts
+- npm run validate:skills
+- npm run test
+- git diff --check
+- npm pack --dry-run
+
 ## 1.5.0
 
 本版本主线是 **Knowledge Pack + 本地 Reference Runtime**。AIOS 不再只把工程资料整理成报告或草稿，而是能把规范摘录、企业标准、项目资料、历史审查口径和人工复核记录治理成可编译、可查询、可评估的工程知识资产。
