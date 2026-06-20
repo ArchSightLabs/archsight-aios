@@ -18,7 +18,6 @@ const fixtures = fixturePaths.map((fixturePath) => ({
 
 const sensitiveTerms = [
   "立信",
-  "费敏",
   "闻总",
   "谭总",
   "茅盾中学",

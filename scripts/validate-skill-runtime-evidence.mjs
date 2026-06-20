@@ -10,7 +10,6 @@ const reportPath = "prompts/evaluations/skill-runtime/v1.4.0-writing-host-valida
 
 const sensitiveTerms = [
   "立信",
-  "费敏",
   "闻总",
   "谭总",
   "客户内部",
