@@ -3,6 +3,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
+import crypto from "node:crypto";
+import readline from "node:readline";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
@@ -14,6 +16,7 @@ const home = os.homedir();
 const managedStart = "<!-- ARCHSIGHT-AIOS:START -->";
 const managedEnd = "<!-- ARCHSIGHT-AIOS:END -->";
 const antigravityPluginName = "archsight-aios";
+const aiosVersion = "1.5.0";
 
 const assetDirs = [
   "skills",
@@ -55,13 +58,23 @@ const skillAliases = {
     "archsight-ai-runtime-design"
   ],
   "aios-exec": ["aios-controlled-execution", "archsight-controlled-execution"],
-  "aios-commercial-tender": ["aios-tender", "archsight-tender"],
+  "aios-tender": ["archsight-tender"],
+  "aios-tender-audit": ["aios-tender-review", "aios-bid-audit", "archsight-tender-audit"],
+  "aios-commercial-tender": ["aios-commercial-bid", "archsight-commercial-tender"],
   "aios-tender-write": ["aios-bid-write", "archsight-bid-write", "aios-technical-bid-write"],
-  "aios-commercial-contract": ["aios-contract", "archsight-contract"],
+  "aios-contract-audit": ["aios-contract", "aios-contract-review", "archsight-contract-audit"],
+  "aios-contract-draft": ["aios-contract-write", "aios-contract-letter", "archsight-contract-draft"],
+  "aios-commercial-contract": ["archsight-commercial-contract"],
   "aios-commercial-variation": ["aios-variation", "archsight-variation"],
-  "aios-construction-daily": ["aios-daily", "archsight-daily"],
-  "aios-construction-meeting": ["aios-meeting", "archsight-meeting"],
-  "aios-construction-scheme": ["aios-scheme", "archsight-scheme"],
+  "aios-daily": ["aios-site-daily", "archsight-daily"],
+  "aios-daily-write": ["aios-daily-report-write", "archsight-daily-write"],
+  "aios-construction-daily": ["archsight-construction-daily"],
+  "aios-meeting": ["aios-site-meeting", "archsight-meeting"],
+  "aios-meeting-write": ["aios-minutes-write", "archsight-meeting-write"],
+  "aios-construction-meeting": ["archsight-construction-meeting"],
+  "aios-scheme": ["archsight-scheme"],
+  "aios-scheme-audit": ["aios-scheme-review", "aios-construction-scheme-audit", "archsight-scheme-audit"],
+  "aios-construction-scheme": ["archsight-construction-scheme"],
   "aios-scheme-write": ["aios-construction-scheme-write", "archsight-scheme-write"]
 };
 
@@ -115,6 +128,8 @@ const profileDetectionRules = {
     "条文",
     "审图",
     "标准",
+    "knowledge pack",
+    "知识包",
     "检索",
     "向量",
     "embedding",
@@ -128,17 +143,27 @@ const skillDetectionRules = {
   "aios-design": ["界面", "ui", "ux", "工作台", "交互", "原型"],
   "aios-plan": ["计划", "排期", "里程碑", "任务拆解", "交付"],
   "aios-review": ["code review", "代码审查", "安全审查", "技术债"],
-  "aios-knowledge": ["bim", "ifc", "规范", "审图", "条文", "知识结构化"],
+  "aios-knowledge": ["bim", "ifc", "规范", "审图", "条文", "知识结构化", "knowledge pack", "知识包"],
   "aios-structural": ["结构", "荷载", "挠度", "fem", "有限元", "计算书"],
-  "aios-runtime": ["rag", "graphrag", "mcp", "tool calling", "memory", "agent runtime"],
+  "aios-runtime": ["rag", "graphrag", "mcp", "tool calling", "memory", "agent runtime", "reference runtime"],
   "aios-compare": ["aios-compare"],
   "aios-prompt-compare": ["aios-prompt-compare"],
+  "aios-tender": ["招标", "投标", "技术标", "商务标", "招采"],
+  "aios-tender-audit": ["读标", "评标办法", "评分", "废标", "资格", "响应性", "资料缺口", "技术标复核", "投标复核"],
   "aios-commercial-tender": ["招标", "投标", "技术标", "商务标", "评分", "废标", "招采", "资格"],
   "aios-tender-write": ["标书编写", "技术标编写", "技术标生成", "技术标改写", "投标文件生成", "投标响应生成", "标书优化", "标书改写", "历史标书", "评分点响应"],
+  "aios-contract-audit": ["合同审核", "合同复核", "合同履约", "付款条件", "责任边界", "违约风险", "合同资料缺口", "补充协议复核"],
+  "aios-contract-draft": ["合同草拟", "补充协议草稿", "条款改写", "履约通知", "催款函", "回函", "合同交底", "合同函件"],
   "aios-commercial-contract": ["合同", "协议", "付款", "履约", "违约", "分包", "采购", "结算条款"],
+  "aios-daily": ["施工日报", "项目日报", "现场日报", "周报素材", "现场记录", "施工日志"],
+  "aios-daily-write": ["日报生成", "日报编写", "施工日报生成", "项目日报生成", "周报生成", "现场记录整理", "口述日报"],
   "aios-construction-daily": ["日报", "周报", "现场记录", "施工日志", "进度", "材料进场", "机械", "劳务"],
+  "aios-meeting": ["会议纪要", "工程会议", "例会", "协调会", "专题会", "交底会", "待办闭环"],
+  "aios-meeting-write": ["会议纪要生成", "会议纪要编写", "会议记录整理", "录音转写", "会议待办生成", "纪要草稿"],
   "aios-construction-meeting": ["会议纪要", "例会", "协调会", "专题会", "待办", "责任人"],
   "aios-commercial-variation": ["变更", "签证", "联系单", "索赔", "洽商", "工程量"],
+  "aios-scheme": ["施工方案", "专项方案", "危大", "交底"],
+  "aios-scheme-audit": ["方案复核", "危险源", "计算书缺口", "专家意见回查", "专家论证", "交底要点", "规范核验"],
   "aios-construction-scheme": ["施工方案", "专项方案", "危大", "交底", "危险源", "专家论证"],
   "aios-scheme-write": ["方案编写", "方案生成", "施工方案生成", "专项施工方案生成", "方案改写", "施工方案改写", "方案优化", "历史方案", "专家意见回写", "施工方案初稿"]
 };
@@ -170,6 +195,12 @@ function usage() {
     "  archsight-aios init [--cwd <path>] [--mode <auto|full|linked|ai-only>] [--profile <auto|none|all|name>]",
     "  archsight-aios writing:init [--cwd <path>] [--type <tender|scheme|general>] [--name <folder>] [--sample]",
     "  archsight-aios writing:validate [--cwd <path>] [--name <folder>]",
+    "  archsight-aios knowledge:init [--cwd <path>] [--name <folder>] [--sample]",
+    "  archsight-aios knowledge:validate [--cwd <path>] [--name <folder>]",
+    "  archsight-aios knowledge:compile [--cwd <path>] [--name <folder>] [--out <json-file>]",
+    "  archsight-aios knowledge:inspect [--cwd <path>] [--name <folder>] [--pack <json-file>]",
+    "  archsight-aios knowledge:lookup --pack <json-file> --query <text> [--region <id>] [--discipline <id>] [--source-version <version>] [--project-condition <text>]",
+    "  archsight-aios knowledge:eval [--cwd <path>] [--name <folder>] [--pack <json-file>]",
     "  archsight-aios validate [--cwd <path>] [--profile <auto|none|all|name>] [--temp]",
     "  archsight-aios capability:call --capability <id> --agent <id> --skill <id> --input <json-file>",
     "  archsight-aios hermes:validate",
@@ -183,6 +214,7 @@ function usage() {
     "  init                  Add AI rules and .ai governance files to a project.",
     "  writing:init          Create a Markdown document-writing workbench.",
     "  writing:validate      Check a Markdown document-writing workbench.",
+    "  knowledge:*           Create, compile, query, and evaluate AIOS Knowledge Packs.",
     "  validate              Validate the project AI template output.",
     "  capability:call       Authorize and call a registered local Capability adapter.",
     "  hermes:*              Validate or dry-run Hermes runtime prompt sync.",
@@ -197,6 +229,9 @@ function usage() {
     "  npx @archsight/aios writing:init --type tender",
     "  npx @archsight/aios writing:init --type scheme --sample --name scheme-sample",
     "  npx @archsight/aios writing:validate --name document-writing",
+    "  npx @archsight/aios knowledge:init --sample --name scheme-review",
+    "  npx @archsight/aios knowledge:compile --name scheme-review",
+    "  npx @archsight/aios knowledge:lookup --pack scheme-review/compiled/knowledge-pack.json --query \"高支模方案是否应检查计算书\"",
     "  npx @archsight/aios validate --temp",
     "  npx @archsight/aios doctor"
   ].join("\n");
@@ -220,6 +255,13 @@ function parseArgs(argv) {
     documentType: "general",
     workspaceName: "document-writing",
     sample: false,
+    pack: undefined,
+    out: undefined,
+    query: undefined,
+    region: undefined,
+    discipline: undefined,
+    sourceVersion: undefined,
+    projectCondition: undefined,
     input: undefined,
     mcpCwd: undefined,
     mcpCommand: undefined,
@@ -253,6 +295,20 @@ function parseArgs(argv) {
       options.workspaceName = rest[++i];
     } else if (arg === "--sample") {
       options.sample = true;
+    } else if (arg === "--pack") {
+      options.pack = path.resolve(rest[++i]);
+    } else if (arg === "--out") {
+      options.out = path.resolve(rest[++i]);
+    } else if (arg === "--query") {
+      options.query = rest[++i];
+    } else if (arg === "--region") {
+      options.region = rest[++i];
+    } else if (arg === "--discipline") {
+      options.discipline = rest[++i];
+    } else if (arg === "--source-version") {
+      options.sourceVersion = rest[++i];
+    } else if (arg === "--project-condition") {
+      options.projectCondition = rest[++i];
     } else if (arg === "--input") {
       options.input = path.resolve(rest[++i]);
     } else if (arg === "--mcp-cwd") {
@@ -373,7 +429,7 @@ async function readManifest() {
 
 async function readJson(filePath) {
   const raw = await fs.readFile(filePath, "utf8");
-  return JSON.parse(raw);
+  return JSON.parse(raw.replace(/^\uFEFF/, ""));
 }
 
 async function readCapabilityRegistry() {
@@ -645,7 +701,7 @@ function callMcpStdio({ command, args, cwd, toolName, input, timeoutMs }) {
       params: {
         protocolVersion: "2025-06-18",
         capabilities: {},
-        clientInfo: { name: "archsight-aios", version: "1.4.0" }
+        clientInfo: { name: "archsight-aios", version: aiosVersion }
       }
     };
     const callTool = {
@@ -1826,19 +1882,19 @@ function documentWritingTypeConfig(type) {
     general: {
       label: "工程文档写作",
       skill: "aios-tender-write / aios-scheme-write",
-      gate: "aios-commercial-tender / aios-construction-scheme",
+      gate: "aios-tender-audit / aios-scheme-audit",
       firstStep: "先在 writing-brief.md 明确是标书、技术标、专项施工方案还是交底材料。"
     },
     tender: {
       label: "标书 / 技术标写作",
       skill: "aios-tender-write",
-      gate: "aios-commercial-tender",
+      gate: "aios-tender-audit",
       firstStep: "先把招标文件、评分办法、技术要求、用户初稿和历史标书索引写入工作母版。"
     },
     scheme: {
       label: "专项施工方案写作",
       skill: "aios-scheme-write",
-      gate: "aios-construction-scheme",
+      gate: "aios-scheme-audit",
       firstStep: "先把工程概况、方案初稿、历史方案、专家意见和计算书目录写入工作母版。"
     }
   };
@@ -1978,7 +2034,10 @@ async function validateDocumentWritingWorkspace(options) {
   await check("draft keeps provenance placeholders", draft.includes("来源") && draft.includes("待补"));
   await check(
     "review-notes keeps audit gate",
-    review.includes("aios-commercial-tender") || review.includes("aios-construction-scheme")
+    review.includes("aios-tender-audit") ||
+      review.includes("aios-scheme-audit") ||
+      review.includes("aios-commercial-tender") ||
+      review.includes("aios-construction-scheme")
   );
   await check("final keeps manual confirmation", final.includes("人工") && final.includes("定稿"));
 
@@ -1994,6 +2053,605 @@ async function validateDocumentWritingWorkspace(options) {
   }
 
   console.log(`Writing workbench validation passed: ${workspaceRoot}`);
+}
+
+const knowledgePackFiles = [
+  "knowledge-pack.source.json",
+  "source-register.md",
+  "standard-register.md",
+  "clause-map.md",
+  "entity-relation-map.md",
+  "eval-questions.md",
+  "review-notes.md"
+];
+
+function knowledgePackSourcePath(workspaceRoot) {
+  return path.join(workspaceRoot, "knowledge-pack.source.json");
+}
+
+function compiledKnowledgePackPath(workspaceRoot) {
+  return path.join(workspaceRoot, "compiled", "knowledge-pack.json");
+}
+
+function isObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function sha256(text) {
+  return crypto.createHash("sha256").update(text).digest("hex");
+}
+
+function collection(source, key) {
+  return Array.isArray(source?.[key]) ? source[key] : [];
+}
+
+function validateKnowledgePackSource(source) {
+  const checks = [];
+
+  function check(label, ok, detail = "") {
+    checks.push({ label, ok: Boolean(ok), detail });
+  }
+
+  check("source is object", isObject(source));
+  if (!isObject(source)) {
+    return checks;
+  }
+
+  check("schema is 1", source.schema === 1, "schema === 1");
+  check("pack metadata exists", isObject(source.pack));
+  check("pack.id exists", typeof source.pack?.id === "string" && source.pack.id.length > 0);
+  check("pack.title exists", typeof source.pack?.title === "string" && source.pack.title.length > 0);
+  check("pack.version exists", typeof source.pack?.version === "string" && source.pack.version.length > 0);
+  check("pack.status valid", ["draft", "reviewed", "blocked", "published"].includes(source.pack?.status));
+  check("pack.dataBoundary exists", typeof source.pack?.dataBoundary === "string" && source.pack.dataBoundary.length > 0);
+
+  for (const key of ["sources", "standards", "clauses", "entities", "relations", "lookupRules", "evalQuestions"]) {
+    check(`${key} is non-empty array`, Array.isArray(source[key]) && source[key].length > 0);
+  }
+
+  const idSets = new Map();
+  for (const key of ["sources", "standards", "clauses", "entities", "relations", "lookupRules", "evalQuestions"]) {
+    const ids = new Set();
+    for (const item of collection(source, key)) {
+      check(`${key} item has id`, typeof item.id === "string" && item.id.length > 0);
+      if (typeof item.id === "string") {
+        check(`${key} id unique ${item.id}`, !ids.has(item.id), item.id);
+        ids.add(item.id);
+      }
+    }
+    idSets.set(key, ids);
+  }
+
+  const sourceIds = idSets.get("sources") ?? new Set();
+  const standardIds = idSets.get("standards") ?? new Set();
+  const clauseIds = idSets.get("clauses") ?? new Set();
+  const entityIds = idSets.get("entities") ?? new Set();
+  const graphNodeIds = new Set([...entityIds, ...clauseIds]);
+
+  for (const sourceItem of collection(source, "sources")) {
+    check(`source ${sourceItem.id} authorization`, typeof sourceItem.authorization === "string" && sourceItem.authorization.length > 0);
+    check(`source ${sourceItem.id} version`, typeof sourceItem.version === "string" && sourceItem.version.length > 0);
+    check(`source ${sourceItem.id} reviewStatus`, typeof sourceItem.reviewStatus === "string" && sourceItem.reviewStatus.length > 0);
+  }
+
+  for (const standard of collection(source, "standards")) {
+    check(`standard ${standard.id} source exists`, sourceIds.has(standard.sourceId), standard.sourceId);
+    check(`standard ${standard.id} version`, typeof standard.version === "string" && standard.version.length > 0);
+    check(`standard ${standard.id} sourceVersion`, typeof standard.sourceVersion === "string" && standard.sourceVersion.length > 0);
+  }
+
+  for (const clause of collection(source, "clauses")) {
+    check(`clause ${clause.id} standard exists`, standardIds.has(clause.standardId), clause.standardId);
+    check(`clause ${clause.id} source exists`, sourceIds.has(clause.sourceId), clause.sourceId);
+    check(`clause ${clause.id} clauseNo`, typeof clause.clauseNo === "string" && clause.clauseNo.length > 0);
+    check(`clause ${clause.id} applicability`, ["applicable", "not_applicable", "need_context"].includes(clause.applicability));
+    check(`clause ${clause.id} pageRange`, typeof clause.pageRange === "string" && clause.pageRange.length > 0);
+    check(`clause ${clause.id} reviewStatus`, typeof clause.reviewStatus === "string" && clause.reviewStatus.length > 0);
+  }
+
+  for (const entity of collection(source, "entities")) {
+    check(`entity ${entity.id} type`, typeof entity.type === "string" && entity.type.length > 0);
+    check(`entity ${entity.id} confidence`, typeof entity.confidence === "number" && entity.confidence >= 0 && entity.confidence <= 1);
+    for (const ref of entity.sourceRefs ?? []) {
+      check(`entity ${entity.id} sourceRef exists ${ref}`, clauseIds.has(ref) || sourceIds.has(ref), ref);
+    }
+  }
+
+  for (const relation of collection(source, "relations")) {
+    check(`relation ${relation.id} from exists`, graphNodeIds.has(relation.from), relation.from);
+    check(`relation ${relation.id} to exists`, graphNodeIds.has(relation.to), relation.to);
+    check(`relation ${relation.id} type`, typeof relation.type === "string" && relation.type.length > 0);
+    check(`relation ${relation.id} confidence`, typeof relation.confidence === "number" && relation.confidence >= 0 && relation.confidence <= 1);
+  }
+
+  for (const rule of collection(source, "lookupRules")) {
+    check(`lookup ${rule.id} queryTerms`, Array.isArray(rule.queryTerms) && rule.queryTerms.length > 0);
+    check(`lookup ${rule.id} clauseIds`, Array.isArray(rule.clauseIds) && rule.clauseIds.length > 0);
+    for (const clauseId of rule.clauseIds ?? []) {
+      check(`lookup ${rule.id} clause exists ${clauseId}`, clauseIds.has(clauseId), clauseId);
+    }
+    check(`lookup ${rule.id} applicability`, ["applicable", "not_applicable", "need_context"].includes(rule.applicability));
+  }
+
+  for (const evalItem of collection(source, "evalQuestions")) {
+    check(`eval ${evalItem.id} question`, typeof evalItem.question === "string" && evalItem.question.length > 0);
+    check(`eval ${evalItem.id} expectedStatus`, ["found", "not_found", "conflict", "inapplicable", "error"].includes(evalItem.expectedStatus));
+    check(`eval ${evalItem.id} expectedApplicability`, ["applicable", "not_applicable", "need_context"].includes(evalItem.expectedApplicability));
+    check(`eval ${evalItem.id} expectedClauseIds`, Array.isArray(evalItem.expectedClauseIds));
+    for (const clauseId of evalItem.expectedClauseIds ?? []) {
+      check(`eval ${evalItem.id} clause exists ${clauseId}`, clauseIds.has(clauseId), clauseId);
+    }
+  }
+
+  check("review metadata exists", isObject(source.review));
+  check("review status valid", ["draft", "reviewed", "blocked", "published"].includes(source.review?.status));
+  return checks;
+}
+
+async function readKnowledgePackSource(workspaceRoot) {
+  const sourcePath = knowledgePackSourcePath(workspaceRoot);
+  const raw = await fs.readFile(sourcePath, "utf8");
+  return { source: JSON.parse(raw), raw, sourcePath };
+}
+
+async function initKnowledgePackWorkspace(options) {
+  const targetRoot = path.resolve(options.cwd);
+  const workspaceName = options.workspaceName ?? "knowledge-pack";
+  if (!workspaceName || path.isAbsolute(workspaceName)) {
+    throw new Error("--name must be a relative folder name");
+  }
+
+  const templateRoot = options.sample
+    ? path.join(repoRoot, "templates", "knowledge-pack-samples", "scheme-review")
+    : path.join(repoRoot, "templates", "knowledge-pack");
+  const workspaceRoot = path.resolve(targetRoot, workspaceName);
+  assertInside(workspaceRoot, targetRoot);
+
+  await ensureDir(targetRoot);
+  await copyTreeMissing(templateRoot, workspaceRoot);
+  console.log(`KNOWLEDGE ${options.sample ? "scheme-review" : "blank"}: ${workspaceRoot}`);
+}
+
+async function resolveKnowledgePackWorkspaceRoot(options) {
+  const targetRoot = path.resolve(options.cwd);
+  const workspaceName = options.workspaceName ?? "knowledge-pack";
+  if (!workspaceName || path.isAbsolute(workspaceName)) {
+    throw new Error("--name must be a relative folder name");
+  }
+
+  const namedRoot = path.resolve(targetRoot, workspaceName);
+  assertInside(namedRoot, targetRoot);
+  if (await exists(namedRoot)) {
+    return namedRoot;
+  }
+
+  let targetRootHasWorkbench = true;
+  for (const fileName of knowledgePackFiles) {
+    if (!(await exists(path.join(targetRoot, fileName)))) {
+      targetRootHasWorkbench = false;
+      break;
+    }
+  }
+  if (targetRootHasWorkbench) {
+    return targetRoot;
+  }
+
+  return namedRoot;
+}
+
+async function validateKnowledgePackWorkspace(options) {
+  const workspaceRoot = await resolveKnowledgePackWorkspaceRoot(options);
+  const checks = [];
+
+  function check(label, ok, detail = "") {
+    checks.push({ label, ok: Boolean(ok), detail });
+  }
+
+  check("workspace directory", await exists(workspaceRoot), workspaceRoot);
+  for (const fileName of knowledgePackFiles) {
+    const filePath = path.join(workspaceRoot, fileName);
+    const ok = await exists(filePath);
+    check(`${fileName} exists`, ok, filePath);
+    if (ok) {
+      const content = await fs.readFile(filePath, "utf8");
+      check(`${fileName} is non-empty`, content.trim().length > 0, filePath);
+    }
+  }
+
+  try {
+    const { source } = await readKnowledgePackSource(workspaceRoot);
+    checks.push(...validateKnowledgePackSource(source));
+  } catch (error) {
+    check("knowledge-pack.source.json parses", false, error.message);
+  }
+
+  const failed = checks.filter((item) => !item.ok);
+  for (const item of checks) {
+    console.log(`${item.ok ? "OK " : "MISS"} ${item.label}${item.detail ? `: ${item.detail}` : ""}`);
+  }
+
+  if (failed.length > 0) {
+    process.exitCode = 1;
+    console.error(`Knowledge Pack validation failed: ${failed.length} issue(s).`);
+    return;
+  }
+
+  console.log(`Knowledge Pack validation passed: ${workspaceRoot}`);
+}
+
+function compileKnowledgePackData(source, raw) {
+  const standardsById = new Map(collection(source, "standards").map((item) => [item.id, item]));
+  const sourcesById = new Map(collection(source, "sources").map((item) => [item.id, item]));
+  const compiledClauses = collection(source, "clauses").map((clause) => {
+    const standard = standardsById.get(clause.standardId) ?? {};
+    const sourceItem = sourcesById.get(clause.sourceId) ?? {};
+    return {
+      ...clause,
+      standard: {
+        id: standard.id,
+        name: standard.name,
+        code: standard.code,
+        version: standard.version,
+        region: standard.region,
+        discipline: standard.discipline,
+        sourceVersion: standard.sourceVersion
+      },
+      source: {
+        id: sourceItem.id,
+        name: sourceItem.name,
+        version: sourceItem.version,
+        authorization: sourceItem.authorization,
+        hash: sourceItem.hash
+      }
+    };
+  });
+
+  return {
+    schema: 1,
+    type: "archsight-aios.knowledge-pack",
+    compiledAt: new Date().toISOString(),
+    compiler: {
+      name: "archsight-aios",
+      version: aiosVersion
+    },
+    sourceDigest: `sha256:${sha256(raw)}`,
+    pack: source.pack,
+    sources: collection(source, "sources"),
+    standards: collection(source, "standards"),
+    clauses: compiledClauses,
+    graph: {
+      entities: collection(source, "entities"),
+      relations: collection(source, "relations")
+    },
+    runtime: {
+      capabilityId: "knowledge.norm_lookup",
+      lookupIndex: collection(source, "lookupRules")
+    },
+    evalQuestions: collection(source, "evalQuestions"),
+    review: source.review,
+    boundary: {
+      notOfficialStandardDatabase: true,
+      noAutomatedComplianceConclusion: true,
+      requiresHumanReviewForFormalUse: true
+    }
+  };
+}
+
+async function compileKnowledgePack(options, silent = false) {
+  const workspaceRoot = await resolveKnowledgePackWorkspaceRoot(options);
+  const { source, raw } = await readKnowledgePackSource(workspaceRoot);
+  const checks = validateKnowledgePackSource(source);
+  const failed = checks.filter((item) => !item.ok);
+  if (failed.length > 0) {
+    const details = failed.map((item) => item.label).join("; ");
+    throw new Error(`Knowledge Pack source is invalid: ${details}`);
+  }
+
+  const artifact = compileKnowledgePackData(source, raw);
+  const outPath = options.out ?? compiledKnowledgePackPath(workspaceRoot);
+  await ensureDir(path.dirname(outPath));
+  await fs.writeFile(outPath, `${JSON.stringify(artifact, null, 2)}\n`, "utf8");
+
+  if (!silent) {
+    console.log(`KNOWLEDGE_PACK ${artifact.pack.id}: ${outPath}`);
+    console.log(`CLAUSES ${artifact.clauses.length}`);
+    console.log(`EVAL_QUESTIONS ${artifact.evalQuestions.length}`);
+  }
+
+  return { artifact, outPath, workspaceRoot };
+}
+
+async function resolveKnowledgePackArtifactPath(options) {
+  if (options.pack) {
+    return options.pack;
+  }
+  const workspaceRoot = await resolveKnowledgePackWorkspaceRoot(options);
+  return compiledKnowledgePackPath(workspaceRoot);
+}
+
+async function readCompiledKnowledgePack(optionsOrPath) {
+  const packPath = typeof optionsOrPath === "string"
+    ? path.resolve(optionsOrPath)
+    : await resolveKnowledgePackArtifactPath(optionsOrPath);
+  const pack = await readJson(packPath);
+  if (pack.schema !== 1 || pack.type !== "archsight-aios.knowledge-pack") {
+    throw new Error(`Invalid Knowledge Pack artifact: ${packPath}`);
+  }
+  return { pack, packPath };
+}
+
+async function inspectKnowledgePack(options) {
+  const { pack, packPath } = await readCompiledKnowledgePack(options);
+  const summary = {
+    schema: 1,
+    path: packPath,
+    packId: pack.pack?.id,
+    title: pack.pack?.title,
+    version: pack.pack?.version,
+    status: pack.pack?.status,
+    sourceDigest: pack.sourceDigest,
+    counts: {
+      sources: pack.sources?.length ?? 0,
+      standards: pack.standards?.length ?? 0,
+      clauses: pack.clauses?.length ?? 0,
+      entities: pack.graph?.entities?.length ?? 0,
+      relations: pack.graph?.relations?.length ?? 0,
+      lookupRules: pack.runtime?.lookupIndex?.length ?? 0,
+      evalQuestions: pack.evalQuestions?.length ?? 0
+    },
+    boundary: pack.boundary
+  };
+  console.log(JSON.stringify(summary, null, 2));
+}
+
+function citationForClause(clause) {
+  return {
+    sourceId: clause.source?.id ?? clause.sourceId,
+    sourceName: clause.source?.name,
+    standardId: clause.standard?.id ?? clause.standardId,
+    standardName: clause.standard?.name,
+    standardCode: clause.standard?.code,
+    sourceVersion: clause.standard?.sourceVersion ?? clause.source?.version,
+    clauseId: clause.id,
+    clauseNo: clause.clauseNo,
+    title: clause.title,
+    pageRange: clause.pageRange,
+    reviewStatus: clause.reviewStatus,
+    applicability: clause.applicability
+  };
+}
+
+function lookupRuleScore(rule, query) {
+  const normalizedQuery = normalizeSignal(query);
+  return (rule.queryTerms ?? []).reduce((score, term) => {
+    const normalizedTerm = normalizeSignal(term);
+    return normalizedTerm && normalizedQuery.includes(normalizedTerm)
+      ? score + Math.max(1, normalizedTerm.length)
+      : score;
+  }, 0);
+}
+
+function lookupKnowledgePack(pack, request) {
+  const query = request?.query ?? "";
+  const rules = pack.runtime?.lookupIndex ?? [];
+  const clausesById = new Map((pack.clauses ?? []).map((clause) => [clause.id, clause]));
+  const matchedRules = rules
+    .map((rule) => ({ rule, score: lookupRuleScore(rule, query) }))
+    .filter((item) => item.score > 0)
+    .sort((left, right) => right.score - left.score || left.rule.id.localeCompare(right.rule.id));
+
+  if (matchedRules.length === 0) {
+    return {
+      status: "not_found",
+      citations: [],
+      applicability: "need_context",
+      sourceVersion: request?.sourceVersion ?? pack.pack?.sourceVersion ?? "",
+      notes: "未命中当前 Knowledge Pack；不得把模型常识写成规范结论。"
+    };
+  }
+
+  const candidateClauses = [];
+  const seenClauseIds = new Set();
+  for (const { rule } of matchedRules) {
+    for (const clauseId of rule.clauseIds ?? []) {
+      if (seenClauseIds.has(clauseId)) {
+        continue;
+      }
+      const clause = clausesById.get(clauseId);
+      if (clause) {
+        candidateClauses.push(clause);
+        seenClauseIds.add(clauseId);
+      }
+    }
+  }
+
+  if (request?.sourceVersion) {
+    const versionMatches = candidateClauses.filter((clause) => {
+      const sourceVersion = clause.standard?.sourceVersion ?? clause.source?.version;
+      return sourceVersion === request.sourceVersion;
+    });
+    if (versionMatches.length === 0) {
+      return {
+        status: "inapplicable",
+        citations: [],
+        applicability: "not_applicable",
+        sourceVersion: request.sourceVersion,
+        notes: `请求版本 ${request.sourceVersion} 未命中当前 Knowledge Pack 的来源版本。`
+      };
+    }
+  }
+
+  const conflict = matchedRules.some((item) => item.rule.status === "conflict");
+  const citations = candidateClauses.map(citationForClause);
+  const firstRule = matchedRules[0].rule;
+  const applicability = conflict
+    ? "need_context"
+    : firstRule.applicability ?? candidateClauses[0]?.applicability ?? "need_context";
+  const sourceVersion = citations[0]?.sourceVersion ?? pack.pack?.sourceVersion ?? "";
+  const notes = matchedRules
+    .map((item) => item.rule.notes)
+    .filter(Boolean)
+    .join(" ");
+
+  return {
+    status: conflict ? "conflict" : "found",
+    citations,
+    applicability,
+    sourceVersion,
+    notes: notes || "已命中 Knowledge Pack；正式结论仍需结合项目条件和人工复核。"
+  };
+}
+
+async function lookupKnowledgePackCommand(options) {
+  if (!options.pack) {
+    throw new Error("--pack is required for knowledge:lookup");
+  }
+  if (!options.query) {
+    throw new Error("--query is required for knowledge:lookup");
+  }
+
+  const { pack } = await readCompiledKnowledgePack(options.pack);
+  const result = lookupKnowledgePack(pack, {
+    query: options.query,
+    region: options.region,
+    discipline: options.discipline,
+    sourceVersion: options.sourceVersion,
+    projectCondition: options.projectCondition
+  });
+  console.log(JSON.stringify(result, null, 2));
+}
+
+async function evalKnowledgePack(options) {
+  let pack;
+  let packPath;
+  if (options.pack) {
+    ({ pack, packPath } = await readCompiledKnowledgePack(options.pack));
+  } else {
+    const compiled = await compileKnowledgePack(options, true);
+    pack = compiled.artifact;
+    packPath = compiled.outPath;
+  }
+
+  const cases = [];
+  for (const evalItem of pack.evalQuestions ?? []) {
+    const result = lookupKnowledgePack(pack, {
+      query: evalItem.question,
+      sourceVersion: evalItem.inputSourceVersion
+    });
+    const expectedClauseIds = new Set(evalItem.expectedClauseIds ?? []);
+    const actualClauseIds = new Set((result.citations ?? []).map((item) => item.clauseId));
+    const checks = [
+      {
+        label: "status",
+        ok: result.status === evalItem.expectedStatus,
+        expected: evalItem.expectedStatus,
+        actual: result.status
+      },
+      {
+        label: "applicability",
+        ok: result.applicability === evalItem.expectedApplicability,
+        expected: evalItem.expectedApplicability,
+        actual: result.applicability
+      },
+      {
+        label: "citations",
+        ok: [...expectedClauseIds].every((clauseId) => actualClauseIds.has(clauseId))
+          && (expectedClauseIds.size > 0 || actualClauseIds.size === 0),
+        expected: [...expectedClauseIds],
+        actual: [...actualClauseIds]
+      },
+      {
+        label: "sourceVersion",
+        ok: !evalItem.mustCiteSourceVersion || (result.sourceVersion && (result.citations ?? []).every((item) => item.sourceVersion)),
+        expected: "sourceVersion present when required",
+        actual: result.sourceVersion
+      },
+      {
+        label: "notes",
+        ok: (evalItem.expectedNotesContains ?? []).every((term) => result.notes.includes(term)),
+        expected: evalItem.expectedNotesContains ?? [],
+        actual: result.notes
+      }
+    ];
+    cases.push({
+      id: evalItem.id,
+      question: evalItem.question,
+      passed: checks.every((item) => item.ok),
+      checks,
+      result
+    });
+  }
+
+  const report = {
+    schema: 1,
+    packPath,
+    packId: pack.pack?.id,
+    total: cases.length,
+    passed: cases.filter((item) => item.passed).length,
+    failed: cases.filter((item) => !item.passed).length,
+    cases
+  };
+
+  console.log(JSON.stringify(report, null, 2));
+  if (report.failed > 0) {
+    process.exitCode = 1;
+  }
+}
+
+function knowledgePackPathFromMcpArgs(args) {
+  const value = args.knowledgePackPath ?? args.packPath;
+  if (typeof value === "string" && value.length > 0) {
+    return path.resolve(value);
+  }
+  return path.resolve(process.cwd(), "knowledge-pack", "compiled", "knowledge-pack.json");
+}
+
+async function runKnowledgeMcpServer() {
+  const rl = readline.createInterface({ input: process.stdin });
+  for await (const line of rl) {
+    if (!line.trim()) {
+      continue;
+    }
+    const request = JSON.parse(line);
+    if (request.method === "initialize") {
+      console.log(JSON.stringify({
+        jsonrpc: "2.0",
+        id: request.id,
+        result: {
+          protocolVersion: "2025-06-18",
+          serverInfo: { name: "archsight-aios-knowledge-reference", version: aiosVersion },
+          capabilities: { tools: {} }
+        }
+      }));
+      continue;
+    }
+    if (request.method === "tools/call") {
+      try {
+        const args = request.params?.arguments ?? {};
+        const toolName = request.params?.name;
+        if (!["norm_lookup", "knowledge.norm_lookup"].includes(toolName)) {
+          throw new Error(`Unknown knowledge tool: ${toolName}`);
+        }
+        const { pack } = await readCompiledKnowledgePack(knowledgePackPathFromMcpArgs(args));
+        const result = lookupKnowledgePack(pack, args);
+        console.log(JSON.stringify({
+          jsonrpc: "2.0",
+          id: request.id,
+          result: {
+            content: [{ type: "text", text: JSON.stringify(result) }],
+            isError: false,
+            structuredContent: result
+          }
+        }));
+      } catch (error) {
+        console.log(JSON.stringify({
+          jsonrpc: "2.0",
+          id: request.id,
+          error: { code: -32000, message: error.message }
+        }));
+      }
+    }
+  }
 }
 
 async function validateProjectTemplate(options) {
@@ -2194,6 +2852,20 @@ async function main() {
     await initDocumentWritingWorkspace(options);
   } else if (options.command === "writing:validate") {
     await validateDocumentWritingWorkspace(options);
+  } else if (options.command === "knowledge:init") {
+    await initKnowledgePackWorkspace(options);
+  } else if (options.command === "knowledge:validate") {
+    await validateKnowledgePackWorkspace(options);
+  } else if (options.command === "knowledge:compile") {
+    await compileKnowledgePack(options);
+  } else if (options.command === "knowledge:inspect") {
+    await inspectKnowledgePack(options);
+  } else if (options.command === "knowledge:lookup") {
+    await lookupKnowledgePackCommand(options);
+  } else if (options.command === "knowledge:eval") {
+    await evalKnowledgePack(options);
+  } else if (options.command === "knowledge:mcp") {
+    await runKnowledgeMcpServer();
   } else if (options.command === "validate") {
     await validateProjectTemplate(options);
   } else if (options.command === "capability:call") {

@@ -1,0 +1,17 @@
+# 实体与关系映射
+
+## 实体
+
+| 实体 ID | 类型 | 名称 | 来源 | 置信度 |
+| --- | --- | --- | --- | --- |
+| ENT-DEEP-EXCAVATION | Requirement | 深基坑专项方案要求 | CLAUSE-DEEP-EXCAVATION | 0.92 |
+| ENT-HIGH-FORMWORK | Requirement | 高支模计算书要求 | CLAUSE-HIGH-FORMWORK | 0.90 |
+| ENT-CRANE-LIFTING | Requirement | 起重吊装资料要求 | CLAUSE-CRANE-LIFTING | 0.88 |
+
+## 关系
+
+| 关系 ID | From | 关系 | To | 来源 | 置信度 |
+| --- | --- | --- | --- | --- | --- |
+| REL-DEEP-DERIVED | ENT-DEEP-EXCAVATION | DERIVED_FROM | CLAUSE-DEEP-EXCAVATION | CLAUSE-DEEP-EXCAVATION | 0.92 |
+| REL-FORMWORK-DERIVED | ENT-HIGH-FORMWORK | DERIVED_FROM | CLAUSE-HIGH-FORMWORK | CLAUSE-HIGH-FORMWORK | 0.90 |
+| REL-LIFTING-DERIVED | ENT-CRANE-LIFTING | DERIVED_FROM | CLAUSE-CRANE-LIFTING | CLAUSE-CRANE-LIFTING | 0.88 |

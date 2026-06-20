@@ -49,7 +49,7 @@ npx @archsight/aios init
 
 `init` 默认会读取项目名、README、package / pyproject 和浅层文件名，自动生成 `.ai/profile-detection.md`，并在首次创建 `.ai/project-context.md` 时预填项目名、技术栈、常用命令、代码结构和候选 AIOS 能力。用户不需要先理解 profile，也不需要手动合并 AI 规则文件。
 
-如果你不写代码，只参与业务判断，可以先看 [业务专家指南](docs/business-expert-guide.md)。如果你需要一步一步安装和验证，可以看 [快速上手](docs/quickstart.md)。
+如果你不写代码，只参与业务判断，可以先看 [建筑行业技能包自助试用指南](docs/industry-user-trial-guide.md) 和 [业务专家指南](docs/business-expert-guide.md)。如果你需要一步一步安装和验证，可以看 [快速上手](docs/quickstart.md)。
 
 ## 自动行业识别
 
@@ -111,6 +111,11 @@ AIOS 的多 Agent 协作不应停留在 Prompt 角色扮演。Agent 提出架构
 | `init` | 给具体业务项目接入 AI 规则、`.ai/` 治理目录、自动 profile 识别和项目上下文草稿。 |
 | `writing:init` | 在业务项目中创建标书 / 方案写作 Markdown 工作台，用于写作型 Skill 生成和审核门禁交接。 |
 | `writing:validate` | 检查写作工作台的文件链、来源、复用、待补、审核门禁和人工定稿边界。 |
+| `knowledge:init` | 创建工程知识治理工作台，用于沉淀 Knowledge Pack。 |
+| `knowledge:validate` | 检查知识包文件链、来源、标准、条文、图谱、查询规则和评估问题。 |
+| `knowledge:compile` | 将工作台编译为 `archsight-aios.knowledge-pack` Runtime 资产。 |
+| `knowledge:lookup` | 使用本地 Reference Runtime 查询编译后的 Knowledge Pack。 |
+| `knowledge:eval` | 执行知识包评估问题，检查引用、版本、拒答、冲突和适用性。 |
 | `validate` | 验证项目接入模板能否生成并引用当前登记的 Skills / Workflows。 |
 | `validate:skills` | 校验公共 skill 发现入口、frontmatter、跨 host manifest 和 npm metadata 是否一致。 |
 | `capability:call` | 按 Capability Registry 权限边界调用本地 MCP Adapter，并输出 Tool Result 与仲裁 Decision。 |
@@ -154,10 +159,53 @@ npx @archsight/aios writing:validate --name document-writing
 
 推荐路由：
 
-- 标书 / 技术标写作：先用 `aios-tender-write`，再交给 `aios-commercial-tender` 审核门禁。
-- 专项施工方案写作：先用 `aios-scheme-write`，再交给 `aios-construction-scheme` 审核门禁。
+- 招投标通用入口：新用户优先使用 `aios-tender`；只做复核时使用 `aios-tender-audit`，写作时使用 `aios-tender-write`。
+- 合同通用入口：只做合同履约复核时使用 `aios-contract-audit`；草拟补充协议、条款改写、履约通知或函件时使用 `aios-contract-draft`。
+- 施工日报通用入口：新用户优先使用 `aios-daily`；从口述、项目群记录或照片说明生成日报时使用 `aios-daily-write`，复核已有日报和问题台账时使用 `aios-construction-daily`。
+- 工程会议通用入口：新用户优先使用 `aios-meeting`；从录音转写、会议笔记或群聊摘要生成纪要时使用 `aios-meeting-write`，复核已有纪要和待办闭环时使用 `aios-construction-meeting`。
+- 专项施工方案通用入口：新用户优先使用 `aios-scheme`；只做复核时使用 `aios-scheme-audit`，写作时使用 `aios-scheme-write`。
+- 标书 / 技术标写作：先用 `aios-tender-write`，再交给 `aios-tender-audit` 审核门禁；已使用 `aios-commercial-tender` 的团队可继续使用原领域型入口。
+- 合同草拟：先用 `aios-contract-draft`，再交给 `aios-contract-audit` 审核门禁；已使用 `aios-commercial-contract` 的团队可继续使用原领域型入口。
+- 日报 / 会议纪要写作：先用 `aios-daily-write` 或 `aios-meeting-write`，再分别交给 `aios-construction-daily` 或 `aios-construction-meeting` 做证据链和闭环复核。
+- 专项施工方案写作：先用 `aios-scheme-write`，再交给 `aios-scheme-audit` 审核门禁；已使用 `aios-construction-scheme` 的团队可继续使用原领域型入口。
 
 `writing:init` 只创建缺失文件，重复执行不会覆盖已有工作台内容。
+
+## Knowledge Pack 与本地 Reference Runtime
+
+v1.5.0 开始，AIOS 提供工程知识治理能力：把规范摘录、企业标准、项目资料、历史审查口径和人工复核记录治理为可编译、可查询、可评估的 `Knowledge Pack`。
+
+创建合成样板：
+
+```bash
+npx @archsight/aios knowledge:init --sample --name scheme-review
+npx @archsight/aios knowledge:validate --name scheme-review
+npx @archsight/aios knowledge:compile --name scheme-review
+```
+
+查询编译产物：
+
+```bash
+npx @archsight/aios knowledge:lookup --pack scheme-review/compiled/knowledge-pack.json --query "高支模方案是否应检查计算书"
+npx @archsight/aios knowledge:eval --name scheme-review
+```
+
+`knowledge.norm_lookup` 现在有本地 stdio MCP Reference Runtime，可通过 `capability:call` 走同一套权限、证据和仲裁规则：
+
+```bash
+npx @archsight/aios capability:call --capability knowledge.norm_lookup --agent vitruvius --skill aios-knowledge --input lookup-input.json
+```
+
+`lookup-input.json` 至少包含：
+
+```json
+{
+  "knowledgePackPath": "scheme-review/compiled/knowledge-pack.json",
+  "query": "高支模方案是否应检查计算书"
+}
+```
+
+Knowledge Pack 不是生产级规范数据库，也不替代法务、总工、专家、审图或注册人员签审。缺来源、缺版本、缺项目条件或存在冲突时，Reference Runtime 必须返回 `need_context`、`not_found`、`conflict` 或 `inapplicable`。
 
 ## 安装位置
 
@@ -250,6 +298,7 @@ npm test
 ## 核心材料
 
 - [快速上手](docs/quickstart.md)
+- [建筑行业技能包自助试用指南](docs/industry-user-trial-guide.md)
 - [业务专家指南](docs/business-expert-guide.md)
 - [术语表](docs/glossary.md)
 - [AI 编码规范](AI_CODING_RULES.md)

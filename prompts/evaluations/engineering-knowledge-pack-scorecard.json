@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "name": "engineering-knowledge-pack-scorecard",
+  "version": "0.1",
+  "dataBoundary": "Quality gate for synthetic or authorized AIOS Knowledge Packs. It evaluates source governance, traceability, runtime lookup behavior, and eval coverage; it does not certify real regulatory compliance.",
+  "criteria": [
+    {
+      "id": "source_authority",
+      "weight": 15,
+      "description": "Every source has authorization, version, hash or locator, review status, and clear boundary text."
+    },
+    {
+      "id": "version_applicability",
+      "weight": 15,
+      "description": "Standards and clauses preserve region, discipline, sourceVersion, effective status, and inapplicable version behavior."
+    },
+    {
+      "id": "clause_structure",
+      "weight": 15,
+      "description": "Clauses are decomposed into objects, conditions, requirement, exceptions, applicability, evidence, and review status."
+    },
+    {
+      "id": "graph_traceability",
+      "weight": 12,
+      "description": "Graph entities and relations retain source references and confidence, and never rely on unmarked model inference."
+    },
+    {
+      "id": "runtime_lookup",
+      "weight": 18,
+      "description": "Reference Runtime returns status, citations, applicability, sourceVersion, and notes through the knowledge.norm_lookup contract."
+    },
+    {
+      "id": "eval_gate",
+      "weight": 15,
+      "description": "Eval questions cover answerable, unanswerable, conflict, version mismatch, and need-context cases."
+    },
+    {
+      "id": "human_review_boundary",
+      "weight": 10,
+      "description": "The pack keeps draft/reviewed/blocked/published states explicit and does not replace formal expert review."
+    }
+  ],
+  "sampleCase": {
+    "packId": "scheme-review-reference",
+    "minimumPassingWeightedScore": 4.5,
+    "scores": {
+      "source_authority": 5,
+      "version_applicability": 5,
+      "clause_structure": 5,
+      "graph_traceability": 5,
+      "runtime_lookup": 5,
+      "eval_gate": 5,
+      "human_review_boundary": 5
+    },
+    "decisionBasis": "The sample pack is synthetic but complete: it declares source boundaries, compiles traceable clauses, exposes a local lookup runtime, and passes all deterministic eval cases."
+  }
+}

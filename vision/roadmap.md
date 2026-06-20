@@ -24,9 +24,20 @@
 
 ## Phase 3：行业知识工程
 
-- BIM / IFC / 规范知识源登记。
-- RAG / GraphRAG 评估集。
-- 审图规则图谱。
+### v1.5.0：Knowledge Pack + 本地 Reference Runtime
+
+- 定义 AIOS 原生 `Knowledge Pack`：来源、授权、版本、标准、条文、实体、关系、lookup 规则、评估问题和人工复核状态。
+- 新增 `knowledge:init` / `knowledge:validate` / `knowledge:compile` / `knowledge:inspect` / `knowledge:lookup` / `knowledge:eval`。
+- 新增端到端合成样板 `templates/knowledge-pack-samples/scheme-review/`。
+- 将 `knowledge.norm_lookup` 接入本地 stdio MCP Reference Runtime，返回可追溯引用、适用性和仲裁状态。
+- 建立 Knowledge Pack 评分卡和发布验证入口 `validate:knowledge-pack`。
+- 详见 [v1.5.0 Knowledge Pack 与本地 Reference Runtime](../docs/v1.5.0-knowledge-pack-runtime.md)。
+
+### 后续行业知识工程方向
+
+- BIM / IFC / 规范知识源登记深化。
+- RAG / GraphRAG 评估集扩展到更多知识域。
+- 审图规则图谱和条文冲突治理。
 - 第二阶段 Agent 深化。
 
 ## Phase 4：企业级运行

@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "archsight-aios",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "ArchSight AIOS 的 Agent、Skill、Workflow、Runtime 和项目模板注册表，面向建筑行业知识工作者与 AI 工程团队。",
   "agents": [
     {
@@ -189,6 +189,20 @@
       "openaiConfigPath": "skills/aios-exec/agents/openai.yaml"
     },
     {
+      "id": "aios-tender",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "review",
+      "path": "skills/aios-tender/SKILL.md",
+      "openaiConfigPath": "skills/aios-tender/agents/openai.yaml"
+    },
+    {
+      "id": "aios-tender-audit",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "review",
+      "path": "skills/aios-tender-audit/SKILL.md",
+      "openaiConfigPath": "skills/aios-tender-audit/agents/openai.yaml"
+    },
+    {
       "id": "aios-commercial-tender",
       "primaryAgent": "mason",
       "defaultWorkflow": "review",
@@ -203,6 +217,20 @@
       "openaiConfigPath": "skills/aios-tender-write/agents/openai.yaml"
     },
     {
+      "id": "aios-contract-audit",
+      "primaryAgent": "themis",
+      "defaultWorkflow": "review",
+      "path": "skills/aios-contract-audit/SKILL.md",
+      "openaiConfigPath": "skills/aios-contract-audit/agents/openai.yaml"
+    },
+    {
+      "id": "aios-contract-draft",
+      "primaryAgent": "themis",
+      "defaultWorkflow": "feature-development",
+      "path": "skills/aios-contract-draft/SKILL.md",
+      "openaiConfigPath": "skills/aios-contract-draft/agents/openai.yaml"
+    },
+    {
       "id": "aios-commercial-contract",
       "primaryAgent": "themis",
       "defaultWorkflow": "review",
@@ -210,11 +238,39 @@
       "openaiConfigPath": "skills/aios-commercial-contract/agents/openai.yaml"
     },
     {
+      "id": "aios-daily",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "site-daily-loop",
+      "path": "skills/aios-daily/SKILL.md",
+      "openaiConfigPath": "skills/aios-daily/agents/openai.yaml"
+    },
+    {
+      "id": "aios-daily-write",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "site-daily-loop",
+      "path": "skills/aios-daily-write/SKILL.md",
+      "openaiConfigPath": "skills/aios-daily-write/agents/openai.yaml"
+    },
+    {
       "id": "aios-construction-daily",
       "primaryAgent": "mason",
       "defaultWorkflow": "site-daily-loop",
       "path": "skills/aios-construction-daily/SKILL.md",
       "openaiConfigPath": "skills/aios-construction-daily/agents/openai.yaml"
+    },
+    {
+      "id": "aios-meeting",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "site-daily-loop",
+      "path": "skills/aios-meeting/SKILL.md",
+      "openaiConfigPath": "skills/aios-meeting/agents/openai.yaml"
+    },
+    {
+      "id": "aios-meeting-write",
+      "primaryAgent": "mason",
+      "defaultWorkflow": "site-daily-loop",
+      "path": "skills/aios-meeting-write/SKILL.md",
+      "openaiConfigPath": "skills/aios-meeting-write/agents/openai.yaml"
     },
     {
       "id": "aios-construction-meeting",
@@ -229,6 +285,20 @@
       "defaultWorkflow": "site-daily-loop",
       "path": "skills/aios-commercial-variation/SKILL.md",
       "openaiConfigPath": "skills/aios-commercial-variation/agents/openai.yaml"
+    },
+    {
+      "id": "aios-scheme",
+      "primaryAgent": "vitruvius",
+      "defaultWorkflow": "review",
+      "path": "skills/aios-scheme/SKILL.md",
+      "openaiConfigPath": "skills/aios-scheme/agents/openai.yaml"
+    },
+    {
+      "id": "aios-scheme-audit",
+      "primaryAgent": "vitruvius",
+      "defaultWorkflow": "review",
+      "path": "skills/aios-scheme-audit/SKILL.md",
+      "openaiConfigPath": "skills/aios-scheme-audit/agents/openai.yaml"
     },
     {
       "id": "aios-construction-scheme",
@@ -383,6 +453,18 @@
       "workflow": "feature-development"
     },
     {
+      "taskType": "工程招投标通用入口，按意图区分写作或审核",
+      "skill": "aios-tender",
+      "agent": "mason",
+      "workflow": "review"
+    },
+    {
+      "taskType": "工程招投标审核、评分点、废标风险和技术标资料矩阵",
+      "skill": "aios-tender-audit",
+      "agent": "mason",
+      "workflow": "review"
+    },
+    {
       "taskType": "工程招投标响应、评分点、废标风险和技术标资料矩阵",
       "skill": "aios-commercial-tender",
       "agent": "mason",
@@ -395,14 +477,50 @@
       "workflow": "feature-development"
     },
     {
+      "taskType": "工程合同审核、履约节点、付款条件、责任边界和资料缺口",
+      "skill": "aios-contract-audit",
+      "agent": "themis",
+      "workflow": "review"
+    },
+    {
+      "taskType": "工程补充协议、合同条款、履约通知和函件草稿生成/改写",
+      "skill": "aios-contract-draft",
+      "agent": "themis",
+      "workflow": "feature-development"
+    },
+    {
       "taskType": "工程合同履约节点、付款条件、责任边界和资料缺口",
       "skill": "aios-commercial-contract",
       "agent": "themis",
       "workflow": "review"
     },
     {
+      "taskType": "工程现场日报通用入口，按意图区分生成或复核",
+      "skill": "aios-daily",
+      "agent": "mason",
+      "workflow": "site-daily-loop"
+    },
+    {
+      "taskType": "施工日报、项目日报、周报素材生成、改写和现场记录整理",
+      "skill": "aios-daily-write",
+      "agent": "mason",
+      "workflow": "site-daily-loop"
+    },
+    {
       "taskType": "施工日报、现场异常、项目群记录和问题追踪台账",
       "skill": "aios-construction-daily",
+      "agent": "mason",
+      "workflow": "site-daily-loop"
+    },
+    {
+      "taskType": "工程会议纪要通用入口，按意图区分生成或复核",
+      "skill": "aios-meeting",
+      "agent": "mason",
+      "workflow": "site-daily-loop"
+    },
+    {
+      "taskType": "工程会议纪要、待办清单和下次追踪生成/改写",
+      "skill": "aios-meeting-write",
       "agent": "mason",
       "workflow": "site-daily-loop"
     },
@@ -417,6 +535,18 @@
       "skill": "aios-commercial-variation",
       "agent": "plutus",
       "workflow": "site-daily-loop"
+    },
+    {
+      "taskType": "专项施工方案通用入口，按意图区分写作或审核",
+      "skill": "aios-scheme",
+      "agent": "vitruvius",
+      "workflow": "review"
+    },
+    {
+      "taskType": "专项施工方案审核、危险源、交底要点和规范/计算书复核清单",
+      "skill": "aios-scheme-audit",
+      "agent": "vitruvius",
+      "workflow": "review"
     },
     {
       "taskType": "专项施工方案、危险源、交底要点和规范/计算书复核清单",
@@ -507,10 +637,13 @@
     "governance/delivery-policy.md",
     "delivery/release-checklist.md",
     "delivery/v1.4.0-release-readiness.md",
+    "delivery/v1.5.0-release-readiness.md",
     "delivery/ai-generated-code-checklist.md",
     "delivery/rollback-policy.md",
+    "docs/industry-user-trial-guide.md",
     "docs/v1.4.0-writing-workflow-quickstart.md",
     "docs/v1.4.0-writing-boundary.md",
+    "docs/v1.5.0-knowledge-pack-runtime.md",
     "memory/decision-records.md",
     "memory/project-memory-policy.md",
     "memory/cleanup-policy.md",
@@ -534,6 +667,7 @@
     "prompts/evaluations/engineering-business-public-advisory-fixtures.json",
     "prompts/evaluations/engineering-document-writing-fixtures.json",
     "prompts/evaluations/engineering-document-writing-scorecard.json",
+    "prompts/evaluations/engineering-knowledge-pack-scorecard.json",
     "prompts/evaluations/skill-runtime/README.md",
     "prompts/evaluations/skill-runtime/v1.4.0-writing-host-validation.json",
     "prompts/evaluations/skill-runtime/v1.4.0-writing-host-validation.md",
@@ -552,12 +686,18 @@
     "infra/permissions.md",
     "infra/service-boundaries.md",
     "skills/engineering-business-starter-kit.md",
+    "skills/aios-tender-audit/prompts/basic-prompt.md",
     "skills/aios-commercial-tender/prompts/basic-prompt.md",
     "skills/aios-tender-write/prompts/basic-prompt.md",
+    "skills/aios-contract-audit/prompts/basic-prompt.md",
+    "skills/aios-contract-draft/prompts/basic-prompt.md",
     "skills/aios-commercial-contract/prompts/basic-prompt.md",
+    "skills/aios-daily-write/prompts/basic-prompt.md",
     "skills/aios-construction-daily/prompts/basic-prompt.md",
+    "skills/aios-meeting-write/prompts/basic-prompt.md",
     "skills/aios-construction-meeting/prompts/basic-prompt.md",
     "skills/aios-commercial-variation/prompts/basic-prompt.md",
+    "skills/aios-scheme-audit/prompts/basic-prompt.md",
     "skills/aios-construction-scheme/prompts/basic-prompt.md",
     "skills/aios-scheme-write/prompts/basic-prompt.md",
     "templates/document-writing/source-normalized.md",
@@ -580,8 +720,25 @@
     "templates/document-writing-samples/scheme/draft.md",
     "templates/document-writing-samples/scheme/review-notes.md",
     "templates/document-writing-samples/scheme/final.md",
+    "templates/knowledge-pack/README.md",
+    "templates/knowledge-pack/knowledge-pack.source.json",
+    "templates/knowledge-pack/source-register.md",
+    "templates/knowledge-pack/standard-register.md",
+    "templates/knowledge-pack/clause-map.md",
+    "templates/knowledge-pack/entity-relation-map.md",
+    "templates/knowledge-pack/eval-questions.md",
+    "templates/knowledge-pack/review-notes.md",
+    "templates/knowledge-pack-samples/scheme-review/README.md",
+    "templates/knowledge-pack-samples/scheme-review/knowledge-pack.source.json",
+    "templates/knowledge-pack-samples/scheme-review/source-register.md",
+    "templates/knowledge-pack-samples/scheme-review/standard-register.md",
+    "templates/knowledge-pack-samples/scheme-review/clause-map.md",
+    "templates/knowledge-pack-samples/scheme-review/entity-relation-map.md",
+    "templates/knowledge-pack-samples/scheme-review/eval-questions.md",
+    "templates/knowledge-pack-samples/scheme-review/review-notes.md",
     "scripts/analyze-prompt-run-results.mjs",
     "scripts/build-prompt-run-pack.mjs",
+    "scripts/validate-knowledge-pack.mjs",
     "scripts/validate-prompt-fixtures.mjs",
     "scripts/validate-prompt-model-outputs.mjs",
     "scripts/validate-prompt-run-results.mjs",

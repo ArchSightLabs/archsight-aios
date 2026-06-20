@@ -1,5 +1,25 @@
 # Release Notes
 
+## 1.5.0
+
+本版本主线是 **Knowledge Pack + 本地 Reference Runtime**。AIOS 不再只把工程资料整理成报告或草稿，而是能把规范摘录、企业标准、项目资料、历史审查口径和人工复核记录治理成可编译、可查询、可评估的工程知识资产。
+
+### Highlights
+
+- 新增 Knowledge Pack 对象模型：来源、授权、版本、标准、条文、实体、关系、lookup 规则、评估问题和人工复核状态。
+- 新增 `knowledge:init` / `knowledge:validate` / `knowledge:compile` / `knowledge:inspect` / `knowledge:lookup` / `knowledge:eval`。
+- 新增端到端合成样板 `templates/knowledge-pack-samples/scheme-review/`。
+- `knowledge.norm_lookup` 接入本地 stdio MCP Reference Runtime，返回可追溯引用、适用性、版本和仲裁状态。
+- 新增 Knowledge Pack 评分卡和 `validate:knowledge-pack` 发布门禁。
+- `aios-knowledge`、`aios-runtime`、`aios-review`、`aios-construction-scheme` 已补充 Knowledge Pack 生产、消费和复核边界。
+- 新增建筑行业自助试用指南，覆盖 WorkBuddy 安装、试用资料选择、脱敏边界、样例任务和人工复核方式。
+- 新增更短的任务型 Skill 入口：`aios-tender`、`aios-tender-audit`、`aios-scheme`、`aios-scheme-audit`。原 `aios-commercial-*` 与 `aios-construction-*` 领域型入口继续保留，适合已培训和内部流程沉淀的团队。
+- 扩充正式工程业务技能包：新增 `aios-contract-audit` / `aios-contract-draft`、`aios-daily` / `aios-daily-write`、`aios-meeting` / `aios-meeting-write`。合同草拟、施工日报生成和会议纪要生成都必须交回对应审核门禁，不能直接标为最终定稿。
+
+### Verification
+
+- `npm run validate:knowledge-pack`
+
 ## 1.4.0
 
 本版本主线是把 AIOS 从“审核型 Skill”推进到“工程文档生成、改写与复核闭环”。新增写作型 Skill 负责初稿生成、历史素材复用和 Markdown 工作母版；现有审核型 Skill 继续负责响应性、证据链、风险和人工复核门禁。

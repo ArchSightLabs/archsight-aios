@@ -1,0 +1,251 @@
+{
+  "schema": 1,
+  "pack": {
+    "id": "scheme-review-reference",
+    "title": "专项施工方案审查 Reference Knowledge Pack",
+    "version": "0.1.0",
+    "status": "reviewed",
+    "domain": "construction-scheme-review",
+    "region": "CN",
+    "discipline": "construction",
+    "sourceVersion": "SYN-2026.01",
+    "dataBoundary": "全部资料为虚构合成样板，只验证知识治理结构和本地 Reference Runtime，不代表真实规范条文。",
+    "license": "synthetic-sample"
+  },
+  "sources": [
+    {
+      "id": "SRC-SYN-SCHEME",
+      "name": "合成专项施工方案审查口径",
+      "type": "synthetic-standard-excerpt",
+      "version": "SYN-2026.01",
+      "pathOrUrl": "source-register.md",
+      "authorization": "synthetic-sample",
+      "hash": "sha256:synthetic-scheme-review",
+      "reviewStatus": "reviewed",
+      "risk": "合成样板不可作为真实规范依据。"
+    }
+  ],
+  "standards": [
+    {
+      "id": "STD-SYN-SCHEME",
+      "name": "合成专项施工方案审查标准",
+      "code": "SYN-SCHEME-2026",
+      "version": "SYN-2026.01",
+      "region": "CN",
+      "discipline": "construction",
+      "status": "reviewed",
+      "sourceId": "SRC-SYN-SCHEME",
+      "sourceVersion": "SYN-2026.01",
+      "effectiveStatus": "sample_only"
+    }
+  ],
+  "clauses": [
+    {
+      "id": "CLAUSE-DEEP-EXCAVATION",
+      "standardId": "STD-SYN-SCHEME",
+      "clauseNo": "S-1.1",
+      "title": "深基坑专项方案触发条件",
+      "text": "合成口径：开挖深度超过 3m 或地质、水文、周边环境复杂时，应形成专项施工方案并保留专家复核路径。",
+      "requirement": "识别开挖深度、周边环境、支护形式和专家复核需求。",
+      "objects": ["深基坑", "土方开挖", "支护体系"],
+      "conditions": ["开挖深度超过 3m", "周边环境复杂", "地下水影响明显"],
+      "exceptions": ["缺少深度或环境条件时不能判断"],
+      "applicability": "need_context",
+      "sourceId": "SRC-SYN-SCHEME",
+      "pageRange": "p.3",
+      "reviewStatus": "reviewed",
+      "tags": ["深基坑", "专项方案", "专家复核"]
+    },
+    {
+      "id": "CLAUSE-HIGH-FORMWORK",
+      "standardId": "STD-SYN-SCHEME",
+      "clauseNo": "S-2.1",
+      "title": "高支模方案计算书要求",
+      "text": "合成口径：模板支撑体系高度、跨度或荷载达到项目控制条件时，应提供计算书、搭设参数和验收记录。",
+      "requirement": "检查支架高度、跨度、荷载、计算书和验收记录是否齐全。",
+      "objects": ["模板支撑", "高支模", "计算书"],
+      "conditions": ["支撑高度达到控制条件", "集中荷载或线荷载较大"],
+      "exceptions": ["缺计算书时不得判断方案已通过"],
+      "applicability": "applicable",
+      "sourceId": "SRC-SYN-SCHEME",
+      "pageRange": "p.7",
+      "reviewStatus": "reviewed",
+      "tags": ["高支模", "计算书", "验收"]
+    },
+    {
+      "id": "CLAUSE-CRANE-LIFTING",
+      "standardId": "STD-SYN-SCHEME",
+      "clauseNo": "S-3.1",
+      "title": "起重吊装作业资料要求",
+      "text": "合成口径：起重吊装作业应明确设备参数、吊点、吊装路径、人员资质、警戒范围和旁站记录。",
+      "requirement": "检查设备能力、吊点复核、人员资质和现场警戒记录。",
+      "objects": ["起重吊装", "吊点", "设备能力"],
+      "conditions": ["存在吊装作业"],
+      "exceptions": ["缺少设备参数时只能标为需核验"],
+      "applicability": "applicable",
+      "sourceId": "SRC-SYN-SCHEME",
+      "pageRange": "p.11",
+      "reviewStatus": "reviewed",
+      "tags": ["吊装", "设备", "旁站"]
+    },
+    {
+      "id": "CLAUSE-CONFLICT-REVIEW",
+      "standardId": "STD-SYN-SCHEME",
+      "clauseNo": "S-9.9",
+      "title": "冲突口径人工复核",
+      "text": "合成口径：当方案资料、专家意见和现场记录对关键参数存在冲突时，应暂停自动结论并转人工复核。",
+      "requirement": "识别参数冲突并阻断自动放行。",
+      "objects": ["冲突资料", "专家意见", "现场记录"],
+      "conditions": ["关键参数冲突", "版本不一致"],
+      "exceptions": ["冲突消解前不得发布结论"],
+      "applicability": "need_context",
+      "sourceId": "SRC-SYN-SCHEME",
+      "pageRange": "p.15",
+      "reviewStatus": "reviewed",
+      "tags": ["冲突", "人工复核", "阻断"]
+    }
+  ],
+  "entities": [
+    {
+      "id": "ENT-DEEP-EXCAVATION",
+      "type": "Requirement",
+      "name": "深基坑专项方案要求",
+      "sourceRefs": ["CLAUSE-DEEP-EXCAVATION"],
+      "confidence": 0.92
+    },
+    {
+      "id": "ENT-HIGH-FORMWORK",
+      "type": "Requirement",
+      "name": "高支模计算书要求",
+      "sourceRefs": ["CLAUSE-HIGH-FORMWORK"],
+      "confidence": 0.9
+    },
+    {
+      "id": "ENT-CRANE-LIFTING",
+      "type": "Requirement",
+      "name": "起重吊装资料要求",
+      "sourceRefs": ["CLAUSE-CRANE-LIFTING"],
+      "confidence": 0.88
+    }
+  ],
+  "relations": [
+    {
+      "id": "REL-DEEP-DERIVED",
+      "from": "ENT-DEEP-EXCAVATION",
+      "to": "CLAUSE-DEEP-EXCAVATION",
+      "type": "DERIVED_FROM",
+      "sourceRefs": ["CLAUSE-DEEP-EXCAVATION"],
+      "confidence": 0.92
+    },
+    {
+      "id": "REL-FORMWORK-DERIVED",
+      "from": "ENT-HIGH-FORMWORK",
+      "to": "CLAUSE-HIGH-FORMWORK",
+      "type": "DERIVED_FROM",
+      "sourceRefs": ["CLAUSE-HIGH-FORMWORK"],
+      "confidence": 0.9
+    },
+    {
+      "id": "REL-LIFTING-DERIVED",
+      "from": "ENT-CRANE-LIFTING",
+      "to": "CLAUSE-CRANE-LIFTING",
+      "type": "DERIVED_FROM",
+      "sourceRefs": ["CLAUSE-CRANE-LIFTING"],
+      "confidence": 0.88
+    }
+  ],
+  "lookupRules": [
+    {
+      "id": "LOOKUP-DEEP-EXCAVATION",
+      "queryTerms": ["深基坑", "开挖", "基坑"],
+      "clauseIds": ["CLAUSE-DEEP-EXCAVATION"],
+      "applicability": "need_context",
+      "requiredContext": ["开挖深度", "周边环境", "地下水"],
+      "notes": "命中深基坑口径；必须结合开挖深度和周边环境判断。"
+    },
+    {
+      "id": "LOOKUP-HIGH-FORMWORK",
+      "queryTerms": ["高支模", "模板支撑", "计算书"],
+      "clauseIds": ["CLAUSE-HIGH-FORMWORK"],
+      "applicability": "applicable",
+      "requiredContext": ["支撑高度", "跨度", "荷载"],
+      "notes": "命中高支模计算书口径；缺计算书时不得判断方案通过。"
+    },
+    {
+      "id": "LOOKUP-CRANE-LIFTING",
+      "queryTerms": ["吊装", "起重", "吊点"],
+      "clauseIds": ["CLAUSE-CRANE-LIFTING"],
+      "applicability": "applicable",
+      "requiredContext": ["设备参数", "吊点", "人员资质"],
+      "notes": "命中起重吊装资料口径；设备参数缺失时需核验。"
+    },
+    {
+      "id": "LOOKUP-CONFLICT",
+      "queryTerms": ["冲突", "版本不一致", "专家意见不一致"],
+      "clauseIds": ["CLAUSE-CONFLICT-REVIEW"],
+      "applicability": "need_context",
+      "status": "conflict",
+      "requiredContext": ["冲突来源", "版本关系"],
+      "notes": "命中冲突口径；自动结论应暂停并转人工复核。"
+    }
+  ],
+  "evalQuestions": [
+    {
+      "id": "EVAL-DEEP-EXCAVATION",
+      "type": "need_context",
+      "question": "深基坑开挖前需要专项方案吗？",
+      "expectedStatus": "found",
+      "expectedApplicability": "need_context",
+      "expectedClauseIds": ["CLAUSE-DEEP-EXCAVATION"],
+      "mustCiteSourceVersion": true,
+      "expectedNotesContains": ["开挖深度"]
+    },
+    {
+      "id": "EVAL-HIGH-FORMWORK",
+      "type": "answerable",
+      "question": "高支模方案是否应检查计算书？",
+      "expectedStatus": "found",
+      "expectedApplicability": "applicable",
+      "expectedClauseIds": ["CLAUSE-HIGH-FORMWORK"],
+      "mustCiteSourceVersion": true,
+      "expectedNotesContains": ["计算书"]
+    },
+    {
+      "id": "EVAL-NOT-FOUND",
+      "type": "unanswerable",
+      "question": "这个知识包能判断消防喷淋系统联动验收吗？",
+      "expectedStatus": "not_found",
+      "expectedApplicability": "need_context",
+      "expectedClauseIds": [],
+      "mustCiteSourceVersion": false,
+      "expectedNotesContains": ["未命中"]
+    },
+    {
+      "id": "EVAL-CONFLICT",
+      "type": "conflict",
+      "question": "专家意见和现场记录版本不一致时能否自动放行？",
+      "expectedStatus": "conflict",
+      "expectedApplicability": "need_context",
+      "expectedClauseIds": ["CLAUSE-CONFLICT-REVIEW"],
+      "mustCiteSourceVersion": true,
+      "expectedNotesContains": ["人工复核"]
+    },
+    {
+      "id": "EVAL-INAPPLICABLE",
+      "type": "version_mismatch",
+      "question": "高支模方案是否应检查计算书？",
+      "inputSourceVersion": "SYN-OLD",
+      "expectedStatus": "inapplicable",
+      "expectedApplicability": "not_applicable",
+      "expectedClauseIds": [],
+      "mustCiteSourceVersion": false,
+      "expectedNotesContains": ["版本"]
+    }
+  ],
+  "review": {
+    "humanReviewer": "Synthetic reviewer",
+    "reviewedAt": "2026-06-19",
+    "status": "reviewed",
+    "notes": "合成样板已覆盖 found / not_found / conflict / inapplicable / need_context，不代表真实规范结论。"
+  }
+}

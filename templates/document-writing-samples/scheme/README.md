@@ -6,7 +6,7 @@
 
 1. 读取 `source-normalized.md` 和 `material-index.md`。
 2. 使用 `aios-scheme-write` 生成或改写 `draft.md`。
-3. 使用 `aios-construction-scheme` 复核 `review-notes.md` 中的危险源、计算书、专家意见和交底要点。
+3. 使用 `aios-scheme-audit` 复核 `review-notes.md` 中的危险源、计算书、专家意见和交底要点；已使用 `aios-construction-scheme` 的团队可继续使用原入口。
 4. 人工处理阻断项后整理 `final.md`。
 
 ## 边界

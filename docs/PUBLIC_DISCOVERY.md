@@ -176,7 +176,7 @@ Supported agents: Codex, Claude Code, Antigravity/agy, Gemini CLI, WorkBuddy, Op
 Canonical skill path: skills/
 Install command: npx skills add ArchSightLabs/archsight-aios --list
 NPM install command: npx @archsight/aios install --target all --scope user
-Representative skills: aios-arch, aios-design, aios-plan, aios-exec, aios-review, aios-knowledge, aios-structural, aios-runtime, aios-commercial-tender, aios-construction-daily
+Representative skills: aios-arch, aios-design, aios-plan, aios-exec, aios-review, aios-knowledge, aios-structural, aios-runtime, aios-tender, aios-tender-audit, aios-contract-audit, aios-contract-draft, aios-daily-write, aios-meeting-write, aios-scheme, aios-scheme-audit
 Keywords: agent skills, construction AI, BIM, IFC, building code, GraphRAG, architecture review, design review, code review, runtime design, MCP, structural review, tender review, construction management
 ```
 

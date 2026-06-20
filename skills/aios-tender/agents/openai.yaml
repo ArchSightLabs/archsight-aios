@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Tender"
+  short_description: "工程招投标通用入口，自动区分写作和审核"
+  default_prompt: "当任务涉及建筑工程招标文件、技术标、投标响应、评分点、废标风险或标书章节生成，且用户没有明确区分写作或审核时，使用该技能先判断任务意图；生成、改写和历史素材复用路由到 aios-tender-write；读标、评分点、废标风险和资料缺口复核路由到 aios-tender-audit；混合任务先审核建矩阵，再写作，最后回到审核门禁。"

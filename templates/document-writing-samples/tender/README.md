@@ -6,7 +6,7 @@
 
 1. 读取 `source-normalized.md` 和 `material-index.md`。
 2. 使用 `aios-tender-write` 生成或改写 `draft.md`。
-3. 使用 `aios-commercial-tender` 复核 `review-notes.md` 中的响应性、评分点和废标风险。
+3. 使用 `aios-tender-audit` 复核 `review-notes.md` 中的响应性、评分点和废标风险；已使用 `aios-commercial-tender` 的团队可继续使用原入口。
 4. 人工处理阻断项后整理 `final.md`。
 
 ## 边界

@@ -1,4 +1,4 @@
 interface:
   display_name: "AIOS Tender Write"
   short_description: "生成和优化工程技术标、评分点响应和标书章节"
-  default_prompt: "当任务涉及工程标书、技术标、投标响应章节的生成、改写或历史素材复用时，使用该技能；默认以 Markdown 作为工作母版，必须包含资料来源、写作 brief、素材复用判断、章节草稿、待补资料、人工复核岗位和审核门禁；不得编造资质、业绩、人员、设备、工期、金额或中标结论；生成后必须交回 aios-commercial-tender 复核。"
+  default_prompt: "当任务涉及工程标书、技术标、投标响应章节的生成、改写或历史素材复用时，使用该技能；默认以 Markdown 作为工作母版，必须包含资料来源、写作 brief、素材复用判断、章节草稿、待补资料、人工复核岗位和审核门禁；不得编造资质、业绩、人员、设备、工期、金额或中标结论；生成后必须交回 aios-tender-audit 复核；已使用 aios-commercial-tender 的团队可继续作为同类审核入口。"

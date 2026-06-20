@@ -1,4 +1,4 @@
 interface:
   display_name: "AIOS Scheme Write"
   short_description: "生成和优化专项施工方案、工艺章节和交底材料"
-  default_prompt: "当任务涉及专项施工方案、施工技术措施或交底材料的生成、改写、历史方案复用或专家意见回写时，使用该技能；默认以 Markdown 作为工作母版，必须包含资料来源、写作 brief、素材复用判断、方案章节草稿、待补资料、人工复核岗位和审核门禁；不得输出方案合格、计算正确、专家论证通过或审批通过；生成后必须交回 aios-construction-scheme 复核。"
+  default_prompt: "当任务涉及专项施工方案、施工技术措施或交底材料的生成、改写、历史方案复用或专家意见回写时，使用该技能；默认以 Markdown 作为工作母版，必须包含资料来源、写作 brief、素材复用判断、方案章节草稿、待补资料、人工复核岗位和审核门禁；不得输出方案合格、计算正确、专家论证通过或审批通过；生成后必须交回 aios-scheme-audit 复核；已使用 aios-construction-scheme 的团队可继续作为同类审核入口。"

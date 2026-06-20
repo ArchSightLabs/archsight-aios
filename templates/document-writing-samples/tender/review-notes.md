@@ -4,7 +4,7 @@
 
 | 项目 | 对应审核 Skill |
 |---|---|
-| 标书 / 技术标 | `aios-commercial-tender` |
+| 标书 / 技术标 | `aios-tender-audit` |
 
 ## 复核问题清单
 

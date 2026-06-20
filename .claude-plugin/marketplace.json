@@ -17,6 +17,9 @@
         "construction-ai",
         "building-ai",
         "aec",
+        "tender",
+        "technical-bid",
+        "scheme-audit",
         "bim",
         "ifc",
         "building-code",
@@ -52,7 +55,9 @@
         "runtime design",
         "structural review",
         "construction daily",
-        "tender review"
+        "tender review",
+        "technical bid",
+        "scheme audit"
       ],
       "skills": "./skills/"
     }

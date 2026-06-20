@@ -4,7 +4,7 @@
 
 | 项目 | 对应审核 Skill |
 |---|---|
-| 专项施工方案 | `aios-construction-scheme` |
+| 专项施工方案 | `aios-scheme-audit` |
 
 ## 复核问题清单
 

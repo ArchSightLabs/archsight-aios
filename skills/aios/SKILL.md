@@ -24,25 +24,36 @@ description: ArchSight AIOS 总路由入口。用户只说“请用 AIOS 技能�
 - 请用 AIOS 分析这份资料。
 - 用 ArchSight AIOS 看一下这个文件。
 - 这个工程资料用 AIOS 跑一下。
-- 没有明确写出 `aios-commercial-contract`、`aios-construction-scheme` 等具体 Skill，但任务明显属于建筑工程资料整理、复核、台账或证据链场景。
+- 没有明确写出 `aios-tender`、`aios-contract-audit`、`aios-daily`、`aios-meeting`、`aios-scheme`、`aios-commercial-contract`、`aios-construction-scheme` 等具体 Skill，但任务明显属于建筑工程资料整理、复核、写作、台账或证据链场景。
 
 ## 路由表
 
 | 资料 / 任务线索 | 路由到 | 默认输出方向 |
 |---|---|---|
-| 招标文件、评分办法、技术标、商务标、资格条件、AI 技术标问题、废标风险 | `aios-commercial-tender` | 响应矩阵、评分点、资料清单、风险提示、人工复核事项 |
+| 招投标、技术标、评分点、商务标，但用户未区分写作还是审核 | `aios-tender` | 判断写作 / 审核 / 混合流程，并路由到 `aios-tender-write` 或 `aios-tender-audit` |
+| 招标文件、评分办法、技术标、商务标、资格条件、AI 技术标问题、废标风险 | `aios-tender-audit` | 响应矩阵、评分点、资料清单、风险提示、人工复核事项 |
+| 已使用原领域型招投标入口的团队 | `aios-commercial-tender` | 保留原工程商务 / 招投标证据链入口含义 |
 | 标书编写、技术标生成、投标响应章节改写、历史标书素材复用、用户提供技术标初稿 | `aios-tender-write` | Markdown 工作母版、写作 brief、素材匹配表、章节初稿、审核门禁 |
-| 合同、协议、分包、采购、租赁、付款、结算、履约、违约、争议解决 | `aios-commercial-contract` | 合同基本事实、空白字段、履约节点、付款结算、责任边界、资料缺口 |
-| 项目日报、施工日报、周报素材、现场记录、材料进场、机械、劳务、进度 | `aios-construction-daily` | 管理摘要、问题台账、异常事项、模板质量诊断、待追踪事项 |
-| 会议纪要、例会、协调会、专题会、交底会、待办、责任人、截止时间 | `aios-construction-meeting` | 会议结论、待办闭环、责任线索、遗留问题、下次追踪 |
+| 合同、协议、分包、采购、租赁、付款、结算、履约、违约、争议解决，但用户未区分草拟还是审核 | `aios-contract-audit` | 合同基本事实、空白字段、履约节点、付款结算、责任边界、资料缺口 |
+| 合同审核、合同复核、履约节点、付款条件、责任边界、资料缺口 | `aios-contract-audit` | 履约节点表、付款条件、责任边界、资料缺口、人工复核事项 |
+| 补充协议草拟、条款改写、履约通知、催款函、回函、合同交底 | `aios-contract-draft` | Markdown 草稿、写作 brief、来源标记、待补占位、审核门禁 |
+| 已使用原领域型合同入口的团队 | `aios-commercial-contract` | 保留原工程商务 / 合同履约证据链入口含义 |
+| 项目日报、施工日报、周报素材、现场记录，但用户未区分生成还是复核 | `aios-daily` | 判断写作 / 复核 / 混合流程，并路由到 `aios-daily-write` 或 `aios-construction-daily` |
+| 日报生成、日报编写、现场口述、项目群记录、照片说明、班组汇报 | `aios-daily-write` | Markdown 日报草稿、事实抽取表、待补资料、审核门禁 |
+| 已有施工日报、周报、现场异常、进度、材料进场、机械、劳务、问题台账 | `aios-construction-daily` | 管理摘要、问题台账、异常事项、模板质量诊断、待追踪事项 |
+| 会议纪要、例会、协调会、专题会、交底会，但用户未区分生成还是复核 | `aios-meeting` | 判断写作 / 复核 / 混合流程，并路由到 `aios-meeting-write` 或 `aios-construction-meeting` |
+| 会议纪要生成、录音转写、会议笔记、群聊摘要、待办清单草稿 | `aios-meeting-write` | Markdown 纪要草稿、结论 / 待办抽取表、待补资料、审核门禁 |
+| 已有会议纪要、待办、责任人、截止时间、遗留争议、下次追踪 | `aios-construction-meeting` | 会议结论、待办闭环、责任线索、遗留问题、下次追踪 |
 | 变更、签证、联系单、洽商、索赔、停工窝工、图纸变更、工程量变化 | `aios-commercial-variation` | 资料链、断点、流程依据、疑点、复核分流 |
-| 专项施工方案、施工组织、危大工程、深基坑、高支模、脚手架、吊装、危险源、交底、专家论证、计算书 | `aios-construction-scheme` | 工程概况、关键工序、危险源、交底要点、规范 / 计算书 / 专家复核清单 |
+| 专项施工方案、施工组织、危大工程，但用户未区分写作还是审核 | `aios-scheme` | 判断写作 / 审核 / 混合流程，并路由到 `aios-scheme-write` 或 `aios-scheme-audit` |
+| 专项施工方案、施工组织、危大工程、深基坑、高支模、脚手架、吊装、危险源、交底、专家论证、计算书 | `aios-scheme-audit` | 工程概况、关键工序、危险源、交底要点、规范 / 计算书 / 专家复核清单 |
+| 已使用原领域型专项方案入口的团队 | `aios-construction-scheme` | 保留原工程施工 / 专项方案证据链入口含义 |
 | 方案编写、方案生成、方案改写、历史方案素材复用、专家意见回写、施工方案初稿优化 | `aios-scheme-write` | Markdown 工作母版、写作 brief、素材匹配表、方案章节初稿、审核门禁 |
 | 结构计算、荷载、边界条件、挠度、稳定、FEM、结构求解器 | `aios-structural` | 结构力学输入检查、求解链路、转 Euclid 结构复核、人工签审边界 |
-| BIM、IFC、Revit、CAD、建筑规范、审图规则、知识结构化 | `aios-knowledge` | 行业语义、规范知识、资料来源、知识结构化边界 |
+| BIM、IFC、Revit、CAD、建筑规范、审图规则、知识结构化、Knowledge Pack、知识包治理 | `aios-knowledge` | 行业语义、规范知识、资料来源、Knowledge Pack 编译 / 评估边界 |
 | 用户明确调用 `aios-compare`，或明确要求用 AIOS 判断两份文档 / 两个版本 / 两个 AI 输出哪份更专业 | `aios-compare` | 对比范围、可比性判断、结构差异、内容差异、专业度评分、边界风险、合并建议 |
 | 开发者明确调用 `aios-prompt-compare`，并要求 weak / portable / skill-runtime 或提示词沉淀评测 | `aios-prompt-compare` | 运行记录、原始输出对照、评分卡、失败模式、沉淀建议 |
-| AI Runtime、RAG、GraphRAG、MCP、Tool Calling、Memory、多 Agent 编排 | `aios-runtime` | Runtime 边界、工具权限、知识管线、运行治理 |
+| AI Runtime、RAG、GraphRAG、MCP、Tool Calling、Memory、多 Agent 编排、Knowledge Pack Reference Runtime | `aios-runtime` | Runtime 边界、工具权限、知识管线、Reference Runtime 和运行治理 |
 | 建筑行业软件 / 系统深度评价、产品定位、商业验证、范围取舍 | `aios-ceo` | 一把手视角评价、阶段路线、风险和停损信号 |
 | 建筑行业平台界面、工作台、BIM Viewer、审图复核、数据看板 | `aios-design` | 界面任务路径、证据定位、复核追溯、实现交接 |
 | 架构、服务边界、技术选型、长期复杂度 | `aios-arch` | 架构边界、数据链路、治理风险 |

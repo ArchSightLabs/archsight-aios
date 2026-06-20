@@ -75,25 +75,46 @@
     {
       "id": "knowledge.norm_lookup",
       "type": "compliance_lookup",
-      "ownerAgents": ["vitruvius", "athena", "mason", "argus"],
+      "ownerAgents": ["vitruvius", "athena", "mason", "argus", "daedalus"],
       "allowedSkills": [
         "aios-knowledge",
+        "aios-runtime",
+        "aios-review",
+        "aios-plan",
         "aios-arch",
         "aios-ceo",
+        "aios-tender",
+        "aios-tender-audit",
+        "aios-tender-write",
         "aios-commercial-tender",
+        "aios-contract-audit",
+        "aios-contract-draft",
         "aios-commercial-contract",
+        "aios-daily",
+        "aios-daily-write",
         "aios-construction-daily",
+        "aios-meeting",
+        "aios-meeting-write",
         "aios-construction-meeting",
         "aios-commercial-variation",
+        "aios-scheme",
+        "aios-scheme-audit",
+        "aios-scheme-write",
         "aios-construction-scheme"
       ],
       "authorityLevel": "L3",
       "description": "按地区、专业、版本、条文和适用条件检索规范知识，返回可追溯引用和适用性判断。",
-      "status": "declared-interface",
+      "status": "implemented-reference-runtime",
       "inputSchema": {
         "type": "object",
         "required": ["query"],
         "properties": {
+          "knowledgePackPath": {
+            "type": "string"
+          },
+          "packPath": {
+            "type": "string"
+          },
           "query": {
             "type": "string"
           },

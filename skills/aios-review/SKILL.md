@@ -28,6 +28,7 @@ description: 代码审查和风险评审工作流。用于审查 diff、PR、AI 
 - 测试、lint、typecheck、构建或安全扫描结果。
 - 相关架构约束、权限约束、Runtime 配置。
 - Capability 工具返回值、仲裁 Claim 和阻断规则，如存在。
+- Knowledge Pack、`knowledge.norm_lookup` 输出、eval gate 和编译产物，如本次改动涉及知识治理或 RAG / GraphRAG。
 - AI 生成代码的来源和改动范围。
 
 ## 工作流
@@ -37,8 +38,9 @@ description: 代码审查和风险评审工作流。用于审查 diff、PR、AI 
 3. 检查是否扩大需求范围、修改无关文件或引入不必要抽象。
 4. 对 Prompt、Tool Calling、MCP、Memory、RAG 相关改动检查注入、越权和数据污染风险。
 5. 对测试、规范、结构求解、安全扫描等 Capability 结果检查输入、版本、适用条件和执行状态。
-6. 区分阻断问题、非阻断建议和风格偏好。
-7. 没有问题时明确说明剩余未验证项。
+6. 对 Knowledge Pack 改动检查来源授权、版本适用性、条文引用、图谱关系、lookup 规则、eval 覆盖和人工复核状态。
+7. 区分阻断问题、非阻断建议和风格偏好。
+8. 没有问题时明确说明剩余未验证项。
 
 ## 输出格式
 
@@ -75,3 +77,4 @@ description: 代码审查和风险评审工作流。用于审查 diff、PR、AI 
 - 不在无证据时断言漏洞。
 - 不替代 Hephaestus 大规模改代码。
 - 不跳过测试和验证直接放行。
+- 不放行缺少 `knowledge:validate`、`knowledge:compile` 或 `knowledge:eval` 证据的 Knowledge Pack 发布。

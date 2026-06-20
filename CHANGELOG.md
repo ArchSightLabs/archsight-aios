@@ -1,5 +1,35 @@
 # 变更记录
 
+## 1.5.0
+
+### 发布说明
+
+本版本把 AIOS 从“能写工程文档”推进到“能治理工程知识”。新增 Knowledge Pack 作为 AIOS 原生知识资产，把来源、授权、版本、标准、条文、实体、关系、lookup 规则、评估问题和人工复核状态编译为可查询、可评估、可由 Skill / Runtime 消费的工程知识包。
+
+### 新增
+
+- 新增 `templates/knowledge-pack/` 工程知识治理工作台模板。
+- 新增 `templates/knowledge-pack-samples/scheme-review/` 端到端合成样板，覆盖 found / not_found / conflict / inapplicable / need_context。
+- 新增 `archsight-aios knowledge:init`、`knowledge:validate`、`knowledge:compile`、`knowledge:inspect`、`knowledge:lookup` 和 `knowledge:eval`。
+- 新增 `knowledge.norm_lookup` 本地 stdio MCP Reference Runtime，可查询编译后的 Knowledge Pack 并输出 Capability 仲裁证据。
+- 新增 `prompts/evaluations/engineering-knowledge-pack-scorecard.json` 和 `npm run validate:knowledge-pack`，固定来源治理、版本适用性、条文结构、图谱追溯、Runtime 查询、eval gate 和人工复核边界。
+- 新增 [v1.5.0 Knowledge Pack 与本地 Reference Runtime](docs/v1.5.0-knowledge-pack-runtime.md) 和 v1.5.0 release readiness 清单。
+- 新增建筑行业自助试用指南 `docs/industry-user-trial-guide.md`，面向非开发者说明 WorkBuddy 安装、试用指令、资料脱敏、样例任务和人工复核边界。
+- 新增短名任务型入口 `aios-tender`、`aios-tender-audit`、`aios-scheme` 和 `aios-scheme-audit`；原 `aios-commercial-*` 与 `aios-construction-*` 领域型入口继续保留原意。
+- 扩充正式工程业务技能包：新增 `aios-contract-audit` / `aios-contract-draft`、`aios-daily` / `aios-daily-write`、`aios-meeting` / `aios-meeting-write`，分别覆盖合同审核与草拟、施工日报生成与复核路由、工程会议纪要生成与闭环路由。
+
+### 调整
+
+- `knowledge.norm_lookup` 从 declared interface 升级为 implemented reference runtime。
+- `aios-knowledge`、`aios-runtime`、`aios-review` 和 `aios-construction-scheme` 增加 Knowledge Pack 使用、复核和发布门禁。
+- `aios-tender-write` 和 `aios-scheme-write` 的默认审核门禁更新为 `aios-tender-audit` 与 `aios-scheme-audit`，旧流程仍可交回 `aios-commercial-tender` 与 `aios-construction-scheme`。
+- RAG / GraphRAG workflow 明确行业知识输入优先治理为 Knowledge Pack。
+- 版本升级到 `1.5.0`，同步更新 npm package、Gemini extension、Claude plugin、runtime manifest 和 CLI MCP clientInfo。
+
+### 验证
+
+- `npm run validate:knowledge-pack`
+
 ## 1.4.0
 
 ### 新增

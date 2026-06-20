@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Scheme"
+  short_description: "专项施工方案通用入口，自动区分写作和审核"
+  default_prompt: "当任务涉及专项施工方案、危大工程方案、技术措施、专家意见、计算书缺口、危险源或方案章节生成，且用户没有明确区分写作或审核时，使用该技能先判断任务意图；生成、改写和历史方案复用路由到 aios-scheme-write；危险源、规范、计算书、专家意见和交底要点复核路由到 aios-scheme-audit；混合任务先审核列问题，再写作，最后回到审核门禁。"

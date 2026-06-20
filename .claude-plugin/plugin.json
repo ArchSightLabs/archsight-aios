@@ -1,7 +1,7 @@
 {
   "name": "archsight-aios",
   "displayName": "ArchSight AIOS",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "面向建筑行业知识工作从业者与 AI 研发团队的 Skills、Workflow 与多 Agent 工具包 / Building-industry AI agent skills for BIM, IFC, RAG, GraphRAG, project evidence work, code review, and runtime governance.",
   "author": {
     "name": "ArchSightLabs",
@@ -15,9 +15,13 @@
     "construction-ai",
     "building-ai",
     "aec",
+    "tender",
+    "technical-bid",
+    "scheme-audit",
     "bim",
     "ifc",
     "building-code",
+    "knowledge-pack",
     "project-evidence-work",
     "rag",
     "graphrag",

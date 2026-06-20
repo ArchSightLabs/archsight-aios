@@ -59,13 +59,23 @@ Skill 可以继续用 `SKILL.md` 表达操作方法，但涉及确定性工具�
 | `aios-exec` | 有边界地改代码、修 bug、更新文档、运行验证。 |
 | `aios-review` | PR、diff、AI 生成代码、安全、证据链和测试缺口审查。 |
 | `aios-arch` | 架构边界、技术选型、长期复杂度和方案评审。 |
-| `aios-knowledge` | BIM、IFC、建筑规范、审图规则和知识结构化。 |
+| `aios-knowledge` | BIM、IFC、建筑规范、审图规则、Knowledge Pack 和知识结构化。 |
 | `aios-structural` | 结构力学、荷载、边界条件、FEM 和确定性求解链路评审。 |
-| `aios-runtime` | Prompt、Context、Memory、MCP/Tool、RAG/GraphRAG 和多 Agent Runtime 设计。 |
+| `aios-runtime` | Prompt、Context、Memory、MCP/Tool、Knowledge Pack Reference Runtime、RAG/GraphRAG 和多 Agent Runtime 设计。 |
 | `aios-compare` | 文档专业度对比：比较两份文档、两个版本或两个 AI 输出哪份更专业、更可复核、更适合交付。 |
 | `aios-prompt-compare` | 内部 Prompt / Skill 测试工具：仅开发者明确调用时，对同一输入分别评估弱提示词、便携强提示词和真实 Skill 触发结果，判断是否应沉淀为 Skill。 |
-| `aios-tender-write` | 工程标书 / 技术标生成与改写：基于招标要求、历史标书素材和用户初稿生成 Markdown 工作母版，并交回 `aios-commercial-tender` 复核。 |
-| `aios-scheme-write` | 专项施工方案生成与改写：基于方案初稿、历史方案素材、工程概况和专家意见生成 Markdown 工作母版，并交回 `aios-construction-scheme` 复核。 |
+| `aios-tender` | 工程招投标通用入口：按用户意图区分写作、审核或“先读标再写”。 |
+| `aios-tender-audit` | 工程招投标审核：提取评分点、资格条件、废标风险、资料缺口和人工复核事项。 |
+| `aios-tender-write` | 工程标书 / 技术标生成与改写：基于招标要求、历史标书素材和用户初稿生成 Markdown 工作母版，并交回 `aios-tender-audit` 复核。 |
+| `aios-contract-audit` | 工程合同审核：提取履约节点、付款条件、责任边界、资料缺口和人工复核事项。 |
+| `aios-contract-draft` | 工程合同草拟：生成补充协议、条款改写、履约通知、函件和合同交底 Markdown 草稿，并交回 `aios-contract-audit` 复核。 |
+| `aios-daily` | 工程现场日报通用入口：按用户意图区分日报生成、复核或“先写再查”。 |
+| `aios-daily-write` | 施工日报 / 项目日报生成与改写：基于现场口述、项目群记录、照片说明和用户初稿生成 Markdown 草稿，并交回 `aios-construction-daily` 复核。 |
+| `aios-meeting` | 工程会议纪要通用入口：按用户意图区分纪要生成、复核或“先写再查”。 |
+| `aios-meeting-write` | 工程会议纪要生成与改写：基于录音转写、会议笔记和用户初稿生成 Markdown 草稿，并交回 `aios-construction-meeting` 复核。 |
+| `aios-scheme` | 专项施工方案通用入口：按用户意图区分写作、审核或“先复核再改写”。 |
+| `aios-scheme-audit` | 专项施工方案审核：提取危险源、交底要点、规范核验点、计算书缺口和专家复核事项。 |
+| `aios-scheme-write` | 专项施工方案生成与改写：基于方案初稿、历史方案素材、工程概况和专家意见生成 Markdown 工作母版，并交回 `aios-scheme-audit` 复核。 |
 
 工程业务管理技能包 (Engineering Project Management)：
 
@@ -73,13 +83,25 @@ Skill 可以继续用 `SKILL.md` 表达操作方法，但涉及确定性工具�
 
 | Skill | 用途 |
 | --- | --- |
+| `aios-tender` | 工程招投标通用短名入口，适合新用户按任务意图路由到写作或审核。 |
+| `aios-tender-audit` | 工程招投标审核短名入口，用于提取评分点、资格条件、废标风险、资料缺口和人工复核事项。 |
 | `aios-commercial-tender` | 工程招投标响应证据链，用于提取评分点、资格条件、废标风险、资料缺口和人工复核事项。 |
 | `aios-tender-write` | 工程标书 / 技术标生成与改写，用于生成目录、章节初稿、评分点响应内容和历史素材复用表。 |
+| `aios-contract-audit` | 工程合同审核短名入口，用于提取履约节点、付款条件、责任边界、资料缺口和人工复核事项。 |
+| `aios-contract-draft` | 工程合同草拟短名入口，用于生成补充协议、条款改写、履约通知、回函和合同交底草稿。 |
 | `aios-commercial-contract` | 工程分包、采购和补充协议履约证据链，用于提取节点、责任边界、付款条件和合同资料缺口。 |
+| `aios-daily` | 工程现场日报通用短名入口，适合新用户按任务意图路由到生成或复核。 |
+| `aios-daily-write` | 施工日报 / 项目日报生成与改写，用于把现场口述、项目群记录、照片说明和用户初稿整理为日报草稿。 |
 | `aios-construction-daily` | 现场施工日报证据链，用于提取管理摘要、异常、问题台账、计划偏差和需补充确认事项。 |
+| `aios-meeting` | 工程会议纪要通用短名入口，适合新用户按任务意图路由到生成或复核。 |
+| `aios-meeting-write` | 工程会议纪要生成与改写，用于把录音转写、会议笔记、群聊摘要和用户初稿整理为纪要草稿。 |
 | `aios-construction-meeting` | 工程现场会议待办闭环，用于将会议讨论转化为责任人、期限、争议点和下次追踪清单。 |
 | `aios-commercial-variation` | 工程变更签证资料链审查，用于梳理联系单、纪要、图纸变更、合同流程和资料断点。 |
+| `aios-scheme` | 专项施工方案通用短名入口，适合新用户按任务意图路由到写作或审核。 |
+| `aios-scheme-audit` | 专项施工方案审核短名入口，用于提取危险源、交底要点、规范核验点、计算书缺口和专家复核事项。 |
 | `aios-construction-scheme` | 专项施工方案证据链辅审，用于提取危险源、交底要点、规范核验点、计算书缺口和专家复核事项。 |
 | `aios-scheme-write` | 专项施工方案生成与改写，用于生成方案章节、工艺流程、危险源控制措施和交底材料初稿。 |
+
+`aios-commercial-*` 和 `aios-construction-*` 系列保留原有领域型入口含义，适合已经在团队培训和内部流程中使用这些命令的场景；`aios-tender*`、`aios-contract-*`、`aios-daily*`、`aios-meeting*` 和 `aios-scheme*` 是更短的任务型入口，适合新用户自助试用和正式技能包对外展示。
 
 工程业务管理 Skill 只处理建筑工程资料抽取、生成初稿、证据链整理、风险提示和人工复核分流，不替代法务、造价、监理、安全、项目经理、总工或专家签审。涉及规范、制度、结构计算、质量安全、金额、工期索赔或责任归属时，必须输出中文化的 `判断事项 / 证据 / 工具结果 / 处理建议`；没有工具或人工证据时只能标注 `需核验` 或 `转人工复核`。写作型 Skill 必须使用 Markdown 工作母版，保留素材来源、复用判断、待补占位和审核门禁，不得把历史项目事实直接套入当前项目。

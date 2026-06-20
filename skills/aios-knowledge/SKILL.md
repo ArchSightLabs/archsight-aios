@@ -37,6 +37,7 @@ description: 建筑知识结构化工作流。用于整理 BIM、IFC、建筑规
 5. 标注冲突、歧义、缺失上下文和待核验项。
 6. 能调用或要求 Capability 时，输出 `Tool Result`；不能调用时标注 `Need tool implementation`。
 7. 将可自动化部分交给 Daedalus / Hephaestus，将结构求解链路交给 Euclid，将行业判断风险交给人工确认。
+8. 当目标是可复用知识资产时，使用 `knowledge-pack.source.json` 组织来源、标准、条文、实体、关系、lookup 规则、评估问题和人工复核状态；完成后要求运行 `knowledge:validate`、`knowledge:compile` 和 `knowledge:eval`。
 
 ## 输出格式
 
@@ -49,6 +50,15 @@ description: 建筑知识结构化工作流。用于整理 BIM、IFC、建筑规
 5. 风险与待核验项
 6. Capability 证据 / Tool Result
 7. 后续动作
+
+需要沉淀为 Knowledge Pack 时，补充：
+
+8. Knowledge Pack 交付物
+   - 工作台路径。
+   - 编译产物路径。
+   - 查询样例。
+   - eval 通过 / 失败情况。
+   - 不得对外承诺的边界。
 
 规则条目建议格式：
 
@@ -70,3 +80,4 @@ description: 建筑知识结构化工作流。用于整理 BIM、IFC、建筑规
 - 不把常识性建筑描述伪装成规范依据。
 - 不直接修改生产系统。
 - 不省略适用范围和版本条件。
+- 不把未编译、未评估、未人工复核的知识整理稿当作可查询 Knowledge Pack。

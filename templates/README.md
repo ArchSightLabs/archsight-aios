@@ -15,6 +15,8 @@
 - [施工视觉 AI 项目 profile](project-construction-vision/)
 - [规范知识库 / RAG / GraphRAG 项目 profile](project-rag-knowledge/)
 - [工程文档写作 Markdown 工作母版](document-writing/)
+- [工程知识治理 Knowledge Pack 工作台](knowledge-pack/)
+- [Knowledge Pack 合成样板](knowledge-pack-samples/)
 - [模板扩展备忘](template-expansion-backlog.md)
 
 ## 项目 Profile
@@ -36,43 +38,31 @@ archsight-aios init --cwd /path/to/project --profile construction-vision
 archsight-aios init --cwd /path/to/project --profile rag-knowledge
 ```
 
-`init` 默认使用 `--mode auto`：新项目补齐根目录入口（`AGENTS.md`、`CLAUDE.md`、`GEMINI.md`、`OPENCODE.md`、`AI_CODING_RULES.md`）和 `.ai/`，已有 AI 工具入口文件的项目自动追加或刷新 ArchSight AIOS 托管引用块。Profile 只在自动识别或显式指定后补充 `.ai/profiles/*.md`，不复制公共入口规则，也不修改已有 `AI_CODING_RULES.md` 正文。
-
-自动生成文件：
-
-- `.ai/profile-detection.md`：记录识别模式、命中证据、启用 profile 和 Skill 候选。
-- `.ai/project-context.md`：首次创建时预填项目名、技术栈、常用命令、代码结构、候选 Agent / Skill / Workflow。
+`init` 默认使用 `--mode auto`：新项目补齐根目录入口和 `.ai/`；已有 AI 工具入口文件的项目自动追加或刷新 ArchSight AIOS 托管引用块。Profile 只在自动识别或显式指定后补充 `.ai/profiles/*.md`，不复制公共入口规则，也不修改已有 `AI_CODING_RULES.md` 正文。
 
 ## 工程文档写作
 
 `document-writing/` 是 v1.4.0 写作型 Skill 的 Markdown 工作母版模板，用于标书、技术标、专项施工方案和交底材料的生成 / 改写流程。
 
-业务项目中可直接执行：
-
 ```bash
 archsight-aios writing:init --cwd /path/to/project --type tender
 archsight-aios writing:init --cwd /path/to/project --type scheme --name scheme-workbench
 archsight-aios writing:init --cwd /path/to/project --type tender --sample --name tender-sample
-```
-
-该命令会把模板复制到项目内的写作工作台目录，并生成类型化 README；已有文件不会被覆盖。
-
-工作台结构校验：
-
-```bash
 archsight-aios writing:validate --cwd /path/to/project --name document-writing
 ```
 
-`document-writing-samples/` 提供两个端到端脱敏样板：
+`document-writing-samples/` 提供两个端到端脱敏样板：`tender/` 和 `scheme/`。
 
-- `tender/`：技术标写作样板。
-- `scheme/`：专项施工方案写作样板。
+## Knowledge Pack
 
-推荐链路：
+`knowledge-pack/` 是 v1.5.0 工程知识治理工作台模板，用于把来源、标准、条文、实体、关系、查询规则、评估问题和人工复核状态编译成 Runtime 可消费的 Knowledge Pack。
 
-- `source-normalized.md`：原始资料归一化。
-- `material-index.md`：历史标书 / 历史方案素材索引和复用判断。
-- `writing-brief.md`：本次写作目标、输出格式、人工复核和禁止承诺。
-- `draft.md`：AI 生成或改写的初稿。
-- `review-notes.md`：审核型 Skill 的响应性、风险和缺口复核。
-- `final.md`：人工定稿前版本，用于后续导出 Word / PDF / PPT。
+```bash
+archsight-aios knowledge:init --cwd /path/to/project --name knowledge-pack
+archsight-aios knowledge:init --cwd /path/to/project --sample --name scheme-review
+archsight-aios knowledge:validate --cwd /path/to/project --name scheme-review
+archsight-aios knowledge:compile --cwd /path/to/project --name scheme-review
+archsight-aios knowledge:eval --cwd /path/to/project --name scheme-review
+```
+
+`knowledge-pack-samples/scheme-review/` 提供端到端合成样板，可用于验证 `knowledge.norm_lookup` 本地 Reference Runtime。

@@ -13,13 +13,23 @@ description: ArchSight AIOS 总路由入口别名。用于“请用 ArchSight AI
 
 | 资料 / 任务线索 | 路由到 |
 |---|---|
-| 招标、投标、技术标、评分、资格、废标 | `aios-commercial-tender` |
+| 招投标、技术标、评分点，且未区分写作或审核 | `aios-tender` |
+| 招标、投标、技术标、评分、资格、废标 | `aios-tender-audit` |
+| 已使用原工程商务招投标入口 | `aios-commercial-tender` |
 | 标书编写、技术标生成、投标响应章节改写、历史标书素材复用 | `aios-tender-write` |
-| 合同、协议、分包、采购、付款、结算、履约、违约 | `aios-commercial-contract` |
-| 日报、施工日志、周报、现场记录、进度、材料、机械、劳务 | `aios-construction-daily` |
-| 会议纪要、例会、协调会、专题会、交底会、待办、责任人 | `aios-construction-meeting` |
+| 合同审核、合同复核、履约节点、付款条件、责任边界、资料缺口 | `aios-contract-audit` |
+| 补充协议草拟、条款改写、履约通知、催款函、回函、合同交底 | `aios-contract-draft` |
+| 已使用原工程商务合同入口 | `aios-commercial-contract` |
+| 日报、施工日志、周报、现场记录，且未区分生成或复核 | `aios-daily` |
+| 日报生成、日报编写、现场口述、项目群记录、照片说明 | `aios-daily-write` |
+| 已有施工日报、进度、材料、机械、劳务、问题台账 | `aios-construction-daily` |
+| 会议纪要、例会、协调会、专题会、交底会，且未区分生成或复核 | `aios-meeting` |
+| 会议纪要生成、录音转写、会议笔记、群聊摘要、待办清单草稿 | `aios-meeting-write` |
+| 已有会议纪要、待办、责任人、截止时间、遗留争议 | `aios-construction-meeting` |
 | 变更、签证、联系单、洽商、索赔、图纸变更、工程量 | `aios-commercial-variation` |
-| 专项施工方案、危大工程、深基坑、高支模、脚手架、吊装、危险源、交底、专家论证、计算书 | `aios-construction-scheme` |
+| 专项施工方案、危大工程，且未区分写作或审核 | `aios-scheme` |
+| 专项施工方案、危大工程、深基坑、高支模、脚手架、吊装、危险源、交底、专家论证、计算书 | `aios-scheme-audit` |
+| 已使用原工程施工专项方案入口 | `aios-construction-scheme` |
 | 方案编写、方案生成、方案改写、历史方案素材复用、专家意见回写 | `aios-scheme-write` |
 | 结构计算、荷载、挠度、稳定、FEM | `aios-structural` |
 | 明确调用 `aios-compare` 或要求判断两份文档 / 两个 AI 输出哪份更专业 | `aios-compare` |

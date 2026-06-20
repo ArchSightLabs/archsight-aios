@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Contract Draft"
+  short_description: "草拟工程补充协议、条款改写和履约函件初稿"
+  default_prompt: "当任务涉及工程补充协议、合同条款改写、履约通知、催款函、回函、合同交底或风险提示 memo 的草拟和改写时，使用该技能；默认以 Markdown 作为工作母版，必须包含资料来源、写作 brief、素材复用判断、草稿、待补资料、人工复核岗位和审核门禁；不得输出最终法律意见、可签署结论、责任归属、索赔成立、结算金额或无需法务复核结论；生成后必须交回 aios-contract-audit 复核；已使用 aios-commercial-contract 的团队可继续作为同类审核入口。"

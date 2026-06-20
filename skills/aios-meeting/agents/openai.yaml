@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Meeting"
+  short_description: "工程会议纪要通用入口，自动区分生成和复核"
+  default_prompt: "当任务涉及工程会议纪要、例会、协调会、专题会、交底会、录音转写、会议笔记、待办闭环或责任人期限复核，且用户没有明确区分生成或复核时，使用该技能先判断任务意图；从录音转写、会议笔记、口述或群聊生成纪要草稿时路由到 aios-meeting-write；审核已有纪要、待办闭环、遗留争议和下次追踪时路由到 aios-construction-meeting；混合任务先写作成稿，再回到 aios-construction-meeting 做责任和证据闭环复核。"

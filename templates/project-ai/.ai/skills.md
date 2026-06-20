@@ -25,13 +25,23 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 | 两份文档、两个版本或两个 AI 输出专业度对比 | `aios-compare` | Daedalus |
 | 内部 Prompt / Skill 测试、weak/basic/runtime 三栏评测 | `aios-prompt-compare` | Daedalus |
 | 建筑行业项目受控实现 / 测试 / 文档 / 脚本 | `aios-exec` | Hephaestus |
-| 工程招投标响应 / 评分点 / 废标风险 / 技术标资料矩阵 | `aios-commercial-tender` | Mason |
+| 工程招投标通用入口 / 自动区分写作和审核 | `aios-tender` | Mason |
+| 工程招投标审核 / 评分点 / 废标风险 / 技术标资料矩阵 | `aios-tender-audit` | Mason |
+| 原工程商务招投标领域入口 / 保留既有培训命令 | `aios-commercial-tender` | Mason |
 | 工程标书 / 技术标生成、改写和历史素材复用 | `aios-tender-write` | Mason |
+| 工程合同审核 / 履约节点 / 付款条件 / 责任边界 / 资料缺口 | `aios-contract-audit` | Themis |
+| 工程补充协议 / 合同条款 / 履约通知 / 函件草稿生成和改写 | `aios-contract-draft` | Themis |
 | 工程合同履约节点 / 付款条件 / 责任边界 / 资料缺口 | `aios-commercial-contract` | Themis |
+| 工程现场日报通用入口 / 自动区分生成和复核 | `aios-daily` | Mason |
+| 施工日报 / 项目日报 / 周报素材生成、改写和现场记录整理 | `aios-daily-write` | Mason |
 | 施工日报 / 现场异常 / 项目群记录 / 问题追踪台账 | `aios-construction-daily` | Mason |
+| 工程会议纪要通用入口 / 自动区分生成和复核 | `aios-meeting` | Mason |
+| 工程会议纪要 / 待办清单 / 下次追踪生成和改写 | `aios-meeting-write` | Mason |
 | 工程会议纪要 / 待办闭环 / 遗留争议 / 下次追踪 | `aios-construction-meeting` | Mason |
 | 工程变更签证资料链 / 联系单 / 图纸变更 / 索赔线索 | `aios-commercial-variation` | Plutus |
-| 专项施工方案 / 危险源 / 交底要点 / 规范和计算书复核 | `aios-construction-scheme` | Vitruvius |
+| 专项施工方案通用入口 / 自动区分写作和审核 | `aios-scheme` | Vitruvius |
+| 专项施工方案审核 / 危险源 / 交底要点 / 规范和计算书复核 | `aios-scheme-audit` | Vitruvius |
+| 原工程施工专项方案领域入口 / 保留既有培训命令 | `aios-construction-scheme` | Vitruvius |
 | 专项施工方案 / 施工技术措施生成、改写和历史方案复用 | `aios-scheme-write` | Vitruvius |
 
 ## 本项目可用的 Skills
@@ -51,12 +61,22 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 - `aios-compare`
 - `aios-prompt-compare`
 - `aios-exec`
+- `aios-tender`
+- `aios-tender-audit`
 - `aios-commercial-tender`
 - `aios-tender-write`
+- `aios-contract-audit`
+- `aios-contract-draft`
 - `aios-commercial-contract`
+- `aios-daily`
+- `aios-daily-write`
 - `aios-construction-daily`
+- `aios-meeting`
+- `aios-meeting-write`
 - `aios-construction-meeting`
 - `aios-commercial-variation`
+- `aios-scheme`
+- `aios-scheme-audit`
 - `aios-construction-scheme`
 - `aios-scheme-write`
 
@@ -68,7 +88,8 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 - 只有启用建筑、BIM、IFC、规范知识库、GraphRAG 或智能审图 profile 时，才默认启用 `aios-knowledge`。
 - 涉及结构力学、荷载、FEM、结构计算工具链或工程安全风险时，启用 `aios-structural`；关键数值必须来自确定性求解器或项目已有计算书。
 - 涉及工程招投标、合同履约、施工日报、工程会议、变更签证或专项施工方案时，可按资料类型启用工程业务管理 Skill；这些 Skill 只做证据链整理、生成初稿和人工复核分流，不替代正式签审。
-- 涉及标书、技术标或专项施工方案的生成、改写、历史素材复用时，优先启用 `aios-tender-write` 或 `aios-scheme-write`；生成后必须回到 `aios-commercial-tender` 或 `aios-construction-scheme` 做审核门禁。
+- 涉及招投标但未区分写作或审核时，优先启用 `aios-tender`；涉及工程合同草拟 / 审核时，优先启用 `aios-contract-draft` 或 `aios-contract-audit`；涉及施工日报或工程会议但未区分生成或复核时，优先启用 `aios-daily` 或 `aios-meeting`；涉及专项施工方案但未区分写作或审核时，优先启用 `aios-scheme`。
+- 涉及标书、技术标、合同函件、施工日报、会议纪要或专项施工方案的生成、改写、历史素材复用时，优先启用 `aios-tender-write`、`aios-contract-draft`、`aios-daily-write`、`aios-meeting-write` 或 `aios-scheme-write`；生成后必须回到 `aios-tender-audit`、`aios-contract-audit`、`aios-construction-daily`、`aios-construction-meeting` 或 `aios-scheme-audit` 做审核门禁。已使用 `aios-commercial-tender`、`aios-commercial-contract`、`aios-construction-daily`、`aios-construction-meeting` 或 `aios-construction-scheme` 的团队可继续使用原领域型入口。
 - 涉及两份文档、两个版本或两个 AI 输出哪份更专业、更可复核、更适合交付时，启用 `aios-compare`。
 - 涉及提示词效果、weak/basic 对照、真实 Skill 输出比较或是否应沉淀为 Skill 时，只有开发者明确调用 `aios-prompt-compare` 才启用；真实 Skill 结果必须来自宿主工具触发对应 `$aios-*` Skill 后的输出。
 - 涉及规范、制度、结构计算、质量安全、金额、工期索赔或责任归属时，必须保留 `Claim / Evidence / Tool Result / Decision`；没有工具或人工证据时标注 `Need verify` 或 `Hold for human`。

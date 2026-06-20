@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "pack": {
+    "id": "example-knowledge-pack",
+    "title": "示例工程知识包",
+    "version": "0.1.0",
+    "status": "draft",
+    "domain": "construction-knowledge",
+    "region": "CN",
+    "discipline": "construction",
+    "sourceVersion": "DRAFT-0.1",
+    "dataBoundary": "模板仅定义结构，不包含真实客户、真实项目或未授权规范全文。",
+    "license": "project-internal"
+  },
+  "sources": [
+    {
+      "id": "SRC-001",
+      "name": "示例来源",
+      "type": "standard-excerpt",
+      "version": "DRAFT-0.1",
+      "pathOrUrl": "source-register.md",
+      "authorization": "project-internal",
+      "hash": "to-be-filled",
+      "reviewStatus": "draft",
+      "risk": "待替换为授权来源和真实 hash。"
+    }
+  ],
+  "standards": [
+    {
+      "id": "STD-001",
+      "name": "示例标准",
+      "code": "EXAMPLE-001",
+      "version": "DRAFT-0.1",
+      "region": "CN",
+      "discipline": "construction",
+      "status": "draft",
+      "sourceId": "SRC-001",
+      "sourceVersion": "DRAFT-0.1",
+      "effectiveStatus": "to_verify"
+    }
+  ],
+  "clauses": [
+    {
+      "id": "CLAUSE-001",
+      "standardId": "STD-001",
+      "clauseNo": "1.0.1",
+      "title": "示例条文",
+      "text": "此处只写授权摘录或人工概括，不能粘贴未授权规范全文。",
+      "requirement": "说明检查对象、触发条件、判断依据和例外条件。",
+      "objects": ["对象示例"],
+      "conditions": ["条件示例"],
+      "exceptions": ["例外示例"],
+      "applicability": "need_context",
+      "sourceId": "SRC-001",
+      "pageRange": "p.1",
+      "reviewStatus": "draft",
+      "tags": ["示例"]
+    }
+  ],
+  "entities": [
+    {
+      "id": "ENT-001",
+      "type": "Requirement",
+      "name": "示例要求",
+      "sourceRefs": ["CLAUSE-001"],
+      "confidence": 0.6
+    }
+  ],
+  "relations": [
+    {
+      "id": "REL-001",
+      "from": "ENT-001",
+      "to": "CLAUSE-001",
+      "type": "DERIVED_FROM",
+      "sourceRefs": ["CLAUSE-001"],
+      "confidence": 0.6
+    }
+  ],
+  "lookupRules": [
+    {
+      "id": "LOOKUP-001",
+      "queryTerms": ["示例"],
+      "clauseIds": ["CLAUSE-001"],
+      "applicability": "need_context",
+      "requiredContext": ["项目条件"],
+      "notes": "模板规则默认需要补充项目条件。"
+    }
+  ],
+  "evalQuestions": [
+    {
+      "id": "EVAL-001",
+      "type": "need_context",
+      "question": "示例问题是否适用？",
+      "expectedStatus": "found",
+      "expectedApplicability": "need_context",
+      "expectedClauseIds": ["CLAUSE-001"],
+      "mustCiteSourceVersion": true,
+      "expectedNotesContains": ["项目条件"]
+    }
+  ],
+  "review": {
+    "humanReviewer": "待填写",
+    "reviewedAt": "",
+    "status": "draft",
+    "notes": "模板未复核，不得发布。"
+  }
+}

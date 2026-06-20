@@ -16,7 +16,9 @@ npx @archsight/aios install --target all --scope user
 npx @archsight/aios install --target workbuddy --scope user
 ```
 
+面向建筑行业业务人员的自助试用说明见 [建筑行业技能包自助试用指南](industry-user-trial-guide.md)。
 写作型工作流见 [v1.4.0 写作工作流快速使用](v1.4.0-writing-workflow-quickstart.md)。
+工程知识治理见 [v1.5.0 Knowledge Pack 与本地 Reference Runtime](v1.5.0-knowledge-pack-runtime.md)。
 
 ## 2. 检查安装
 

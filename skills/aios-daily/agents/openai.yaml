@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Daily"
+  short_description: "工程现场日报通用入口，自动区分生成和复核"
+  default_prompt: "当任务涉及施工日报、项目日报、周报素材、现场口述、项目群记录、照片说明或日报复核，且用户没有明确区分生成或复核时，使用该技能先判断任务意图；从口述、群聊、照片说明或零散笔记生成日报草稿时路由到 aios-daily-write；审核已有日报、问题台账、资料缺口和签证线索时路由到 aios-construction-daily；混合任务先写作成稿，再回到 aios-construction-daily 做证据链和问题闭环复核。"

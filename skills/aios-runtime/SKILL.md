@@ -28,6 +28,7 @@ description: 高级 Runtime 和知识管线设计入口。用于设计 Prompt、
 - 工具清单、权限、输入输出 schema。
 - Capability 注册表、工具权限、输入输出 schema、证据契约和仲裁阻断规则。
 - RAG / GraphRAG 数据源、索引、评估需求。
+- 已编译的 Knowledge Pack、`knowledge.norm_lookup` 输入输出契约、eval gate 和 Reference Runtime 运行证据。
 - 当前上下文、记忆、检索或工具调用失败案例。
 
 ## 工作流
@@ -37,9 +38,10 @@ description: 高级 Runtime 和知识管线设计入口。用于设计 Prompt、
 3. 设计 Prompt：角色、职责、边界、输入、输出、风格、升级路径。
 4. 设计 Memory：写入条件、读取策略、过期和清理机制。
 5. 设计 Tool Calling / Capability：权限最小化、schema、证据契约、审计、人工确认点。
-6. 设计 RAG / GraphRAG：chunk、实体、关系、索引、检索、引用、评估。
-7. 对工具失败、权限扩大、证据缺失和 Agent 冲突输出 `Claim / Evidence / Tool Result / Decision`。
-8. 指定安全审查和验证：交给 Argus 复核注入、越权和数据污染风险。
+6. 设计 RAG / GraphRAG：优先把 Knowledge Pack 作为行业知识资产输入，明确 chunk、实体、关系、索引、检索、引用、评估。
+7. 设计本地 Reference Runtime：说明 `knowledge:lookup`、`knowledge:eval` 和 `knowledge.norm_lookup` 如何返回可追溯引用、适用性、版本和仲裁状态。
+8. 对工具失败、权限扩大、证据缺失和 Agent 冲突输出 `Claim / Evidence / Tool Result / Decision`。
+9. 指定安全审查和验证：交给 Argus 复核注入、越权和数据污染风险。
 
 ## 输出格式
 
@@ -52,6 +54,13 @@ description: 高级 Runtime 和知识管线设计入口。用于设计 Prompt、
 5. Capability Registry / 仲裁门禁
 6. 评估与风险
 7. 后续动作
+
+涉及 Knowledge Pack 时补充：
+
+- Knowledge Pack 路径和编译产物。
+- Reference Runtime 查询入口。
+- eval gate 结果。
+- 未覆盖知识域和不可回答边界。
 
 Runtime 条目建议格式：
 
@@ -74,3 +83,4 @@ Instance：
 - 不把未经评估的 Prompt 投入关键流程。
 - 不替代 Vitruvius 判断建筑行业语义。
 - 不允许 Memory 污染任务上下文。
+- 不把未通过 `knowledge:eval` 的 Knowledge Pack 接入关键 RAG / GraphRAG 流程。

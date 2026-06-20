@@ -57,6 +57,8 @@ async function testHelp() {
   assert.match(result.stdout, /archsight-aios init /);
   assert.match(result.stdout, /archsight-aios writing:init/);
   assert.match(result.stdout, /archsight-aios writing:validate/);
+  assert.match(result.stdout, /archsight-aios knowledge:init/);
+  assert.match(result.stdout, /archsight-aios knowledge:lookup/);
   assert.doesNotMatch(result.stdout, /init-project/);
   assert.doesNotMatch(result.stdout, /validate-project-template/);
   assert.doesNotMatch(result.stdout, new RegExp(["ai", "os"].join("-")));
@@ -135,6 +137,7 @@ async function testPublicDiscoveryMetadata() {
 
   assert.equal(pkg.scripts["validate:skills"], "node ./scripts/validate-skills.mjs");
   assert.equal(pkg.scripts["validate:skill-runtime-evidence"], "node ./scripts/validate-skill-runtime-evidence.mjs");
+  assert.equal(pkg.scripts["validate:knowledge-pack"], "node ./scripts/validate-knowledge-pack.mjs");
   assert.ok(pkg.scripts["validate:document-writing-scorecard"].includes("validate-prompt-scorecard.mjs"));
   assert.ok(pkg.files.includes("skills/"));
   assert.ok(pkg.files.includes("scripts/"));
@@ -184,6 +187,12 @@ async function testValidateSkillRuntimeEvidenceCommand() {
   const result = runNodeScript(path.join(repoRoot, "scripts", "validate-skill-runtime-evidence.mjs"));
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(result.stdout, /Skill runtime evidence validation passed/);
+}
+
+async function testValidateKnowledgePackCommand() {
+  const result = runNodeScript(path.join(repoRoot, "scripts", "validate-knowledge-pack.mjs"));
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout, /Knowledge Pack validation passed/);
 }
 
 async function testBuildPromptRunPackCommand() {
@@ -387,11 +396,14 @@ async function testSkillsAvoidPromptTemplateShape() {
 async function testEngineeringBusinessSkillsRequireDetailedOutput() {
   const routerSkills = ["aios", "archsight-aios"];
   const businessSkills = [
+    "aios-tender-audit",
     "aios-commercial-tender",
+    "aios-contract-audit",
     "aios-commercial-contract",
     "aios-construction-daily",
     "aios-construction-meeting",
     "aios-commercial-variation",
+    "aios-scheme-audit",
     "aios-construction-scheme"
   ];
   const requiredSkillTerms = [
@@ -427,8 +439,8 @@ async function testEngineeringBusinessSkillsRequireDetailedOutput() {
 
 async function testEngineeringWritingSkillsAreRoutedAndGuarded() {
   const writingSkills = [
-    ["aios-tender-write", "aios-commercial-tender"],
-    ["aios-scheme-write", "aios-construction-scheme"]
+    ["aios-tender-write", "aios-tender-audit"],
+    ["aios-scheme-write", "aios-scheme-audit"]
   ];
   const requiredTerms = [
     "Markdown 工作母版",
@@ -459,6 +471,9 @@ async function testEngineeringWritingSkillsAreRoutedAndGuarded() {
   const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
   const manifestSkillIds = new Set(manifest.skills.map((skill) => skill.id));
   assert.ok(manifestSkillIds.has("aios-tender-write"));
+  assert.ok(manifestSkillIds.has("aios-contract-draft"));
+  assert.ok(manifestSkillIds.has("aios-daily-write"));
+  assert.ok(manifestSkillIds.has("aios-meeting-write"));
   assert.ok(manifestSkillIds.has("aios-scheme-write"));
 
   for (const fileName of [
@@ -476,6 +491,54 @@ async function testEngineeringWritingSkillsAreRoutedAndGuarded() {
 
   await fs.access(path.join(repoRoot, "prompts", "evaluations", "engineering-document-writing-scorecard.json"));
   await fs.access(path.join(repoRoot, "prompts", "evaluations", "skill-runtime", "v1.4.0-writing-host-validation.json"));
+}
+
+async function testExpandedEngineeringWritingSkillsAreGuarded() {
+  const writingSkills = [
+    ["aios-contract-draft", "aios-contract-audit", "可签署结论"],
+    ["aios-daily-write", "aios-construction-daily", "未确认口述"],
+    ["aios-meeting-write", "aios-construction-meeting", "正式会议决议"]
+  ];
+  const requiredSkillTerms = [
+    "Markdown 工作母版",
+    "source-normalized.md",
+    "material-index.md",
+    "writing-brief.md",
+    "draft.md",
+    "review-notes.md",
+    "final.md",
+    "素材复用判断",
+    "审核门禁",
+    "不编造"
+  ];
+
+  for (const [skillName, gateSkill, forbiddenConclusion] of writingSkills) {
+    const skillContent = await fs.readFile(path.join(repoRoot, "skills", skillName, "SKILL.md"), "utf8");
+    const configContent = await fs.readFile(path.join(repoRoot, "skills", skillName, "agents", "openai.yaml"), "utf8");
+    const promptContent = await fs.readFile(path.join(repoRoot, "skills", skillName, "prompts", "basic-prompt.md"), "utf8");
+
+    for (const term of requiredSkillTerms) assert.ok(skillContent.includes(term), `${skillName}: missing ${term}`);
+    assert.ok(skillContent.includes(gateSkill), `${skillName}: missing gate ${gateSkill}`);
+    assert.ok(skillContent.includes(forbiddenConclusion), `${skillName}: missing forbidden conclusion ${forbiddenConclusion}`);
+    assert.ok(configContent.includes("Markdown"), `${skillName} config: missing Markdown`);
+    assert.ok(configContent.includes(gateSkill), `${skillName} config: missing gate ${gateSkill}`);
+    assert.ok(promptContent.includes("[待补"), `${skillName} prompt: missing pending placeholder`);
+    assert.ok(promptContent.includes(gateSkill), `${skillName} prompt: missing gate ${gateSkill}`);
+  }
+
+  const routerSkills = [
+    ["aios-daily", "aios-daily-write", "aios-construction-daily"],
+    ["aios-meeting", "aios-meeting-write", "aios-construction-meeting"]
+  ];
+
+  for (const [routerSkill, writeSkill, auditSkill] of routerSkills) {
+    const skillContent = await fs.readFile(path.join(repoRoot, "skills", routerSkill, "SKILL.md"), "utf8");
+    const configContent = await fs.readFile(path.join(repoRoot, "skills", routerSkill, "agents", "openai.yaml"), "utf8");
+    assert.ok(skillContent.includes(writeSkill), `${routerSkill}: missing write route ${writeSkill}`);
+    assert.ok(skillContent.includes(auditSkill), `${routerSkill}: missing audit route ${auditSkill}`);
+    assert.ok(configContent.includes(writeSkill), `${routerSkill} config: missing write route ${writeSkill}`);
+    assert.ok(configContent.includes(auditSkill), `${routerSkill} config: missing audit route ${auditSkill}`);
+  }
 }
 
 async function testWritingInitCreatesMarkdownWorkbench() {
@@ -499,7 +562,7 @@ async function testWritingInitCreatesMarkdownWorkbench() {
 
   const readme = await fs.readFile(path.join(workspaceRoot, "README.md"), "utf8");
   assert.match(readme, /aios-tender-write/);
-  assert.match(readme, /aios-commercial-tender/);
+  assert.match(readme, /aios-tender-audit/);
   assert.match(readme, /Markdown 工作母版/);
 
   const second = run(["writing:init", "--cwd", tempRoot, "--type", "tender", "--name", "bid-workbench"]);
@@ -536,31 +599,141 @@ async function testWritingValidateRejectsIncompleteWorkbench() {
   await fs.rm(tempRoot, { recursive: true, force: true });
 }
 
+async function testKnowledgePackWorkbenchAndReferenceRuntime() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-knowledge-pack-"));
+  const init = run(["knowledge:init", "--cwd", tempRoot, "--name", "scheme-review", "--sample"]);
+  assert.equal(init.status, 0, `${init.stdout}\n${init.stderr}`);
+  assert.match(init.stdout, /KNOWLEDGE scheme-review/);
+
+  const workspaceRoot = path.join(tempRoot, "scheme-review");
+  for (const fileName of [
+    "knowledge-pack.source.json",
+    "source-register.md",
+    "standard-register.md",
+    "clause-map.md",
+    "entity-relation-map.md",
+    "eval-questions.md",
+    "review-notes.md",
+    "README.md"
+  ]) {
+    await fs.access(path.join(workspaceRoot, fileName));
+  }
+
+  const validate = run(["knowledge:validate", "--cwd", tempRoot, "--name", "scheme-review"]);
+  assert.equal(validate.status, 0, `${validate.stdout}\n${validate.stderr}`);
+  assert.match(validate.stdout, /Knowledge Pack validation passed/);
+
+  const packPath = path.join(tempRoot, "scheme-review-pack.json");
+  const compile = run([
+    "knowledge:compile",
+    "--cwd",
+    tempRoot,
+    "--name",
+    "scheme-review",
+    "--out",
+    packPath
+  ]);
+  assert.equal(compile.status, 0, `${compile.stdout}\n${compile.stderr}`);
+  assert.match(compile.stdout, /KNOWLEDGE_PACK scheme-review-reference/);
+
+  const inspect = run(["knowledge:inspect", "--pack", packPath]);
+  assert.equal(inspect.status, 0, `${inspect.stdout}\n${inspect.stderr}`);
+  const summary = JSON.parse(inspect.stdout);
+  assert.equal(summary.packId, "scheme-review-reference");
+  assert.equal(summary.counts.clauses, 4);
+  assert.equal(summary.counts.lookupRules, 4);
+
+  const lookup = run([
+    "knowledge:lookup",
+    "--pack",
+    packPath,
+    "--query",
+    "高支模方案是否应检查计算书"
+  ]);
+  assert.equal(lookup.status, 0, `${lookup.stdout}\n${lookup.stderr}`);
+  const lookupResult = JSON.parse(lookup.stdout);
+  assert.equal(lookupResult.status, "found");
+  assert.equal(lookupResult.applicability, "applicable");
+  assert.equal(lookupResult.citations[0].clauseId, "CLAUSE-HIGH-FORMWORK");
+
+  const evalResult = run(["knowledge:eval", "--pack", packPath]);
+  assert.equal(evalResult.status, 0, `${evalResult.stdout}\n${evalResult.stderr}`);
+  const evalReport = JSON.parse(evalResult.stdout);
+  assert.equal(evalReport.failed, 0);
+  assert.equal(evalReport.passed, 5);
+
+  const inputPath = path.join(tempRoot, "lookup-input.json");
+  await fs.writeFile(
+    inputPath,
+    JSON.stringify({
+      knowledgePackPath: packPath,
+      query: "高支模方案是否应检查计算书"
+    }),
+    "utf8"
+  );
+  const capability = run([
+    "capability:call",
+    "--capability",
+    "knowledge.norm_lookup",
+    "--agent",
+    "vitruvius",
+    "--skill",
+    "aios-knowledge",
+    "--input",
+    inputPath
+  ]);
+  assert.equal(capability.status, 0, `${capability.stdout}\n${capability.stderr}`);
+  const envelope = JSON.parse(capability.stdout);
+  assert.equal(envelope.adapter.id, "archsight-aios.knowledge-reference-mcp");
+  assert.equal(envelope.toolResult.status, "found");
+  assert.equal(envelope.decision.action, "proceed");
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
 async function testWritingIntentRoutesToWritingSkill() {
   const cases = [
     {
       name: "technical-bid",
       readme: "# 技术标生成\n\n本项目需要根据招标文件做技术标生成。",
       expected: "aios-tender-write",
-      fallback: "aios-commercial-tender"
+      fallback: "aios-tender"
     },
     {
       name: "technical-bid-rewrite",
       readme: "# 技术标改写\n\n请基于用户初稿和历史标书素材做技术标改写，并保留评分点响应。",
       expected: "aios-tender-write",
-      fallback: "aios-commercial-tender"
+      fallback: "aios-tender"
     },
     {
       name: "construction-scheme",
       readme: "# 施工方案生成\n\n本项目需要根据历史方案做施工方案生成。",
       expected: "aios-scheme-write",
-      fallback: "aios-construction-scheme"
+      fallback: "aios-scheme"
     },
     {
       name: "scheme-expert-comment-rewrite",
       readme: "# 方案改写\n\n请根据专家意见回写专项施工方案初稿，保留危险源和计算书待补项。",
       expected: "aios-scheme-write",
-      fallback: "aios-construction-scheme"
+      fallback: "aios-scheme"
+    },
+    {
+      name: "contract-draft",
+      readme: "# 合同草拟\n\n请根据原合同和会议纪要生成补充协议草稿，并保留履约通知、合同交底待补项和合同审核门禁，后续复核责任边界。",
+      expected: "aios-contract-draft",
+      fallback: "aios-contract-audit"
+    },
+    {
+      name: "daily-write",
+      readme: "# 施工日报生成\n\n请根据现场口述、项目群记录和照片说明生成施工日报草稿。",
+      expected: "aios-daily-write",
+      fallback: "aios-daily"
+    },
+    {
+      name: "meeting-write",
+      readme: "# 会议纪要生成\n\n请根据录音转写和会议笔记生成工程会议纪要草稿，保留待办清单和责任线索。",
+      expected: "aios-meeting-write",
+      fallback: "aios-meeting"
     }
   ];
 
@@ -573,8 +746,12 @@ async function testWritingIntentRoutesToWritingSkill() {
 
     const detection = await fs.readFile(path.join(tempRoot, ".ai", "profile-detection.md"), "utf8");
     assert.match(detection, new RegExp(item.expected));
+    const expectedIndex = detection.indexOf(`\`${item.expected}\``);
+    const fallbackIndex = detection.indexOf(`\`${item.fallback}\``);
+    assert.notEqual(expectedIndex, -1, `${item.expected} should be present`);
+    assert.notEqual(fallbackIndex, -1, `${item.fallback} should be present`);
     assert.ok(
-      detection.indexOf(item.expected) < detection.indexOf(item.fallback),
+      expectedIndex < fallbackIndex,
       `${item.expected} should rank before ${item.fallback}`
     );
 
@@ -1133,6 +1310,7 @@ const tests = [
   testValidatePromptModelOutputsCommand,
   testValidatePromptScorecardCommand,
   testValidateSkillRuntimeEvidenceCommand,
+  testValidateKnowledgePackCommand,
   testBuildPromptRunPackCommand,
   testValidatePromptRunResultsCommand,
   testAnalyzePromptRunResultsCommand,
@@ -1140,8 +1318,10 @@ const tests = [
   testSkillsAvoidPromptTemplateShape,
   testEngineeringBusinessSkillsRequireDetailedOutput,
   testEngineeringWritingSkillsAreRoutedAndGuarded,
+  testExpandedEngineeringWritingSkillsAreGuarded,
   testWritingInitCreatesMarkdownWorkbench,
   testWritingValidateRejectsIncompleteWorkbench,
+  testKnowledgePackWorkbenchAndReferenceRuntime,
   testWritingIntentRoutesToWritingSkill,
   testInstallAntigravityUsesPluginByDefault,
   testInstallGeminiWritesGeminiSupportAssets,

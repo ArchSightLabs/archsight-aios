@@ -32,7 +32,7 @@ npm run validate:prompts
 
 ## 工程文档写作提示词回归
 
-工程文档写作型提示词使用 `prompts/evaluations/engineering-document-writing-fixtures.json` 作为脱敏回归基线，覆盖 `aios-tender-write` 和 `aios-scheme-write` 两类生成 / 改写任务。
+工程文档写作型提示词使用 `prompts/evaluations/engineering-document-writing-fixtures.json` 作为脱敏回归基线，当前覆盖 `aios-tender-write` 和 `aios-scheme-write` 两类生成 / 改写任务；`aios-contract-draft`、`aios-daily-write` 和 `aios-meeting-write` 先按 Skill 结构测试纳入边界，后续可补充独立 fixture。
 
 该 fixture 不验证模型真实文采，也不证明可以直接交付客户；它只检查写作型 Skill 是否稳定保留：
 
@@ -40,7 +40,7 @@ npm run validate:prompts
 - 资料来源、写作 brief 和历史素材复用判断。
 - 章节初稿 / 改写稿和待补占位。
 - 禁止编造、禁止越权结论和人工复核边界。
-- 生成后交回 `aios-commercial-tender` 或 `aios-construction-scheme` 的审核门禁。
+- 生成后交回对应审核门禁：`aios-tender-audit`、`aios-contract-audit`、`aios-construction-daily`、`aios-construction-meeting` 或 `aios-scheme-audit`；历史流程中的 `aios-commercial-tender`、`aios-commercial-contract`、`aios-construction-daily`、`aios-construction-meeting` 和 `aios-construction-scheme` 继续保留。
 
 若需要批量运行写作 weak/basic 对照输入，使用：
 
