@@ -2,22 +2,13 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { findSensitiveTerms, loadLocalSensitiveTerms } from "./lib/local-sensitive-terms.mjs";
 
 const root = fs.realpathSync(process.cwd());
 const errors = [];
 const evidencePath = "prompts/evaluations/skill-runtime/v1.4.0-writing-host-validation.json";
 const reportPath = "prompts/evaluations/skill-runtime/v1.4.0-writing-host-validation.md";
-
-const sensitiveTerms = [
-  "立信",
-  "闻总",
-  "谭总",
-  "客户内部",
-  "培训演示",
-  "基础内测",
-  "内测模式",
-  "内测包"
-];
+const sensitiveTerms = loadLocalSensitiveTerms(root);
 
 function repoPath(...parts) {
   const target = path.join(root, ...parts);
@@ -55,8 +46,7 @@ function check(condition, message) {
 }
 
 function includesSensitiveTerm(value) {
-  const raw = typeof value === "string" ? value : JSON.stringify(value);
-  return sensitiveTerms.filter((term) => raw.includes(term));
+  return findSensitiveTerms(value, sensitiveTerms);
 }
 
 const evidence = readJson(evidencePath);

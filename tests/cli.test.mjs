@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { findSensitiveTerms, loadLocalSensitiveTerms } from "../scripts/lib/local-sensitive-terms.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const repoRoot = path.resolve(path.dirname(__filename), "..");
@@ -1298,6 +1299,34 @@ async function testHermesCommands() {
   }
 }
 
+async function testLocalSensitiveTermLoading() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "aios-sensitive-terms-"));
+  try {
+    await fs.writeFile(
+      path.join(tempRoot, ".env.local"),
+      [
+        "IGNORED_SECRET=SHOULD_NOT_LOAD",
+        "AIOS_SENSITIVE_TERMS=PRIVATE_ALPHA, PRIVATE_BETA"
+      ].join("\n"),
+      "utf8"
+    );
+    await fs.writeFile(
+      path.join(tempRoot, ".aios-sensitive-terms.local"),
+      ["# local deny list", "PRIVATE_GAMMA;PRIVATE_DELTA"].join("\n"),
+      "utf8"
+    );
+
+    const terms = loadLocalSensitiveTerms(tempRoot, { AIOS_SENSITIVE_TERMS: "PRIVATE_ENV" });
+    assert.deepEqual(
+      [...terms].sort(),
+      ["PRIVATE_ALPHA", "PRIVATE_BETA", "PRIVATE_DELTA", "PRIVATE_ENV", "PRIVATE_GAMMA"].sort()
+    );
+    assert.deepEqual(findSensitiveTerms("ok PRIVATE_BETA PRIVATE_GAMMA", terms).sort(), ["PRIVATE_BETA", "PRIVATE_GAMMA"].sort());
+    assert.deepEqual(findSensitiveTerms("SHOULD_NOT_LOAD", terms), []);
+  } finally {
+    await fs.rm(tempRoot, { recursive: true, force: true });
+  }
+}
 const tests = [
   testHelp,
   testHelpCommand,
@@ -1306,6 +1335,7 @@ const tests = [
   testManifestCoversRepositoryAssets,
   testPublicDiscoveryMetadata,
   testValidateSkillsCommand,
+  testLocalSensitiveTermLoading,
   testValidatePromptFixturesCommand,
   testValidatePromptModelOutputsCommand,
   testValidatePromptScorecardCommand,

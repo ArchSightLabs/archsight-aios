@@ -1,3 +1,7 @@
 .omx/
 .omx/logs/
 .local-docs/
+.env
+.env.*
+!.env.example
+.aios-sensitive-terms.local

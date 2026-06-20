@@ -2,6 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { findSensitiveTerms, loadLocalSensitiveTerms } from "./lib/local-sensitive-terms.mjs";
 
 const root = fs.realpathSync(process.cwd());
 const errors = [];
@@ -15,31 +16,7 @@ const fixtures = fixturePaths.map((fixturePath) => ({
   path: fixturePath,
   data: readJson(repoPath(fixturePath))
 }));
-
-const sensitiveTerms = [
-  "立信",
-  "闻总",
-  "谭总",
-  "茅盾中学",
-  "鸿益",
-  "太鑫",
-  "飞双",
-  "魔毯",
-  "客户内部",
-  "培训演示",
-  "基础内测",
-  "内测模式",
-  "内测包",
-  "嘉兴",
-  "绍兴",
-  "杭州",
-  "20,000",
-  "20000",
-  "28,000",
-  "28000",
-  "17,800",
-  "17800"
-];
+const sensitiveTerms = loadLocalSensitiveTerms(root);
 
 const requiredCaseFields = [
   "id",
@@ -90,8 +67,7 @@ function check(condition, message) {
 }
 
 function includesSensitiveTerm(value) {
-  const raw = typeof value === "string" ? value : JSON.stringify(value);
-  return sensitiveTerms.filter((term) => raw.includes(term));
+  return findSensitiveTerms(value, sensitiveTerms);
 }
 
 function validateMarkdownFixture(fixturePath, item) {
