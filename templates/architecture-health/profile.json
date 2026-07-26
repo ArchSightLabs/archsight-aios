@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "0.1",
+  "id": "project-owned-example",
+  "version": "1",
+  "allowBootstrap": false,
+  "rules": [
+    {
+      "id": "complexity.high",
+      "dimension": "complexity",
+      "metric": "function.cyclomatic_complexity",
+      "operator": "greaterThan",
+      "threshold": 20,
+      "severity": "P1",
+      "gate": true,
+      "modes": ["commit", "weekly", "milestone"],
+      "message": "Function complexity exceeds the project threshold"
+    },
+    {
+      "id": "file.large",
+      "dimension": "maintainability",
+      "metric": "file.lines",
+      "operator": "greaterThan",
+      "threshold": 1500,
+      "severity": "P2",
+      "gate": false,
+      "modes": ["weekly", "milestone"],
+      "message": "Large file is an investigation signal, not a deletion gate"
+    }
+  ],
+  "dependencyPolicy": {
+    "cycles": {
+      "severity": "P1",
+      "gate": true,
+      "modes": ["commit", "weekly", "milestone"]
+    },
+    "forbiddenDirections": []
+  },
+  "requiredEvidence": {
+    "commit": [],
+    "weekly": ["coverage"],
+    "milestone": ["coverage", "performance", "real-database", "failure-injection"]
+  },
+  "budgets": [],
+  "analyzers": []
+}

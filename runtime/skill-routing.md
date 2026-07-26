@@ -22,6 +22,7 @@
 | 建筑行业软件 / 系统深度评价、项目立项、产品定位、商业目标、范围取舍 | `aios-ceo` | Janus | `review` |
 | 建筑行业平台界面方案、工作台体验、复核追溯和前端实现交接 | `aios-design` | Janus | `design-review` |
 | 建筑行业项目中的架构评审、技术选型、服务边界 | `aios-arch` | Atlas | `architecture-review` |
+| 架构健康扫描、基线差分、临时预算、棘轮门禁和 SARIF | `aios-arch-health` | Atlas | `architecture-review` |
 | 建筑行业项目中的 Feature 拆解、交付计划、任务依赖 | `aios-plan` | Mason | `feature-development` |
 | 建筑行业项目中的 PR / diff / AI 生成代码审查 | `aios-review` | Argus | `code-review` |
 | 建筑行业项目中的 Bug 修复、测试失败、构建失败 | `aios-exec` | Hephaestus | `bug-fixing` |
@@ -62,6 +63,7 @@
 - `aios-ceo` 用于一把手视角的建筑行业软件 / 系统深度评价，把产品定位、行业专业性、工程可信度、证据链、商业验证和范围取舍放到同一决策框架里；它可以引用架构和行业语义事实作为 CEO 判断依据，但不替代 `aios-arch` 或 `aios-knowledge` 的专项设计与专业结论。
 - `aios-design` 用于实现前判断界面方案是否支撑建筑行业审查、定位、复核、追溯和交付；不替代 `frontend-generation` 的 UI 实现、布局验证和交互验证，也不替代通用 `frontend-design` 的视觉风格和前端代码美化评审。
 - `aios-arch` 应补足通用架构评审缺失的建筑行业平台视角，包括 BIM / IFC、规范知识链路、审图证据链、RAG / GraphRAG、任务编排、审计和后端运行可靠性。
+- `aios-arch-health` 负责确定性架构事实、基线、预算和门禁；`aios-arch` 负责解释深 Module、合理复杂度和职责混杂。推断不得冒充 measured 事实。
 - `aios-structural` 用于结构力学、荷载、边界条件、FEM 和求解器接口评审；它不能替代结构工程师签审，关键数值必须来自 Capability 或项目已有求解器证据。
 - `aios-tender`、`aios-tender-audit`、`aios-tender-write`、`aios-contract-audit`、`aios-contract-draft`、`aios-daily`、`aios-daily-write`、`aios-meeting`、`aios-meeting-write`、`aios-scheme`、`aios-scheme-audit` 和 `aios-scheme-write` 是更短的任务型入口，适合新用户自助试用和正式技能包对外展示。
 - `aios-commercial-tender`、`aios-commercial-contract`、`aios-commercial-variation`、`aios-construction-daily`、`aios-construction-meeting` 和 `aios-construction-scheme` 保留原有领域型入口含义，适合已经培训和内部流程沉淀过这些命令的团队。

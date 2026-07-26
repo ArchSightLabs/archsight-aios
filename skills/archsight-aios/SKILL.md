@@ -32,6 +32,7 @@ description: ArchSight AIOS 总路由入口别名。用于“请用 ArchSight AI
 | 已使用原工程施工专项方案入口 | `aios-construction-scheme` |
 | 方案编写、方案生成、方案改写、历史方案素材复用、专家意见回写 | `aios-scheme-write` |
 | 结构计算、荷载、挠度、稳定、FEM | `aios-structural` |
+| 架构健康、复杂度、巨型文件或函数、重复代码、循环依赖、依赖方向、架构债、基线棘轮、SARIF | `aios-arch-health` |
 | 明确调用 `aios-compare` 或要求判断两份文档 / 两个 AI 输出哪份更专业 | `aios-compare` |
 | 开发者明确调用 `aios-prompt-compare` 或要求 weak / portable / skill-runtime 内部评测 | `aios-prompt-compare` |
 

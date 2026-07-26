@@ -17,6 +17,7 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 | 建筑行业软件 / 系统深度评价、项目立项 / 产品定位 / 商业目标 | `aios-ceo` | Janus |
 | 建筑行业平台 UI / UX 设计方案 / 工作台体验 | `aios-design` | Janus |
 | 建筑行业项目架构评审 | `aios-arch` | Atlas |
+| 架构健康扫描 / 基线差分 / 棘轮门禁 | `aios-arch-health` | Atlas |
 | 建筑行业项目交付计划 | `aios-plan` | Mason |
 | 建筑行业项目代码审查 | `aios-review` | Argus |
 | BIM / IFC / 建筑知识建模 | `aios-knowledge` | Vitruvius |
@@ -51,6 +52,7 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 - `aios`
 - `archsight-aios`
 - `aios-arch`
+- `aios-arch-health`
 - `aios-ceo`
 - `aios-design`
 - `aios-plan`
@@ -85,6 +87,7 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 - 优先读取 `.ai/profile-detection.md` 和 `.ai/project-context.md`，再按任务类型选择 Skill。
 - 涉及建筑行业软件 / 系统评价、项目立项、产品定位、商业目标、范围取舍或阶段路线时，优先启用 `aios-ceo`。
 - 涉及建筑行业平台 UI / UX 方案、工作台体验、交互状态、响应式或前端实现交接时，优先启用 `aios-design`。
+- 涉及复杂度、巨型文件或函数、重复代码、依赖方向、循环依赖、基线差分、架构债预算或 SARIF 门禁时，启用 `aios-arch-health`；确定性事实交给 `aios-arch` 做业务边界解释。
 - 只有启用建筑、BIM、IFC、规范知识库、GraphRAG 或智能审图 profile 时，才默认启用 `aios-knowledge`。
 - 涉及结构力学、荷载、FEM、结构计算工具链或工程安全风险时，启用 `aios-structural`；关键数值必须来自确定性求解器或项目已有计算书。
 - 涉及工程招投标、合同履约、施工日报、工程会议、变更签证或专项施工方案时，可按资料类型启用工程业务管理 Skill；这些 Skill 只做证据链整理、生成初稿和人工复核分流，不替代正式签审。

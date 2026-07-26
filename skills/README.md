@@ -59,6 +59,7 @@ Skill 可以继续用 `SKILL.md` 表达操作方法，但涉及确定性工具�
 | `aios-exec` | 有边界地改代码、修 bug、更新文档、运行验证。 |
 | `aios-review` | PR、diff、AI 生成代码、安全、证据链和测试缺口审查。 |
 | `aios-arch` | 架构边界、技术选型、长期复杂度和方案评审。 |
+| `aios-arch-health` | 确定性架构健康扫描、基线差分、临时预算、棘轮门禁和 JSON / Markdown / SARIF / 依赖图产物。 |
 | `aios-knowledge` | BIM、IFC、建筑规范、审图规则、Knowledge Pack 和知识结构化。 |
 | `aios-structural` | 结构力学、荷载、边界条件、FEM 和确定性求解链路评审。 |
 | `aios-runtime` | Prompt、Context、Memory、MCP/Tool、Knowledge Pack Reference Runtime、RAG/GraphRAG 和多 Agent Runtime 设计。 |

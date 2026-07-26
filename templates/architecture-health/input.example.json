@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "0.1",
+  "repository": {
+    "id": "example-project",
+    "commit": "0123456789abcdef"
+  },
+  "observedAt": "2026-01-01T00:00:00.000Z",
+  "observations": [
+    {
+      "id": "example-function",
+      "dimension": "complexity",
+      "metric": "function.cyclomatic_complexity",
+      "value": 21,
+      "unit": "score",
+      "evidenceClass": "measured",
+      "location": {
+        "path": "src/example.ts",
+        "line": 1,
+        "symbol": "example"
+      },
+      "message": "example has cyclomatic complexity 21",
+      "source": "project-native-analyzer"
+    }
+  ],
+  "dependencies": [],
+  "evidence": []
+}

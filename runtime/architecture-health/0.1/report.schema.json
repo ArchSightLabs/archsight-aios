@@ -1,0 +1,305 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://archsightlabs.github.io/aios/schemas/architecture-health/0.1/report.schema.json",
+  "title": "ArchSight AIOS Architecture Health Report 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "type",
+    "run",
+    "summary",
+    "findings",
+    "resolved",
+    "comparison",
+    "budgets",
+    "evidence",
+    "dependencyGraph",
+    "gate",
+    "reportFingerprint"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.1" },
+    "type": { "const": "archsight-aios.architecture-health" },
+    "run": { "$ref": "#/$defs/run" },
+    "summary": { "$ref": "#/$defs/summary" },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" }
+    },
+    "resolved": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/resolvedFinding" }
+    },
+    "comparison": { "$ref": "#/$defs/comparison" },
+    "budgets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/budgetResult" }
+    },
+    "evidence": { "$ref": "#/$defs/evidenceSummary" },
+    "dependencyGraph": { "$ref": "#/$defs/dependencyGraph" },
+    "gate": { "$ref": "#/$defs/gate" },
+    "reportFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "$defs": {
+    "evidenceClass": {
+      "type": "string",
+      "enum": ["measured", "inferred", "unverified"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["note", "P2", "P1", "P0"]
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "commit"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "commit": { "type": "string", "minLength": 1 }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "repository", "observedAt", "profile", "profileDigest"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["commit", "weekly", "milestone"]
+        },
+        "repository": { "$ref": "#/$defs/repository" },
+        "observedAt": { "type": "string", "format": "date-time" },
+        "profile": { "$ref": "#/$defs/profile" },
+        "profileDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["new", "worsened", "improved", "retained", "budgeted", "resolved"],
+      "properties": {
+        "new": { "type": "integer", "minimum": 0 },
+        "worsened": { "type": "integer", "minimum": 0 },
+        "improved": { "type": "integer", "minimum": 0 },
+        "retained": { "type": "integer", "minimum": 0 },
+        "budgeted": { "type": "integer", "minimum": 0 },
+        "resolved": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "line": { "type": "integer", "minimum": 1 },
+        "symbol": { "type": "string", "minLength": 1 }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "value": { "type": ["number", "string", "boolean"] },
+        "unit": { "type": "string" },
+        "threshold": { "type": ["number", "string", "boolean"] },
+        "operator": {
+          "type": "string",
+          "enum": ["greaterThan", "greaterThanOrEqual", "lessThan", "lessThanOrEqual", "equals"]
+        }
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["severity"],
+      "properties": {
+        "severity": { "$ref": "#/$defs/severity" },
+        "value": { "type": ["number", "string", "boolean"] }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fingerprint",
+        "ruleId",
+        "dimension",
+        "severity",
+        "evidenceClass",
+        "gateEligible",
+        "status",
+        "message",
+        "metric",
+        "source"
+      ],
+      "properties": {
+        "fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "ruleId": { "type": "string", "minLength": 1 },
+        "dimension": { "type": "string", "minLength": 1 },
+        "severity": { "$ref": "#/$defs/severity" },
+        "evidenceClass": { "$ref": "#/$defs/evidenceClass" },
+        "gateEligible": { "type": "boolean" },
+        "status": {
+          "type": "string",
+          "enum": ["new", "worsened", "improved", "retained", "budgeted"]
+        },
+        "message": { "type": "string", "minLength": 1 },
+        "location": { "$ref": "#/$defs/location" },
+        "metric": { "$ref": "#/$defs/metric" },
+        "source": { "type": "string", "minLength": 1 },
+        "baseline": { "$ref": "#/$defs/baseline" },
+        "budgetId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "resolvedFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fingerprint", "ruleId", "severity", "status", "message"],
+      "properties": {
+        "fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "ruleId": { "type": "string", "minLength": 1 },
+        "severity": { "$ref": "#/$defs/severity" },
+        "status": { "const": "resolved" },
+        "message": { "type": "string", "minLength": 1 },
+        "location": { "$ref": "#/$defs/location" }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseline"],
+      "properties": {
+        "baseline": {
+          "type": "string",
+          "enum": ["missing", "bootstrap", "mismatch", "compatible"]
+        }
+      }
+    },
+    "budgetResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "ruleId",
+        "scope",
+        "owner",
+        "reason",
+        "ceiling",
+        "expiresAt",
+        "status",
+        "consumed",
+        "remaining"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "ruleId": { "type": "string", "minLength": 1 },
+        "scope": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "ceiling": { "type": "integer", "minimum": 1 },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "status": {
+          "type": "string",
+          "enum": ["available", "expired"]
+        },
+        "consumed": { "type": "integer", "minimum": 0 },
+        "remaining": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "evidenceClass"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "status": {
+          "type": "string",
+          "enum": ["available", "missing", "failed"]
+        },
+        "evidenceClass": { "$ref": "#/$defs/evidenceClass" },
+        "details": { "type": "string" }
+      }
+    },
+    "evidenceSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "supplied"],
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence" }
+        },
+        "supplied": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence" }
+        }
+      }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "fromLayer", "toLayer", "evidenceClass", "source"],
+      "properties": {
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "fromLayer": { "type": "string", "minLength": 1 },
+        "toLayer": { "type": "string", "minLength": 1 },
+        "evidenceClass": { "$ref": "#/$defs/evidenceClass" },
+        "source": { "type": "string", "minLength": 1 }
+      }
+    },
+    "dependencyGraph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodes", "edges", "cycles"],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "edges": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/dependency" }
+        },
+        "cycles": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reasons"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pass", "fail", "hold"]
+        },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

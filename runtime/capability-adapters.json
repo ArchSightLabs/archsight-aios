@@ -3,6 +3,19 @@
   "description": "ArchSight AIOS 本地 Capability Adapter 映射。当前只声明 stdio MCP 本地调用，不开放网络服务。",
   "adapters": [
     {
+      "id": "archsight-aios.architecture-health-mcp",
+      "transport": "stdio-mcp",
+      "capabilityIds": [
+        "repo.architecture_health_scan"
+      ],
+      "command": "node",
+      "args": ["./bin/archsight-aios.mjs", "architecture:mcp"],
+      "timeoutMs": 120000,
+      "toolNameMap": {
+        "repo.architecture_health_scan": "architecture_health_scan"
+      }
+    },
+    {
       "id": "archsight-aios.knowledge-reference-mcp",
       "transport": "stdio-mcp",
       "capabilityIds": [

@@ -73,6 +73,79 @@
       "humanEscalation": ["skip_required_tests", "production_release_after_failed_check"]
     },
     {
+      "id": "repo.architecture_health_scan",
+      "type": "repository_fact",
+      "ownerAgents": ["atlas", "argus", "hephaestus"],
+      "allowedSkills": ["aios-arch-health", "aios-arch", "aios-review", "aios-exec"],
+      "authorityLevel": "L1",
+      "description": "运行项目自有架构扫描器，归一化复杂度、依赖、覆盖率和运行证据，并输出基线差分、临时预算与棘轮门禁结果。",
+      "status": "implemented",
+      "inputSchema": {
+        "type": "object",
+        "required": ["cwd", "profilePath"],
+        "properties": {
+          "cwd": { "type": "string" },
+          "profilePath": {
+            "type": "string",
+            "description": "Repository-relative profile path; absolute paths and parent traversal are rejected.",
+            "pattern": "^(?![A-Za-z]:[\\\\/])(?![\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+"
+          },
+          "inputPath": {
+            "type": "string",
+            "description": "Repository-relative normalized input path.",
+            "pattern": "^(?![A-Za-z]:[\\\\/])(?![\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+"
+          },
+          "baselinePath": {
+            "type": "string",
+            "description": "Repository-relative baseline report path.",
+            "pattern": "^(?![A-Za-z]:[\\\\/])(?![\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+"
+          },
+          "outDir": {
+            "type": "string",
+            "description": "Repository-relative output directory.",
+            "pattern": "^(?![A-Za-z]:[\\\\/])(?![\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+"
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["commit", "weekly", "milestone"]
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["schemaVersion", "capabilityId", "status", "reportFingerprint", "summary", "artifacts", "gate"],
+        "properties": {
+          "schemaVersion": { "type": "string" },
+          "capabilityId": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "hold"]
+          },
+          "reportFingerprint": { "type": "string" },
+          "summary": { "type": "object" },
+          "artifacts": { "type": "object" },
+          "gate": { "type": "object" }
+        }
+      },
+      "evidenceContract": {
+        "requiredFields": ["status", "reportFingerprint", "summary", "artifacts", "gate"],
+        "invalidWhenMissing": ["status", "reportFingerprint", "artifacts", "gate"]
+      },
+      "blockingRules": [
+        {
+          "when": "status == fail",
+          "severity": "P0",
+          "action": "block"
+        },
+        {
+          "when": "status == hold",
+          "severity": "P1",
+          "action": "hold"
+        }
+      ],
+      "humanEscalation": ["milestone_evidence_missing", "architecture_budget_exception"]
+    },
+    {
       "id": "knowledge.norm_lookup",
       "type": "compliance_lookup",
       "ownerAgents": ["vitruvius", "athena", "mason", "argus", "daedalus"],

@@ -41,6 +41,9 @@
     "mcp",
     "runtime-governance",
     "architecture-review",
+    "architecture-health",
+    "sarif",
+    "technical-debt",
     "code-review",
     "design-review"
   ],
@@ -62,11 +65,12 @@
     "validate:document-writing-scorecard": "node ./scripts/validate-prompt-scorecard.mjs",
     "validate:skill-runtime-evidence": "node ./scripts/validate-skill-runtime-evidence.mjs",
     "validate:knowledge-pack": "node ./scripts/validate-knowledge-pack.mjs",
+    "test:architecture-health": "node ./tests/architecture-health.test.mjs",
     "build:prompt-run-pack": "node ./scripts/build-prompt-run-pack.mjs --out prompts/evaluations/engineering-business-basic-run-pack.generated.json",
     "build:public-advisory-run-pack": "node ./scripts/build-prompt-run-pack.mjs --fixture prompts/evaluations/engineering-business-public-advisory-fixtures.json --out prompts/evaluations/engineering-business-public-advisory-run-pack.generated.json",
     "build:document-writing-run-pack": "node ./scripts/build-prompt-run-pack.mjs --fixture prompts/evaluations/engineering-document-writing-fixtures.json --out prompts/evaluations/engineering-document-writing-run-pack.generated.json",
     "analyze:prompt-run-results": "node ./scripts/analyze-prompt-run-results.mjs",
-    "test": "node ./tests/cli.test.mjs"
+    "test": "node ./tests/cli.test.mjs && node ./tests/architecture-health.test.mjs"
   },
   "engines": {
     "node": ">=18"

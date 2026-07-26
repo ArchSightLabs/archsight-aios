@@ -7,6 +7,11 @@ import crypto from "node:crypto";
 import readline from "node:readline";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import {
+  parseArchitectureHealthArgs,
+  runArchitectureHealth,
+  runArchitectureHealthCapability
+} from "../scripts/lib/architecture-health.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,6 +47,7 @@ const skillSupportFiles = ["README.md", "engineering-business-starter-kit.md"];
 const topLevelSkillNames = new Set(["aios", "archsight-aios"]);
 const skillAliases = {
   "aios-arch": ["aios-architecture-review", "archsight-architecture-review"],
+  "aios-arch-health": ["aios-architecture-health", "archsight-architecture-health"],
   "aios-plan": ["aios-delivery-planning", "archsight-delivery-planning"],
   "aios-review": ["aios-code-review", "archsight-code-review"],
   "aios-knowledge": [
@@ -139,6 +145,7 @@ const profileDetectionRules = {
 };
 
 const skillDetectionRules = {
+  "aios-arch-health": ["架构健康", "复杂度", "巨型文件", "巨型函数", "循环依赖", "依赖方向", "架构债", "棘轮", "sarif"],
   "aios-arch": ["架构", "服务边界", "技术选型", "系统设计"],
   "aios-design": ["界面", "ui", "ux", "工作台", "交互", "原型"],
   "aios-plan": ["计划", "排期", "里程碑", "任务拆解", "交付"],
@@ -201,6 +208,7 @@ function usage() {
     "  archsight-aios knowledge:inspect [--cwd <path>] [--name <folder>] [--pack <json-file>]",
     "  archsight-aios knowledge:lookup --pack <json-file> --query <text> [--region <id>] [--discipline <id>] [--source-version <version>] [--project-condition <text>]",
     "  archsight-aios knowledge:eval [--cwd <path>] [--name <folder>] [--pack <json-file>]",
+    "  archsight-aios architecture:health --health-profile <json-file> [--health-input <json-file>] [--baseline <report-json>] [--cwd <path>] [--mode <commit|weekly|milestone>] [--out <directory>]",
     "  archsight-aios validate [--cwd <path>] [--profile <auto|none|all|name>] [--temp]",
     "  archsight-aios capability:call --capability <id> --agent <id> --skill <id> --input <json-file>",
     "  archsight-aios hermes:validate",
@@ -215,6 +223,7 @@ function usage() {
     "  writing:init          Create a Markdown document-writing workbench.",
     "  writing:validate      Check a Markdown document-writing workbench.",
     "  knowledge:*           Create, compile, query, and evaluate AIOS Knowledge Packs.",
+    "  architecture:health   Scan normalized architecture facts and apply baseline ratchets.",
     "  validate              Validate the project AI template output.",
     "  capability:call       Authorize and call a registered local Capability adapter.",
     "  hermes:*              Validate or dry-run Hermes runtime prompt sync.",
@@ -232,6 +241,7 @@ function usage() {
     "  npx @archsight/aios knowledge:init --sample --name scheme-review",
     "  npx @archsight/aios knowledge:compile --name scheme-review",
     "  npx @archsight/aios knowledge:lookup --pack scheme-review/compiled/knowledge-pack.json --query \"高支模方案是否应检查计算书\"",
+    "  npx @archsight/aios architecture:health --cwd . --mode commit --health-profile .ai/architecture-health/profile.json --health-input build/architecture-health-input.json --baseline .ai/architecture-health/baseline.json",
     "  npx @archsight/aios validate --temp",
     "  npx @archsight/aios doctor"
   ].join("\n");
@@ -240,6 +250,12 @@ function usage() {
 function parseArgs(argv) {
   const [command, ...rest] = argv;
   const help = command === "--help" || command === "-h" || command === "help";
+  if (command === "architecture:health") {
+    return {
+      command,
+      ...parseArchitectureHealthArgs(rest, { defaultCwd: process.cwd() })
+    };
+  }
   const options = {
     command: help ? undefined : command,
     target: "all",
@@ -2654,6 +2670,58 @@ async function runKnowledgeMcpServer() {
   }
 }
 
+async function runArchitectureHealthCommand(options) {
+  const result = await runArchitectureHealth(options);
+  console.log(JSON.stringify(result, null, 2));
+  if (result.status === "fail" || result.status === "hold") {
+    process.exitCode = 2;
+  }
+}
+
+async function runArchitectureHealthMcpServer() {
+  const rl = readline.createInterface({ input: process.stdin });
+  for await (const line of rl) {
+    if (!line.trim()) continue;
+    const request = JSON.parse(line);
+    if (request.method === "initialize") {
+      console.log(JSON.stringify({
+        jsonrpc: "2.0",
+        id: request.id,
+        result: {
+          protocolVersion: "2025-06-18",
+          serverInfo: { name: "archsight-aios-arch-health", version: aiosVersion },
+          capabilities: { tools: {} }
+        }
+      }));
+      continue;
+    }
+    if (request.method === "tools/call") {
+      try {
+        const toolName = request.params?.name;
+        if (!["architecture_health_scan", "repo.architecture_health_scan"].includes(toolName)) {
+          throw new Error(`Unknown architecture-health tool: ${toolName}`);
+        }
+        const result = await runArchitectureHealthCapability(request.params?.arguments ?? {});
+        console.log(JSON.stringify({
+          jsonrpc: "2.0",
+          id: request.id,
+          result: {
+            content: [{ type: "text", text: JSON.stringify(result) }],
+            isError: false,
+            structuredContent: result
+          }
+        }));
+      } catch (error) {
+        console.log(JSON.stringify({
+          jsonrpc: "2.0",
+          id: request.id,
+          error: { code: -32000, message: error.message }
+        }));
+      }
+    }
+  }
+}
+
 async function validateProjectTemplate(options) {
   const manifest = await readManifest();
   const createdTemp = options.temp;
@@ -2866,6 +2934,10 @@ async function main() {
     await evalKnowledgePack(options);
   } else if (options.command === "knowledge:mcp") {
     await runKnowledgeMcpServer();
+  } else if (options.command === "architecture:health") {
+    await runArchitectureHealthCommand(options);
+  } else if (options.command === "architecture:mcp") {
+    await runArchitectureHealthMcpServer();
   } else if (options.command === "validate") {
     await validateProjectTemplate(options);
   } else if (options.command === "capability:call") {

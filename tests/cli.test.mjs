@@ -60,6 +60,7 @@ async function testHelp() {
   assert.match(result.stdout, /archsight-aios writing:validate/);
   assert.match(result.stdout, /archsight-aios knowledge:init/);
   assert.match(result.stdout, /archsight-aios knowledge:lookup/);
+  assert.match(result.stdout, /archsight-aios architecture:health/);
   assert.doesNotMatch(result.stdout, /init-project/);
   assert.doesNotMatch(result.stdout, /validate-project-template/);
   assert.doesNotMatch(result.stdout, new RegExp(["ai", "os"].join("-")));
@@ -90,6 +91,7 @@ async function testProductIdentity() {
   assert.ok(manifest.skills.every((skill) => skill.id.startsWith("aios-") || topLevelSkillIds.has(skill.id)));
   assert.ok(manifest.skills.every((skill) => skill.path.startsWith("skills/aios-") || topLevelSkillIds.has(skill.id)));
   assert.ok(manifest.skills.every((skill) => skill.id.split("-").length <= 3));
+  assert.ok(manifest.skills.some((skill) => skill.id === "aios-arch-health"));
   assert.ok(manifest.workflows.every((workflow) => workflow.id.split("-").length <= 3));
   assert.equal(manifest.installTargets.codexSkills, "~/.codex/skills");
   assert.equal(manifest.installTargets.codexWorkflows, "~/.codex/workflows/aios");

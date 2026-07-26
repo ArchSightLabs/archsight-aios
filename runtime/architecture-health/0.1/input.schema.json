@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://archsightlabs.github.io/aios/schemas/architecture-health/0.1/input.schema.json",
+  "title": "ArchSight AIOS Architecture Health Normalized Input 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "repository", "observedAt", "observations", "dependencies", "evidence"],
+  "properties": {
+    "schemaVersion": { "const": "0.1" },
+    "repository": { "$ref": "#/$defs/repository" },
+    "observedAt": { "type": "string", "format": "date-time" },
+    "observations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/observation" }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/dependency" }
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence" }
+    },
+    "analyzers": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/analyzerState" }
+    }
+  },
+  "$defs": {
+    "evidenceClass": {
+      "type": "string",
+      "enum": ["measured", "inferred", "unverified"]
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "commit"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "commit": { "type": "string", "minLength": 1 }
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "line": { "type": "integer", "minimum": 1 },
+        "symbol": { "type": "string", "minLength": 1 }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "environment": { "type": "string" },
+        "dataset": { "type": "string" },
+        "conditions": { "type": "string" },
+        "sampleSize": { "type": "integer", "minimum": 1 },
+        "databaseVersion": { "type": "string" },
+        "hardware": { "type": "string" }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "dimension", "metric", "value", "evidenceClass", "message", "source"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "dimension": { "type": "string", "minLength": 1 },
+        "metric": { "type": "string", "minLength": 1 },
+        "value": { "type": ["number", "string", "boolean"] },
+        "unit": { "type": "string" },
+        "evidenceClass": { "$ref": "#/$defs/evidenceClass" },
+        "location": { "$ref": "#/$defs/location" },
+        "message": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "context": { "$ref": "#/$defs/context" }
+      }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "fromLayer", "toLayer", "evidenceClass", "source"],
+      "properties": {
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "fromLayer": { "type": "string", "minLength": 1 },
+        "toLayer": { "type": "string", "minLength": 1 },
+        "evidenceClass": { "$ref": "#/$defs/evidenceClass" },
+        "source": { "type": "string", "minLength": 1 }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "evidenceClass"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "status": {
+          "type": "string",
+          "enum": ["available", "missing", "failed"]
+        },
+        "evidenceClass": { "$ref": "#/$defs/evidenceClass" },
+        "details": { "type": "string" }
+      }
+    },
+    "analyzerState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "required", "status"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean" },
+        "status": {
+          "type": "string",
+          "enum": ["pass", "failed"]
+        },
+        "error": { "type": "string" }
+      }
+    }
+  }
+}

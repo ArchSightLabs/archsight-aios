@@ -133,6 +133,13 @@
       "openaiConfigPath": "skills/aios-arch/agents/openai.yaml"
     },
     {
+      "id": "aios-arch-health",
+      "primaryAgent": "atlas",
+      "defaultWorkflow": "architecture-review",
+      "path": "skills/aios-arch-health/SKILL.md",
+      "openaiConfigPath": "skills/aios-arch-health/agents/openai.yaml"
+    },
+    {
       "id": "aios-plan",
       "primaryAgent": "mason",
       "defaultWorkflow": "feature-development",
@@ -393,6 +400,12 @@
       "workflow": "architecture-review"
     },
     {
+      "taskType": "架构健康扫描、基线差分、临时预算、棘轮门禁和 SARIF",
+      "skill": "aios-arch-health",
+      "agent": "atlas",
+      "workflow": "architecture-review"
+    },
+    {
       "taskType": "建筑行业项目中的 Feature 拆解、交付计划、任务依赖",
       "skill": "aios-plan",
       "agent": "mason",
@@ -644,6 +657,7 @@
     "docs/v1.4.0-writing-workflow-quickstart.md",
     "docs/v1.4.0-writing-boundary.md",
     "docs/v1.5.0-knowledge-pack-runtime.md",
+    "docs/architecture-health.md",
     "memory/decision-records.md",
     "memory/project-memory-policy.md",
     "memory/cleanup-policy.md",
@@ -736,6 +750,12 @@
     "templates/knowledge-pack-samples/scheme-review/entity-relation-map.md",
     "templates/knowledge-pack-samples/scheme-review/eval-questions.md",
     "templates/knowledge-pack-samples/scheme-review/review-notes.md",
+    "templates/architecture-health/profile.json",
+    "templates/architecture-health/input.example.json",
+    "runtime/architecture-health/0.1/profile.schema.json",
+    "runtime/architecture-health/0.1/input.schema.json",
+    "runtime/architecture-health/0.1/report.schema.json",
+    "scripts/lib/architecture-health.mjs",
     "scripts/analyze-prompt-run-results.mjs",
     "scripts/build-prompt-run-pack.mjs",
     "scripts/validate-knowledge-pack.mjs",
