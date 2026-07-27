@@ -37,6 +37,7 @@
 | 工程招投标审核、评分点、废标风险和技术标资料矩阵 | `aios-tender-audit` | Mason | `review` |
 | 原工程商务招投标领域入口，保留既有培训和内部流程命令 | `aios-commercial-tender` | Mason | `review` |
 | 工程标书、技术标和投标响应章节生成 / 改写 / 历史素材复用 | `aios-tender-write` | Mason | `feature-development` |
+| 技术标历史 DOCX 母版保真改写、盘点母版、生成修改单、写入阶段版 Word、扫描旧项目残留 | `aios-tender-write` | Mason | `tender-docx-rewrite` |
 | 工程合同审核 / 履约节点 / 付款条件 / 责任边界 / 资料缺口 | `aios-contract-audit` | Themis | `review` |
 | 工程补充协议 / 合同条款 / 履约通知 / 函件草稿生成和改写 | `aios-contract-draft` | Themis | `feature-development` |
 | 工程合同履约节点、付款条件、责任边界和资料缺口 | `aios-commercial-contract` | Themis | `review` |

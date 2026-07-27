@@ -18,6 +18,7 @@
 
 **工程业务管理 (Business Execution):**
 - [现场协同与日常管理闭环](site-daily-loop.md)
+- [技术标 DOCX 保真改写](tender-docx-rewrite.md)
 
 每个 workflow 应明确参与角色、输入、输出、执行顺序、验收标准和回滚策略。
 

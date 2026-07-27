@@ -366,6 +366,10 @@
     {
       "id": "site-daily-loop",
       "path": "workflows/site-daily-loop.md"
+    },
+    {
+      "id": "tender-docx-rewrite",
+      "path": "workflows/tender-docx-rewrite.md"
     }
   ],
   "routes": [
