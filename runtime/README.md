@@ -27,5 +27,5 @@
 - Capability 是 Agent 可调用或要求的外部证据接口；Adapter 可以实现 Capability，但不得把未执行的工具结果伪装成已验证事实。
 - 本地 stdio MCP 阶段先使用 Capability Registry 的 `ownerAgents` 和 `allowedSkills` 做权限边界；传统 API Key、mTLS、租户隔离等远程鉴权留给 HTTP / SSE / Gateway Adapter 阶段。
 - `archsight-aios capability:call` 是最小本地调用闭环：校验 Agent / Skill 权限，校验输入 schema，调用 MCP Tool，校验输出证据契约，再给出仲裁 Decision。
-- `repo.architecture_health_scan` 通过本地 stdio MCP 运行项目自有 analyzer，归一化事实并返回基线棘轮结果；项目 profile、扫描器和基线仍归目标项目所有。
+- `repo.architecture_health_scan` 通过本地 stdio MCP 运行项目自有 analyzer，归一化事实，核验必需证据来源和受保护约束变更，并返回基线棘轮结果；项目 profile、扫描器、约束和基线仍归目标项目所有。
 - 多 Agent 冲突时，Runtime 应回传 `Claim / Evidence / Tool Result / Decision`，供治理层按 `governance/arbitration-protocol.md` 仲裁。

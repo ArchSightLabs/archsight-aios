@@ -21,6 +21,10 @@
       "type": "array",
       "items": { "$ref": "#/$defs/evidence" }
     },
+    "constraints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/constraint" }
+    },
     "analyzers": {
       "type": "array",
       "items": { "$ref": "#/$defs/analyzerState" }
@@ -98,12 +102,94 @@
       "required": ["id", "status", "evidenceClass"],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "unit-test",
+            "acceptance-test",
+            "property-test",
+            "mutation-test",
+            "coverage",
+            "code-quality",
+            "dependency-scan",
+            "ui-qa",
+            "performance",
+            "real-database",
+            "concurrency",
+            "failure-injection",
+            "constraint-approval",
+            "other"
+          ]
+        },
         "status": {
           "type": "string",
           "enum": ["available", "missing", "failed"]
         },
         "evidenceClass": { "$ref": "#/$defs/evidenceClass" },
-        "details": { "type": "string" }
+        "details": { "type": "string" },
+        "source": { "type": "string", "minLength": 1 },
+        "covers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "artifact": { "$ref": "#/$defs/artifact" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "command", "actor", "role", "repositoryCommit", "observedAt"],
+      "properties": {
+        "tool": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "command": { "type": "string", "minLength": 1 },
+        "actor": { "type": "string", "minLength": 1 },
+        "role": {
+          "type": "string",
+          "enum": ["producer", "verifier", "reviewer", "ci"]
+        },
+        "repositoryCommit": { "type": "string", "minLength": 1 },
+        "observedAt": { "type": "string", "format": "date-time" },
+        "environment": { "type": "string", "minLength": 1 }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "digest", "source"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "specification",
+            "acceptance-test",
+            "unit-test",
+            "quality-profile",
+            "qa-procedure",
+            "other"
+          ]
+        },
+        "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "source": { "type": "string", "minLength": 1 },
+        "location": { "type": "string", "minLength": 1 },
+        "producer": { "type": "string", "minLength": 1 },
+        "references": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
       }
     },
     "analyzerState": {

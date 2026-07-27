@@ -24,6 +24,8 @@
         "milestone": { "$ref": "#/$defs/stringArray" }
       }
     },
+    "evidencePolicy": { "$ref": "#/$defs/evidencePolicy" },
+    "constraintIntegrity": { "$ref": "#/$defs/constraintIntegrity" },
     "budgets": {
       "type": "array",
       "items": { "$ref": "#/$defs/budget" }
@@ -52,6 +54,24 @@
       "type": "array",
       "uniqueItems": true,
       "items": { "type": "string", "minLength": 1 }
+    },
+    "evidencePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requireProvenance", "requireArtifactDigest"],
+      "properties": {
+        "requireProvenance": { "$ref": "#/$defs/modes" },
+        "requireArtifactDigest": { "$ref": "#/$defs/modes" }
+      }
+    },
+    "constraintIntegrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modes", "approvalEvidenceId"],
+      "properties": {
+        "modes": { "$ref": "#/$defs/modes" },
+        "approvalEvidenceId": { "type": "string", "minLength": 1 }
+      }
     },
     "rule": {
       "type": "object",

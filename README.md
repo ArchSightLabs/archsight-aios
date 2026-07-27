@@ -32,7 +32,7 @@ AIOS 现在面向两类用户。第一类是建筑 AI / 软件研发团队，负
 | 角色 | 可以用它做什么 |
 | --- | --- |
 | 建筑行业软件 / AI 产品负责人 | 用 `aios-ceo`、`aios-design` 和 `aios-plan` 评估产品定位、行业专业性、工作台体验、交付路线和停损信号。 |
-| 架构师 / 后端 / AI 工程师 | 用 `aios-arch-health` 取得复杂度、依赖和趋势事实，再用 `aios-arch`、`aios-runtime`、`aios-structural` 和 `aios-exec` 评估服务边界、数据链路、Runtime、RAG / GraphRAG、结构计算工具链和受控执行。 |
+| 架构师 / 后端 / AI 工程师 | 用 `aios-arch-health` 核验复杂度、依赖、测试证据来源和受保护约束，再用 `aios-arch`、`aios-runtime`、`aios-structural` 和 `aios-exec` 评估服务边界、数据链路、Runtime、RAG / GraphRAG、结构计算工具链和受控执行。 |
 | 代码审查 / 质量负责人 | 用 `aios-review` 审查 diff、PR、AI 生成代码、安全敏感改动、Prompt / Tool / Runtime 变更、测试缺口和发布准备度。 |
 | 建筑数字化 / AI 应用团队 | 把行业知识、评估样例、RAG / GraphRAG、Tool Calling 和多 Agent 流程纳入可验证的工程链路。 |
 | 企业负责人 / 研发负责人 | 统一多工具、多模型、多 Agent 的研发边界和交付检查方式，评估 AIOS 在团队中的使用范围、投入顺序和风险边界。 |
@@ -167,7 +167,7 @@ npx @archsight/aios@latest init
 | 场景 | 推荐入口 |
 | --- | --- |
 | 企业负责人 / 一把手深度评审 | `aios-ceo` |
-| 复杂度、依赖方向、循环依赖、架构债基线和棘轮门禁 | `aios-arch-health` |
+| 复杂度、依赖方向、测试证据来源、受保护约束、架构债基线和棘轮门禁 | `aios-arch-health` |
 | 架构、服务边界、数据 / 模型 / Runtime 边界和长期复杂度 | `aios-arch` |
 | 建筑行业平台界面、审图工作台、BIM Viewer、规范检索和报告复核体验 | `aios-design` |
 | 功能、bug、架构决策、PR / 发布顺序和 CI/CD 交付拆解 | `aios-plan` |

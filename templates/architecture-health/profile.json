@@ -36,9 +36,27 @@
     "forbiddenDirections": []
   },
   "requiredEvidence": {
-    "commit": [],
-    "weekly": ["coverage"],
-    "milestone": ["coverage", "performance", "real-database", "failure-injection"]
+    "commit": ["unit-tests", "acceptance-tests", "coverage"],
+    "weekly": ["unit-tests", "acceptance-tests", "coverage", "code-quality", "mutation-tests"],
+    "milestone": [
+      "unit-tests",
+      "acceptance-tests",
+      "coverage",
+      "code-quality",
+      "mutation-tests",
+      "ui-qa",
+      "performance",
+      "real-database",
+      "failure-injection"
+    ]
+  },
+  "evidencePolicy": {
+    "requireProvenance": ["commit", "weekly", "milestone"],
+    "requireArtifactDigest": ["weekly", "milestone"]
+  },
+  "constraintIntegrity": {
+    "modes": ["commit", "weekly", "milestone"],
+    "approvalEvidenceId": "constraint-change-approval"
   },
   "budgets": [],
   "analyzers": []

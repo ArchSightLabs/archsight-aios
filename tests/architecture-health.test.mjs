@@ -14,6 +14,50 @@ import {
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cli = path.join(repoRoot, "bin", "archsight-aios.mjs");
+const DIGEST_A = "a".repeat(64);
+const DIGEST_B = "b".repeat(64);
+
+function provenance(repositoryCommit, overrides = {}) {
+  return {
+    tool: "fixture-runner",
+    version: "1.0.0",
+    command: "npm test",
+    actor: "ci",
+    role: "ci",
+    repositoryCommit,
+    observedAt: "2026-07-26T00:00:00.000Z",
+    environment: "test",
+    ...overrides
+  };
+}
+
+function measuredEvidence(id, repositoryCommit, overrides = {}) {
+  return {
+    id,
+    kind: "unit-test",
+    status: "available",
+    evidenceClass: "measured",
+    source: "fixture",
+    provenance: provenance(repositoryCommit),
+    artifact: {
+      path: `artifacts/${id}.json`,
+      sha256: DIGEST_A
+    },
+    ...overrides
+  };
+}
+
+function protectedConstraint(overrides = {}) {
+  return {
+    id: "acceptance.login",
+    kind: "acceptance-test",
+    digest: DIGEST_A,
+    source: "fixture-constraint-scanner",
+    location: "tests/login.feature",
+    producer: "implementation-agent",
+    ...overrides
+  };
+}
 
 function profile(overrides = {}) {
   return {
@@ -161,6 +205,147 @@ async function testEvidenceClassesAndMilestoneHold() {
   assert.match(inferredRequiredEvidence.gate.reasons.join("\n"), /performance/);
 }
 
+async function testEvidenceProvenanceAndArtifactPolicy() {
+  const currentProfile = profile({
+    requiredEvidence: {
+      commit: ["unit-tests"],
+      weekly: [],
+      milestone: []
+    },
+    evidencePolicy: {
+      requireProvenance: ["commit"],
+      requireArtifactDigest: ["commit"]
+    }
+  });
+  const baseInput = input({ observations: [] });
+
+  const missingProvenance = evaluateArchitectureHealth({
+    profile: currentProfile,
+    input: input({
+      observations: [],
+      evidence: [{
+        id: "unit-tests",
+        kind: "unit-test",
+        status: "available",
+        evidenceClass: "measured"
+      }]
+    }),
+    mode: "commit"
+  });
+  assert.equal(missingProvenance.gate.status, "hold");
+  assert.match(missingProvenance.gate.reasons.join("\n"), /lacks provenance/);
+  assert.match(missingProvenance.gate.reasons.join("\n"), /artifact digest is missing/);
+
+  const mismatchedCommit = evaluateArchitectureHealth({
+    profile: currentProfile,
+    input: input({
+      observations: [],
+      evidence: [measuredEvidence("unit-tests", "different-commit")]
+    }),
+    mode: "commit"
+  });
+  assert.equal(mismatchedCommit.gate.status, "hold");
+  assert.match(mismatchedCommit.gate.reasons.join("\n"), /does not match/);
+
+  const valid = evaluateArchitectureHealth({
+    profile: currentProfile,
+    input: {
+      ...baseInput,
+      evidence: [measuredEvidence("unit-tests", baseInput.repository.commit)]
+    },
+    mode: "commit"
+  });
+  assert.equal(valid.gate.status, "pass");
+  assert.equal(valid.evidence.integrity.status, "pass");
+}
+
+async function testProtectedConstraintApproval() {
+  const currentProfile = profile({
+    constraintIntegrity: {
+      modes: ["commit"],
+      approvalEvidenceId: "constraint-change-approval"
+    }
+  });
+  const initialInput = input({
+    observations: [],
+    constraints: [protectedConstraint()]
+  });
+  const baseline = evaluateArchitectureHealth({
+    profile: currentProfile,
+    input: initialInput,
+    mode: "commit"
+  });
+  assert.equal(baseline.gate.status, "pass");
+  assert.equal(baseline.constraintIntegrity.status, "bootstrap");
+
+  const unchanged = evaluateArchitectureHealth({
+    profile: currentProfile,
+    input: input({
+      repository: { id: "fixture-repo", commit: "def456" },
+      observations: [],
+      constraints: [protectedConstraint()]
+    }),
+    baseline,
+    mode: "commit"
+  });
+  assert.equal(unchanged.gate.status, "pass");
+  assert.equal(unchanged.constraintIntegrity.status, "unchanged");
+
+  const changedInput = input({
+    repository: { id: "fixture-repo", commit: "def457" },
+    observations: [],
+    constraints: [protectedConstraint({ digest: DIGEST_B })]
+  });
+  const unapproved = evaluateArchitectureHealth({
+    profile: currentProfile,
+    input: changedInput,
+    baseline,
+    mode: "commit"
+  });
+  assert.equal(unapproved.gate.status, "hold");
+  assert.equal(unapproved.constraintIntegrity.status, "hold");
+
+  const selfApproved = evaluateArchitectureHealth({
+    profile: currentProfile,
+    input: {
+      ...changedInput,
+      evidence: [measuredEvidence("constraint-change-approval", "def457", {
+        kind: "constraint-approval",
+        covers: ["acceptance.login"],
+        provenance: provenance("def457", {
+          actor: "implementation-agent",
+          role: "reviewer",
+          command: "review protected constraints"
+        })
+      })]
+    },
+    baseline,
+    mode: "commit"
+  });
+  assert.equal(selfApproved.gate.status, "hold");
+  assert.match(selfApproved.gate.reasons.join("\n"), /cannot approve its own/);
+
+  const independentlyApproved = evaluateArchitectureHealth({
+    profile: currentProfile,
+    input: {
+      ...changedInput,
+      evidence: [measuredEvidence("constraint-change-approval", "def457", {
+        kind: "constraint-approval",
+        covers: ["acceptance.login"],
+        provenance: provenance("def457", {
+          actor: "architecture-reviewer",
+          role: "reviewer",
+          command: "review protected constraints"
+        })
+      })]
+    },
+    baseline,
+    mode: "commit"
+  });
+  assert.equal(independentlyApproved.gate.status, "pass");
+  assert.equal(independentlyApproved.constraintIntegrity.status, "approved");
+}
+
 async function testBudgetsAndExpiry() {
   const validBudget = {
     id: "legacy-budget",
@@ -288,6 +473,26 @@ async function testStrictDomainValidation() {
       }]
     })),
     /context.dataset/
+  );
+  assert.throws(
+    () => validateArchitectureHealthInput(input({
+      constraints: [protectedConstraint({ digest: "not-a-digest" })]
+    })),
+    /lowercase SHA-256/
+  );
+  assert.throws(
+    () => validateArchitectureHealthInput(input({
+      constraints: [protectedConstraint({ references: ["missing.constraint"] })]
+    })),
+    /unknown constraint id/
+  );
+  assert.throws(
+    () => validateArchitectureHealthInput(input({
+      evidence: [measuredEvidence("unit-tests", "abc123", {
+        provenance: provenance("abc123", { role: "owner" })
+      })]
+    })),
+    /provenance.role is invalid/
   );
   await assert.rejects(
     () => runArchitectureHealthCapability({
@@ -477,6 +682,8 @@ async function testProjectOwnedAnalyzer() {
 const tests = [
   testMeasuredRatchetAndBaseline,
   testEvidenceClassesAndMilestoneHold,
+  testEvidenceProvenanceAndArtifactPolicy,
+  testProtectedConstraintApproval,
   testBudgetsAndExpiry,
   testDependencyPolicies,
   testStrictDomainValidation,

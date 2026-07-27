@@ -14,6 +14,7 @@
     "comparison",
     "budgets",
     "evidence",
+    "constraintIntegrity",
     "dependencyGraph",
     "gate",
     "reportFingerprint"
@@ -37,6 +38,7 @@
       "items": { "$ref": "#/$defs/budgetResult" }
     },
     "evidence": { "$ref": "#/$defs/evidenceSummary" },
+    "constraintIntegrity": { "$ref": "#/$defs/constraintIntegrity" },
     "dependencyGraph": { "$ref": "#/$defs/dependencyGraph" },
     "gate": { "$ref": "#/$defs/gate" },
     "reportFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
@@ -225,18 +227,89 @@
       "required": ["id", "status", "evidenceClass"],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "unit-test",
+            "acceptance-test",
+            "property-test",
+            "mutation-test",
+            "coverage",
+            "code-quality",
+            "dependency-scan",
+            "ui-qa",
+            "performance",
+            "real-database",
+            "concurrency",
+            "failure-injection",
+            "constraint-approval",
+            "other"
+          ]
+        },
         "status": {
           "type": "string",
           "enum": ["available", "missing", "failed"]
         },
         "evidenceClass": { "$ref": "#/$defs/evidenceClass" },
-        "details": { "type": "string" }
+        "details": { "type": "string" },
+        "source": { "type": "string", "minLength": 1 },
+        "covers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "artifact": { "$ref": "#/$defs/artifact" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "command", "actor", "role", "repositoryCommit", "observedAt"],
+      "properties": {
+        "tool": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "command": { "type": "string", "minLength": 1 },
+        "actor": { "type": "string", "minLength": 1 },
+        "role": {
+          "type": "string",
+          "enum": ["producer", "verifier", "reviewer", "ci"]
+        },
+        "repositoryCommit": { "type": "string", "minLength": 1 },
+        "observedAt": { "type": "string", "format": "date-time" },
+        "environment": { "type": "string", "minLength": 1 }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "evidenceIntegrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "requireProvenance", "requireArtifactDigest", "issues"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["not-required", "pass", "hold"]
+        },
+        "requireProvenance": { "type": "boolean" },
+        "requireArtifactDigest": { "type": "boolean" },
+        "issues": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
       }
     },
     "evidenceSummary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["required", "supplied"],
+      "required": ["required", "supplied", "integrity"],
       "properties": {
         "required": {
           "type": "array",
@@ -245,7 +318,90 @@
         "supplied": {
           "type": "array",
           "items": { "$ref": "#/$defs/evidence" }
+        },
+        "integrity": { "$ref": "#/$defs/evidenceIntegrity" }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "digest", "source"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "specification",
+            "acceptance-test",
+            "unit-test",
+            "quality-profile",
+            "qa-procedure",
+            "other"
+          ]
+        },
+        "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "source": { "type": "string", "minLength": 1 },
+        "location": { "type": "string", "minLength": 1 },
+        "producer": { "type": "string", "minLength": 1 },
+        "references": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
         }
+      }
+    },
+    "constraintChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "status", "source"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "specification",
+            "acceptance-test",
+            "unit-test",
+            "quality-profile",
+            "qa-procedure",
+            "other"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["new", "changed", "removed"]
+        },
+        "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "baselineDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "source": { "type": "string", "minLength": 1 },
+        "location": { "type": "string", "minLength": 1 },
+        "producer": { "type": "string", "minLength": 1 },
+        "references": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "constraintIntegrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "changes", "constraints"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["disabled", "bootstrap", "unverified", "unchanged", "hold", "approved"]
+        },
+        "approvalEvidenceId": { "type": "string", "minLength": 1 },
+        "changes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/constraintChange" }
+        },
+        "constraints": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/constraint" }
+        },
+        "reason": { "type": "string", "minLength": 1 }
       }
     },
     "dependency": {

@@ -6,6 +6,31 @@ import { spawn } from "node:child_process";
 const VERSION = "0.1";
 const MODES = new Set(["commit", "weekly", "milestone"]);
 const EVIDENCE_CLASSES = new Set(["measured", "inferred", "unverified"]);
+const EVIDENCE_KINDS = new Set([
+  "unit-test",
+  "acceptance-test",
+  "property-test",
+  "mutation-test",
+  "coverage",
+  "code-quality",
+  "dependency-scan",
+  "ui-qa",
+  "performance",
+  "real-database",
+  "concurrency",
+  "failure-injection",
+  "constraint-approval",
+  "other"
+]);
+const PROVENANCE_ROLES = new Set(["producer", "verifier", "reviewer", "ci"]);
+const CONSTRAINT_KINDS = new Set([
+  "specification",
+  "acceptance-test",
+  "unit-test",
+  "quality-profile",
+  "qa-procedure",
+  "other"
+]);
 const EVIDENCE_RANK = { unverified: 0, inferred: 1, measured: 2 };
 const SEVERITY_RANK = { note: 0, P2: 1, P1: 2, P0: 3 };
 const INVESTIGATION_ONLY_METRICS = new Set([
@@ -83,6 +108,13 @@ function validateModes(modes, label) {
   if (new Set(modes).size !== modes.length) throw new Error(`${label} must not contain duplicates`);
 }
 
+function validateStringArray(values, label) {
+  if (!Array.isArray(values) || values.some((item) => typeof item !== "string" || item.trim().length === 0)) {
+    throw new Error(`${label} must be a string array`);
+  }
+  if (new Set(values).size !== values.length) throw new Error(`${label} must not contain duplicates`);
+}
+
 function validateLocation(location, label) {
   requireObject(location, label);
   rejectUnknown(location, new Set(["path", "line", "symbol"]), label);
@@ -98,7 +130,7 @@ export function validateArchitectureHealthProfile(profile) {
   requireObject(profile, "profile");
   rejectUnknown(profile, new Set([
     "schemaVersion", "id", "version", "allowBootstrap", "rules", "dependencyPolicy",
-    "requiredEvidence", "budgets", "analyzers"
+    "requiredEvidence", "evidencePolicy", "constraintIntegrity", "budgets", "analyzers"
   ]), "profile");
   if (profile.schemaVersion !== VERSION) throw new Error(`profile.schemaVersion must be ${VERSION}`);
   requireString(profile.id, "profile.id");
@@ -169,12 +201,29 @@ export function validateArchitectureHealthProfile(profile) {
   rejectUnknown(profile.requiredEvidence, MODES, "profile.requiredEvidence");
   for (const mode of MODES) {
     const required = profile.requiredEvidence?.[mode] ?? [];
-    if (!Array.isArray(required) || required.some((item) => typeof item !== "string" || item.trim().length === 0)) {
-      throw new Error(`profile.requiredEvidence.${mode} must be a string array`);
-    }
-    if (new Set(required).size !== required.length) {
-      throw new Error(`profile.requiredEvidence.${mode} must not contain duplicates`);
-    }
+    validateStringArray(required, `profile.requiredEvidence.${mode}`);
+  }
+
+  if (profile.evidencePolicy !== undefined) {
+    requireObject(profile.evidencePolicy, "profile.evidencePolicy");
+    rejectUnknown(
+      profile.evidencePolicy,
+      new Set(["requireProvenance", "requireArtifactDigest"]),
+      "profile.evidencePolicy"
+    );
+    validateModes(profile.evidencePolicy.requireProvenance, "profile.evidencePolicy.requireProvenance");
+    validateModes(profile.evidencePolicy.requireArtifactDigest, "profile.evidencePolicy.requireArtifactDigest");
+  }
+
+  if (profile.constraintIntegrity !== undefined) {
+    requireObject(profile.constraintIntegrity, "profile.constraintIntegrity");
+    rejectUnknown(
+      profile.constraintIntegrity,
+      new Set(["modes", "approvalEvidenceId"]),
+      "profile.constraintIntegrity"
+    );
+    validateModes(profile.constraintIntegrity.modes, "profile.constraintIntegrity.modes");
+    requireString(profile.constraintIntegrity.approvalEvidenceId, "profile.constraintIntegrity.approvalEvidenceId");
   }
 
   if (!Object.hasOwn(profile, "budgets") || !Array.isArray(profile.budgets)) {
@@ -225,7 +274,7 @@ export function validateArchitectureHealthProfile(profile) {
 export function validateArchitectureHealthInput(input) {
   requireObject(input, "input");
   rejectUnknown(input, new Set([
-    "schemaVersion", "repository", "observedAt", "observations", "dependencies", "evidence", "analyzers"
+    "schemaVersion", "repository", "observedAt", "observations", "dependencies", "evidence", "constraints", "analyzers"
   ]), "input");
   if (input.schemaVersion !== VERSION) throw new Error(`input.schemaVersion must be ${VERSION}`);
   requireObject(input.repository, "input.repository");
@@ -236,6 +285,7 @@ export function validateArchitectureHealthInput(input) {
   if (!Array.isArray(input.observations)) throw new Error("input.observations must be an array");
   if (!Array.isArray(input.dependencies)) throw new Error("input.dependencies must be an array");
   if (!Array.isArray(input.evidence)) throw new Error("input.evidence must be an array");
+  if (!Array.isArray(input.constraints ?? [])) throw new Error("input.constraints must be an array");
   const observationIds = new Set();
   for (const [index, observation] of input.observations.entries()) {
     const label = `input.observations[${index}]`;
@@ -294,14 +344,86 @@ export function validateArchitectureHealthInput(input) {
   for (const [index, evidence] of input.evidence.entries()) {
     const label = `input.evidence[${index}]`;
     requireObject(evidence, label);
-    rejectUnknown(evidence, new Set(["id", "status", "evidenceClass", "details"]), label);
+    rejectUnknown(
+      evidence,
+      new Set(["id", "kind", "status", "evidenceClass", "details", "source", "covers", "provenance", "artifact"]),
+      label
+    );
     requireString(evidence.id, `${label}.id`);
     if (evidenceIds.has(evidence.id)) throw new Error(`Duplicate evidence id: ${evidence.id}`);
     evidenceIds.add(evidence.id);
     if (!["available", "missing", "failed"].includes(evidence.status)) throw new Error(`${label}.status is invalid`);
     if (!EVIDENCE_CLASSES.has(evidence.evidenceClass)) throw new Error(`${label}.evidenceClass is invalid`);
+    if (evidence.kind !== undefined && !EVIDENCE_KINDS.has(evidence.kind)) {
+      throw new Error(`${label}.kind is invalid`);
+    }
     if (evidence.details !== undefined && typeof evidence.details !== "string") {
       throw new Error(`${label}.details must be a string`);
+    }
+    if (evidence.source !== undefined) requireString(evidence.source, `${label}.source`);
+    if (evidence.covers !== undefined) validateStringArray(evidence.covers, `${label}.covers`);
+    if (evidence.provenance !== undefined) {
+      requireObject(evidence.provenance, `${label}.provenance`);
+      rejectUnknown(
+        evidence.provenance,
+        new Set(["tool", "version", "command", "actor", "role", "repositoryCommit", "observedAt", "environment"]),
+        `${label}.provenance`
+      );
+      for (const field of ["tool", "command", "actor", "role", "repositoryCommit", "observedAt"]) {
+        requireString(evidence.provenance[field], `${label}.provenance.${field}`);
+      }
+      if (!PROVENANCE_ROLES.has(evidence.provenance.role)) {
+        throw new Error(`${label}.provenance.role is invalid`);
+      }
+      requireIsoDate(evidence.provenance.observedAt, `${label}.provenance.observedAt`);
+      if (evidence.provenance.version !== undefined) {
+        requireString(evidence.provenance.version, `${label}.provenance.version`);
+      }
+      if (evidence.provenance.environment !== undefined) {
+        requireString(evidence.provenance.environment, `${label}.provenance.environment`);
+      }
+    }
+    if (evidence.artifact !== undefined) {
+      requireObject(evidence.artifact, `${label}.artifact`);
+      rejectUnknown(evidence.artifact, new Set(["path", "sha256"]), `${label}.artifact`);
+      evidence.artifact.path = normalizeRelativePath(evidence.artifact.path);
+      requireString(evidence.artifact.path, `${label}.artifact.path`);
+      if (typeof evidence.artifact.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(evidence.artifact.sha256)) {
+        throw new Error(`${label}.artifact.sha256 must be a lowercase SHA-256 digest`);
+      }
+    }
+  }
+  const constraintIds = new Set();
+  for (const [index, constraint] of (input.constraints ?? []).entries()) {
+    const label = `input.constraints[${index}]`;
+    requireObject(constraint, label);
+    rejectUnknown(
+      constraint,
+      new Set(["id", "kind", "digest", "source", "location", "producer", "references"]),
+      label
+    );
+    for (const field of ["id", "kind", "digest", "source"]) requireString(constraint[field], `${label}.${field}`);
+    if (constraintIds.has(constraint.id)) throw new Error(`Duplicate constraint id: ${constraint.id}`);
+    constraintIds.add(constraint.id);
+    if (!CONSTRAINT_KINDS.has(constraint.kind)) throw new Error(`${label}.kind is invalid`);
+    if (!/^[a-f0-9]{64}$/.test(constraint.digest)) {
+      throw new Error(`${label}.digest must be a lowercase SHA-256 digest`);
+    }
+    if (constraint.location !== undefined) {
+      constraint.location = normalizeRelativePath(constraint.location);
+      requireString(constraint.location, `${label}.location`);
+    }
+    if (constraint.producer !== undefined) requireString(constraint.producer, `${label}.producer`);
+    if (constraint.references !== undefined) validateStringArray(constraint.references, `${label}.references`);
+  }
+  for (const [index, constraint] of (input.constraints ?? []).entries()) {
+    for (const reference of (constraint.references ?? [])) {
+      if (!constraintIds.has(reference)) {
+        throw new Error(`input.constraints[${index}].references contains unknown constraint id: ${reference}`);
+      }
+      if (reference === constraint.id) {
+        throw new Error(`input.constraints[${index}].references must not reference itself`);
+      }
     }
   }
   for (const [index, analyzer] of (input.analyzers ?? []).entries()) {
@@ -498,7 +620,7 @@ function violationMagnitude(metric) {
   return metric.value === metric.threshold ? 1 : 0;
 }
 
-function applyBaseline(findings, baseline, repository, profileDigest, mode, allowBootstrap) {
+function applyBaseline(findings, baseline, repository, profileDigest, mode, allowBootstrap, schemaVersion) {
   if (!baseline) {
     const hold = mode === "commit" && !allowBootstrap;
     return {
@@ -508,7 +630,7 @@ function applyBaseline(findings, baseline, repository, profileDigest, mode, allo
       holdReason: hold ? "Commit mode requires a compatible baseline" : undefined
     };
   }
-  if (baseline.schemaVersion !== VERSION || baseline.type !== "archsight-aios.architecture-health") {
+  if (baseline.schemaVersion !== schemaVersion || baseline.type !== "archsight-aios.architecture-health") {
     return { findings, resolved: [], compatibility: "mismatch", holdReason: "Baseline schema is incompatible" };
   }
   if (baseline.run?.repository?.id !== repository.id || baseline.run?.profileDigest !== profileDigest) {
@@ -590,6 +712,156 @@ function requiredEvidenceState(profile, input, mode) {
   }).sort((left, right) => left.id.localeCompare(right.id));
 }
 
+function evidenceIntegrityState(profile, requiredEvidence, input, mode) {
+  const requireProvenance = profile.evidencePolicy?.requireProvenance?.includes(mode) ?? false;
+  const requireArtifactDigest = profile.evidencePolicy?.requireArtifactDigest?.includes(mode) ?? false;
+  const issues = [];
+  for (const evidence of requiredEvidence) {
+    if (evidence.status !== "available" || evidence.evidenceClass !== "measured") continue;
+    if (requireProvenance) {
+      if (!evidence.provenance) {
+        issues.push(`${evidence.id}: measured evidence lacks provenance`);
+      } else if (evidence.provenance.repositoryCommit !== input.repository.commit) {
+        issues.push(`${evidence.id}: provenance commit does not match the scanned repository commit`);
+      }
+    }
+    if (requireArtifactDigest && !evidence.artifact?.sha256) {
+      issues.push(`${evidence.id}: required artifact digest is missing`);
+    }
+  }
+  return {
+    status: issues.length > 0 ? "hold" : requireProvenance || requireArtifactDigest ? "pass" : "not-required",
+    requireProvenance,
+    requireArtifactDigest,
+    issues
+  };
+}
+
+function constraintSnapshot(constraints) {
+  return [...(constraints ?? [])]
+    .map((constraint) => structuredClone(constraint))
+    .sort((left, right) => left.id.localeCompare(right.id));
+}
+
+function constraintChange(current, before, status) {
+  const source = current ?? before;
+  return {
+    id: source.id,
+    kind: source.kind,
+    status,
+    digest: current?.digest,
+    baselineDigest: before?.digest,
+    source: source.source,
+    location: source.location,
+    producer: source.producer,
+    references: source.references
+  };
+}
+
+function constraintIntegrityState(profile, input, baseline, mode, comparisonCompatibility) {
+  const constraints = constraintSnapshot(input.constraints);
+  const policy = profile.constraintIntegrity;
+  if (!policy?.modes.includes(mode)) {
+    return {
+      status: "disabled",
+      changes: [],
+      constraints
+    };
+  }
+  if (comparisonCompatibility === "bootstrap") {
+    return {
+      status: "bootstrap",
+      approvalEvidenceId: policy.approvalEvidenceId,
+      changes: constraints.map((constraint) => constraintChange(constraint, undefined, "new")),
+      constraints
+    };
+  }
+  if (comparisonCompatibility !== "compatible") {
+    return {
+      status: "unverified",
+      approvalEvidenceId: policy.approvalEvidenceId,
+      changes: [],
+      constraints
+    };
+  }
+  if (!Array.isArray(baseline?.constraintIntegrity?.constraints)) {
+    return {
+      status: "hold",
+      approvalEvidenceId: policy.approvalEvidenceId,
+      changes: [],
+      constraints,
+      reason: "Compatible baseline lacks a protected constraint snapshot"
+    };
+  }
+
+  const before = new Map(baseline.constraintIntegrity.constraints.map((constraint) => [constraint.id, constraint]));
+  const changes = [];
+  for (const constraint of constraints) {
+    const prior = before.get(constraint.id);
+    if (!prior) {
+      changes.push(constraintChange(constraint, undefined, "new"));
+      continue;
+    }
+    before.delete(constraint.id);
+    if (stableJson(constraint) !== stableJson(prior)) {
+      changes.push(constraintChange(constraint, prior, "changed"));
+    }
+  }
+  for (const constraint of before.values()) {
+    changes.push(constraintChange(undefined, constraint, "removed"));
+  }
+  changes.sort((left, right) => left.id.localeCompare(right.id));
+  if (changes.length === 0) {
+    return {
+      status: "unchanged",
+      approvalEvidenceId: policy.approvalEvidenceId,
+      changes,
+      constraints
+    };
+  }
+
+  const approval = input.evidence.find((item) => item.id === policy.approvalEvidenceId);
+  const approvalIssues = [];
+  if (!approval || approval.status !== "available" || approval.evidenceClass !== "measured") {
+    approvalIssues.push("measured approval evidence is unavailable");
+  } else {
+    if (approval.kind !== "constraint-approval") {
+      approvalIssues.push("approval evidence kind must be constraint-approval");
+    }
+    if (!approval.provenance || approval.provenance.role !== "reviewer") {
+      approvalIssues.push("approval evidence must identify an independent reviewer");
+    } else {
+      if (approval.provenance.repositoryCommit !== input.repository.commit) {
+        approvalIssues.push("approval evidence commit does not match the scanned repository commit");
+      }
+      const changedProducers = new Set(changes.map((change) => change.producer).filter(Boolean));
+      if (changedProducers.has(approval.provenance.actor)) {
+        approvalIssues.push("constraint producer cannot approve its own constraint change");
+      }
+    }
+    const covered = new Set(approval.covers ?? []);
+    const uncovered = changes.map((change) => change.id).filter((id) => !covered.has(id));
+    if (uncovered.length > 0) {
+      approvalIssues.push(`approval evidence does not cover changed constraints: ${uncovered.join(", ")}`);
+    }
+  }
+  if (approvalIssues.length > 0) {
+    return {
+      status: "hold",
+      approvalEvidenceId: policy.approvalEvidenceId,
+      changes,
+      constraints,
+      reason: `Protected constraints changed without valid independent approval: ${approvalIssues.join("; ")}`
+    };
+  }
+  return {
+    status: "approved",
+    approvalEvidenceId: policy.approvalEvidenceId,
+    changes,
+    constraints
+  };
+}
+
 function renderMarkdown(report) {
   const rows = report.findings.map((finding) => {
     const location = finding.location
@@ -597,6 +869,9 @@ function renderMarkdown(report) {
       : "-";
     return `| ${finding.severity} | ${finding.status} | ${finding.evidenceClass} | ${finding.ruleId} | ${location} | ${finding.message.replaceAll("|", "\\|")} |`;
   });
+  const constraintRows = report.constraintIntegrity.changes.map((change) => (
+    `| ${change.status} | ${change.kind} | ${change.id} | ${change.location ?? "-"} |`
+  ));
   return [
     "# Architecture Health",
     "",
@@ -614,6 +889,24 @@ function renderMarkdown(report) {
     `- Retained: ${report.summary.retained}`,
     `- Budgeted: ${report.summary.budgeted}`,
     `- Resolved: ${report.summary.resolved}`,
+    "",
+    "## Evidence integrity",
+    "",
+    `- Status: \`${report.evidence.integrity.status}\``,
+    `- Provenance required: ${report.evidence.integrity.requireProvenance}`,
+    `- Artifact digest required: ${report.evidence.integrity.requireArtifactDigest}`,
+    ...(report.evidence.integrity.issues.length > 0
+      ? report.evidence.integrity.issues.map((issue) => `- ${issue}`)
+      : ["- No evidence integrity issues."]),
+    "",
+    "## Constraint integrity",
+    "",
+    `- Status: \`${report.constraintIntegrity.status}\``,
+    `- Approval evidence: \`${report.constraintIntegrity.approvalEvidenceId ?? "-"}\``,
+    "",
+    "| Change | Kind | Constraint | Location |",
+    "| --- | --- | --- | --- |",
+    ...(constraintRows.length > 0 ? constraintRows : ["| - | - | - | No constraint changes |"]),
     "",
     "## Findings",
     "",
@@ -638,7 +931,7 @@ function renderSarif(report) {
       tool: {
         driver: {
           name: "ArchSight AIOS Architecture Health",
-          version: VERSION,
+          version: report.schemaVersion,
           rules: ruleIds.map((id) => ({ id, name: id }))
         }
       },
@@ -701,6 +994,9 @@ export function evaluateArchitectureHealth({ profile, input, baseline, mode = "c
   if (!MODES.has(mode)) throw new Error(`Unknown architecture-health mode: ${mode}`);
   validateArchitectureHealthProfile(profile);
   validateArchitectureHealthInput(input);
+  if (profile.schemaVersion !== input.schemaVersion) {
+    throw new Error("profile.schemaVersion must match input.schemaVersion");
+  }
   const profileDigest = sha256(stableJson({
     ...profile,
     budgets: [],
@@ -715,10 +1011,19 @@ export function evaluateArchitectureHealth({ profile, input, baseline, mode = "c
     input.repository,
     profileDigest,
     mode,
-    profile.allowBootstrap === true
+    profile.allowBootstrap === true,
+    profile.schemaVersion
   );
   const budgets = applyBudgets(comparison.findings, profile.budgets ?? [], input.observedAt);
   const requiredEvidence = requiredEvidenceState(profile, input, mode);
+  const evidenceIntegrity = evidenceIntegrityState(profile, requiredEvidence, input, mode);
+  const constraintIntegrity = constraintIntegrityState(
+    profile,
+    input,
+    baseline,
+    mode,
+    comparison.compatibility
+  );
   const gateReasons = [];
   if (comparison.holdReason) gateReasons.push(comparison.holdReason);
   const missingEvidence = requiredEvidence.filter(
@@ -727,6 +1032,10 @@ export function evaluateArchitectureHealth({ profile, input, baseline, mode = "c
   if (missingEvidence.length > 0) {
     gateReasons.push(`Required evidence unavailable: ${missingEvidence.map((item) => item.id).join(", ")}`);
   }
+  if (evidenceIntegrity.issues.length > 0) {
+    gateReasons.push(`Required evidence integrity failed: ${evidenceIntegrity.issues.join("; ")}`);
+  }
+  if (constraintIntegrity.reason) gateReasons.push(constraintIntegrity.reason);
   const analyzerFailures = (input.analyzers ?? []).filter((item) => item.required && item.status !== "pass");
   if (analyzerFailures.length > 0) {
     gateReasons.push(`Required analyzers failed: ${analyzerFailures.map((item) => item.id).join(", ")}`);
@@ -737,10 +1046,14 @@ export function evaluateArchitectureHealth({ profile, input, baseline, mode = "c
       && finding.gateEligible
   );
   if (blocking.length > 0) gateReasons.push(`${blocking.length} unbudgeted measured architecture debt item(s)`);
-  const hold = Boolean(comparison.holdReason) || missingEvidence.length > 0 || analyzerFailures.length > 0;
+  const hold = Boolean(comparison.holdReason)
+    || missingEvidence.length > 0
+    || evidenceIntegrity.issues.length > 0
+    || Boolean(constraintIntegrity.reason)
+    || analyzerFailures.length > 0;
   const gateStatus = hold ? "hold" : blocking.length > 0 ? "fail" : "pass";
   const report = {
-    schemaVersion: VERSION,
+    schemaVersion: profile.schemaVersion,
     type: "archsight-aios.architecture-health",
     run: {
       mode,
@@ -756,8 +1069,10 @@ export function evaluateArchitectureHealth({ profile, input, baseline, mode = "c
     budgets,
     evidence: {
       required: requiredEvidence,
-      supplied: [...input.evidence].sort((left, right) => left.id.localeCompare(right.id))
+      supplied: [...input.evidence].sort((left, right) => left.id.localeCompare(right.id)),
+      integrity: evidenceIntegrity
     },
+    constraintIntegrity,
     dependencyGraph: {
       nodes: [...new Set(dependencies.flatMap((edge) => [edge.from, edge.to]))].sort(),
       edges: dependencies,
@@ -831,6 +1146,7 @@ function mergeAnalyzerInputs(baseInput, analyzerRuns) {
     merged.observations.push(...(run.output.observations ?? []));
     merged.dependencies.push(...(run.output.dependencies ?? []));
     merged.evidence.push(...(run.output.evidence ?? []));
+    merged.constraints.push(...(run.output.constraints ?? []));
   }
   return merged;
 }
@@ -876,7 +1192,7 @@ export async function writeArchitectureHealthArtifacts(report, input, outputDir)
     renderDependencyGraph(report.dependencyGraph.edges, report.dependencyGraph.cycles)
   );
   await atomicWrite(files.cycles, stableJson({
-    schemaVersion: VERSION,
+    schemaVersion: report.schemaVersion,
     repository: report.run.repository,
     cycles: report.dependencyGraph.cycles
   }));
@@ -930,13 +1246,15 @@ export async function runArchitectureHealth(options) {
   let input = options.healthInput
     ? await readJson(options.healthInput)
     : {
-      schemaVersion: VERSION,
+      schemaVersion: profile.schemaVersion,
       repository: { id: path.basename(options.cwd), commit: "unknown" },
       observedAt: new Date(0).toISOString(),
       observations: [],
       dependencies: [],
-      evidence: []
+      evidence: [],
+      constraints: []
     };
+  input.constraints ??= [];
   const analyzers = (profile.analyzers ?? []).filter((analyzer) => analyzer.modes.includes(options.mode));
   if (!options.healthInput && analyzers.length === 0) {
     throw new Error("Provide --health-input or configure at least one analyzer for this mode");
@@ -953,7 +1271,7 @@ export async function runArchitectureHealth(options) {
   const report = evaluateArchitectureHealth({ profile, input, baseline, mode: options.mode });
   const artifacts = await writeArchitectureHealthArtifacts(report, input, options.out);
   return {
-    schemaVersion: VERSION,
+    schemaVersion: report.schemaVersion,
     capabilityId: "repo.architecture_health_scan",
     status: report.gate.status,
     reportFingerprint: report.reportFingerprint,

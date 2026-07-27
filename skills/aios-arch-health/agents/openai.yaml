@@ -1,4 +1,4 @@
 interface:
   display_name: "AIOS Arch Health"
-  short_description: "扫描架构事实、执行基线棘轮并阻止无预算新增架构债务"
-  default_prompt: "Use $aios-arch-health to run a deterministic architecture health scan, apply baseline ratchets, and hand measured facts to aios-arch for interpretation."
+  short_description: "核验证据和受保护约束，执行架构健康基线棘轮"
+  default_prompt: "Use $aios-arch-health to verify deterministic evidence provenance and protected constraints, apply architecture-health baseline ratchets, and hand measured facts to aios-arch for architectural interpretation."

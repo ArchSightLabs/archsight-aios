@@ -23,5 +23,96 @@
     }
   ],
   "dependencies": [],
-  "evidence": []
+  "evidence": [
+    {
+      "id": "unit-tests",
+      "kind": "unit-test",
+      "status": "available",
+      "evidenceClass": "measured",
+      "source": "project-ci",
+      "provenance": {
+        "tool": "project-test-runner",
+        "version": "1.0.0",
+        "command": "npm test",
+        "actor": "ci",
+        "role": "ci",
+        "repositoryCommit": "0123456789abcdef",
+        "observedAt": "2026-01-01T00:00:00.000Z",
+        "environment": "ci"
+      },
+      "artifact": {
+        "path": "build/test-results/unit.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    },
+    {
+      "id": "acceptance-tests",
+      "kind": "acceptance-test",
+      "status": "available",
+      "evidenceClass": "measured",
+      "source": "project-ci",
+      "provenance": {
+        "tool": "project-acceptance-runner",
+        "version": "1.0.0",
+        "command": "npm run test:acceptance",
+        "actor": "ci",
+        "role": "ci",
+        "repositoryCommit": "0123456789abcdef",
+        "observedAt": "2026-01-01T00:00:00.000Z",
+        "environment": "ci"
+      },
+      "artifact": {
+        "path": "build/test-results/acceptance.json",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    {
+      "id": "coverage",
+      "kind": "coverage",
+      "status": "available",
+      "evidenceClass": "measured",
+      "source": "project-ci",
+      "provenance": {
+        "tool": "project-coverage-runner",
+        "version": "1.0.0",
+        "command": "npm run coverage",
+        "actor": "ci",
+        "role": "ci",
+        "repositoryCommit": "0123456789abcdef",
+        "observedAt": "2026-01-01T00:00:00.000Z",
+        "environment": "ci"
+      },
+      "artifact": {
+        "path": "build/coverage/coverage-summary.json",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    }
+  ],
+  "constraints": [
+    {
+      "id": "spec.example-behavior",
+      "kind": "specification",
+      "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "source": "project-constraint-scanner",
+      "location": "specs/example.feature",
+      "producer": "product-owner"
+    },
+    {
+      "id": "acceptance.example-behavior",
+      "kind": "acceptance-test",
+      "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "source": "project-constraint-scanner",
+      "location": "tests/example.acceptance.ts",
+      "producer": "test-author",
+      "references": ["spec.example-behavior"]
+    },
+    {
+      "id": "quality.project-profile",
+      "kind": "quality-profile",
+      "digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "source": "project-constraint-scanner",
+      "location": ".ai/architecture-health/profile.json",
+      "producer": "architecture-owner"
+    }
+  ]
 }
