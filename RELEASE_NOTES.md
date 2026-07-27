@@ -1,5 +1,35 @@
 # Release Notes
 
+## 1.6.0
+
+本版本新增两条可直接使用的能力主线：可复验的架构健康门禁，以及历史技术标 DOCX 母版保真改写。前者把架构扫描事实、基线差分、证据可信度和受保护约束纳入统一契约；后者让成熟 Word 母版可以在保留页眉页脚、表格、图片、编号和版式的前提下完成受控改写。
+
+### Highlights
+
+- 新增 `aios-arch-health`、`architecture.health_scan`、0.1 JSON Schema、参考分析器、项目输入模板和自动化测试，支持 Markdown / JSON / SARIF 结果、基线差分与棘轮门禁。
+- 架构健康结果显式区分 `measured`、`inferred` 和 `unverified`，并校验证据来源、产物摘要、受保护约束与独立审批，防止实现、测试或质量阈值同时变化后制造不可复验的绿灯。
+- 架构硬门禁仅针对可复验的新增或恶化债务；业务边界、合理复杂度和未验证信号继续交给 `aios-arch` 与人工解释。
+- 新增历史技术标 DOCX 母版保真改写七步 workflow，从模板体检、证据整理和修改单，推进到原位改写、输出检查、修订回路与发布候选。
+- 技术标入口现已区分 Markdown 从零写作与 DOCX 保真改写，并同步接入 runtime manifest、Skill 路由、项目 workflow 模板和用户指南。
+- `aios-plan` 与 `aios-exec` 增强真实产品收口规则，覆盖 Goal 连续推进、脏工作区保护、源仓库交付边界、未上线硬删除条件和高价值客户端资产威胁模型。
+- 版本号同步升级到 `1.6.0`，覆盖 npm package、Gemini extension、Claude plugin、runtime manifest 和 CLI / MCP clientInfo。
+
+### Compatibility
+
+- `architecture-health` 0.1 契约保持向后兼容；项目 profile、扫描器、阈值和基线仍由下游项目维护。
+- Knowledge Pack、本地 Reference Runtime、既有工程资料 Skill 和短名路由保持兼容。
+- 历史 DOCX 母版保真改写是新增路径，不替代现有 Markdown 工作母版。
+
+### Verification
+
+- `npm run validate:skills`
+- `npm run validate:prompts`
+- `npm run validate:knowledge-pack`
+- `npm run smoke:project`
+- `npm test`
+- `npm pack --dry-run`
+- `git diff --check`
+
 ## 1.5.1
 
 v1.5.1 is a maintenance patch for the v1.5.0 Knowledge Pack + local Reference Runtime release. It updates npm-facing version metadata and tightens local configuration and input-boundary handling for prompt evaluation and engineering document workflows.
