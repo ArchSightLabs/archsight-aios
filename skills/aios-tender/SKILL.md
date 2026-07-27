@@ -31,6 +31,7 @@ description: 工程招投标通用入口。用于在未区分写作或审核时�
 |---|---|---|
 | 读标、评分点、废标风险、资料缺口、响应性复核 | `aios-tender-audit` | 响应矩阵、风险清单、资料缺口、人工复核岗位 |
 | 技术标生成、章节改写、历史素材复用、初稿优化 | `aios-tender-write` | Markdown 工作母版、写作 brief、素材复用表、章节初稿 |
+| 技术标历史 docx 母版保真改写、盘点母版、生成修改单、写入阶段版 Word、扫描旧项目残留 | `aios-tender-write` + `tender-docx-rewrite` | 七步中文动作、控制包、阶段版 Word、残留扫描、复核清单 |
 | 先分析招标文件再生成技术标 | `aios-tender-audit` -> `aios-tender-write` -> `aios-tender-audit` | 先建证据矩阵，再写作，再审核 |
 
 ## 输出要求
