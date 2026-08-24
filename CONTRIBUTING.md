@@ -57,4 +57,4 @@ npm run smoke:project
 
 ## Commit 建议
 
-提交信息应说明为什么改，而不仅是改了什么。涉及取舍时记录约束、拒绝的方案、验证方式和未验证风险。
+正式提交必须遵循[中文 Conventional + Lore Commit 治理](governance/git-commit-policy.md)：标题先写中文动机，正文解释为什么改，并至少记录 `Confidence`、`Scope-risk` 和 `Tested`。涉及取舍时继续记录约束、拒绝的方案和未验证风险。

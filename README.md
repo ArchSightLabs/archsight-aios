@@ -137,6 +137,7 @@ npx @archsight/aios@latest init
 | 建筑 AI / 软件研发治理 | 覆盖 `aios-ceo`、`aios-arch-health`、`aios-arch`、`aios-design`、`aios-plan`、`aios-review`、`aios-runtime`、`aios-exec` 等研发评审和执行入口。 |
 | 多工具安装与公共发现 | 支持 WorkBuddy、Codex、Claude Code、OpenCode、Gemini、Antigravity、`npx skills` 等工具发现和安装。 |
 | Capability 证据仲裁 | 对规范、结构计算、工具调用和多 Agent 冲突保留 `Claim / Evidence / Tool Result / Decision`，避免无证据结论。 |
+| Git 提交治理 | 用同一校验器约束中文 Conventional + Lore Commit，并在 commit-msg、pre-push 与 CI 三层复核共享历史。 |
 
 ## 常用技能入口
 
@@ -431,6 +432,7 @@ npm test
 - [业务专家指南](docs/business-expert-guide.md)
 - [术语表](docs/glossary.md)
 - [AI 编码规范](AI_CODING_RULES.md)
+- [Git 提交治理](governance/git-commit-policy.md)
 - [Agents](agents/README.md)
 - [Skills](skills/README.md)
 - [Workflows](workflows/README.md)

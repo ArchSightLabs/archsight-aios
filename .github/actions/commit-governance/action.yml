@@ -1,0 +1,23 @@
+name: ArchSight Git 提交治理
+description: 校验当前 PR 或 push 范围内的中文 Conventional + Lore Commit 信息
+
+inputs:
+  revision-range:
+    description: 可选的显式 Git revision range；留空时从 GitHub event 推导
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: 校验提交信息
+      shell: bash
+      env:
+        ARCHSIGHT_REVISION_RANGE: ${{ inputs.revision-range }}
+      run: |
+        validator="$GITHUB_ACTION_PATH/../../../scripts/check_git_commit.py"
+        if [ -n "$ARCHSIGHT_REVISION_RANGE" ]; then
+          python "$validator" --repo "$GITHUB_WORKSPACE" --range "$ARCHSIGHT_REVISION_RANGE"
+        else
+          python "$validator" --repo "$GITHUB_WORKSPACE" --github-event "$GITHUB_EVENT_PATH"
+        fi
