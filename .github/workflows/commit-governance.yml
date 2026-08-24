@@ -1,0 +1,22 @@
+name: 中文提交治理
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  commit-governance:
+    name: 中文 Conventional + Lore Commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+
+      - name: Validate commit range
+        uses: ./.github/actions/commit-governance
