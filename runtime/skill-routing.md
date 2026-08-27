@@ -20,6 +20,7 @@
 | AIOS 总入口、资料类型识别和 Skill 自动路由 | `aios` | Daedalus | `review` |
 | ArchSight AIOS 总入口别名和自然语言调用 | `archsight-aios` | Daedalus | `review` |
 | 建筑行业软件 / 系统深度评价、项目立项、产品定位、商业目标、范围取舍 | `aios-ceo` | Janus | `review` |
+| 建筑行业产品体检、用户问题、版本范围、PRD、产品优先级、验收指标和试点 / UAT | `aios-product` | Janus | `feature-development` |
 | 建筑行业平台界面方案、工作台体验、复核追溯和前端实现交接 | `aios-design` | Janus | `design-review` |
 | 建筑行业项目中的架构评审、技术选型、服务边界 | `aios-arch` | Atlas | `architecture-review` |
 | 架构健康扫描、基线差分、临时预算、棘轮门禁和 SARIF | `aios-arch-health` | Atlas | `architecture-review` |
@@ -53,6 +54,22 @@
 | 原工程施工专项方案领域入口，保留既有培训和内部流程命令 | `aios-construction-scheme` | Vitruvius | `review` |
 | 专项施工方案、施工技术措施和交底材料生成 / 改写 / 历史方案复用 | `aios-scheme-write` | Vitruvius | `feature-development` |
 
+## CEO / Product / Arch 组合协议
+
+这三个 Skill 可以组合，但不应互相替代：
+
+| 调用方式 | 解决的问题 | 顺序与裁决 |
+| --- | --- | --- |
+| `aios-ceo` | 项目是否值得做、为谁做、投入和停损边界 | Janus 独立战略评审 |
+| `aios-arch` | 技术方案是否可靠、边界是否稳定、长期代价是什么 | Atlas 独立架构评审 |
+| `aios-product` | 已确认方向如何成为下一版产品契约 | Janus 产品经理模式 |
+| `aios-ceo` + `aios-arch` | 战略可信度与技术可信度双审 | 共享事实、独立判断、联合收口；不强制加入 Product |
+| `aios-ceo` -> `aios-product` | 从阶段决策进入版本定义 | 顺序交接，Product 不重新立项 |
+| `aios-product` <-> `aios-arch` | 产品范围与技术约束互相校正 | Product 提草案，Arch 返回支持 / 调整 / 技术阻断，Product 回写 |
+| 三者同时 | 重大版本、平台转型或高投入试点 | CEO 定战略门槛，Product 定版本契约，Arch 校验技术边界；核心价值或投入边界变化才回 CEO |
+
+发生冲突时，先区分冲突对象：战略 / 商业范围由 CEO 模式和 L0 人类目标裁决；版本用户结果、非目标和 UAT 由 Product 在既定边界内负责；技术可行性、可靠性和迁移风险由 Arch 结合 L1 / L2 证据判断。任何 Agent 都不能用自然语言意见覆盖更高等级证据。
+
 ## 路由原则
 
 - 优先按任务类型选择 Skill，而不是按 Agent 名称选择。
@@ -62,6 +79,7 @@
 - AIOS 是建筑行业增强层，不是通用任务替代器；普通非建筑任务优先使用宿主工具的通用能力，不强行套用 BIM、IFC、规范、审图或工程证据链假设。
 - 是否启用行业增强，先看 `.ai/profile-detection.md`、项目 profile、`.ai/project-context.md`、README 和当前任务；不确定时先核验上下文，不凭 Skill 名称硬套。
 - `aios-ceo` 用于一把手视角的建筑行业软件 / 系统深度评价，把产品定位、行业专业性、工程可信度、证据链、商业验证和范围取舍放到同一决策框架里；它可以引用架构和行业语义事实作为 CEO 判断依据，但不替代 `aios-arch` 或 `aios-knowledge` 的专项设计与专业结论。
+- `aios-product` 用于 CEO 方向已确认后的产品经理工作：审查产品事实和用户任务，定义版本范围、非目标、用户故事、验收指标、试点 / UAT 和研发交接；不得重复 `aios-ceo` 的立项、商业目标、投资强度和停损决策。
 - `aios-design` 用于实现前判断界面方案是否支撑建筑行业审查、定位、复核、追溯和交付；不替代 `frontend-generation` 的 UI 实现、布局验证和交互验证，也不替代通用 `frontend-design` 的视觉风格和前端代码美化评审。
 - `aios-arch` 应补足通用架构评审缺失的建筑行业平台视角，包括 BIM / IFC、规范知识链路、审图证据链、RAG / GraphRAG、任务编排、审计和后端运行可靠性。
 - `aios-arch-health` 负责确定性架构事实、基线、预算和门禁；`aios-arch` 负责解释深 Module、合理复杂度和职责混杂。推断不得冒充 measured 事实。
@@ -83,6 +101,7 @@
 
 - 涉及服务边界、数据模型、长期架构：升级给 Atlas。
 - 涉及建筑行业软件 / 系统深度评价、立项、定位、商业目标和范围取舍：升级给 Janus，并优先使用 `aios-ceo`。
+- 涉及产品体检、用户问题、版本范围、PRD、产品优先级、验收指标、试点 / UAT 或研发交接：升级给 Janus，并使用 `aios-product`。
 - 涉及页面方案、工作台体验、证据定位、复核追溯、交互状态和前端实现交接：升级给 Janus，并使用 `aios-design`。
 - 涉及任务依赖、交付顺序、CI/CD：升级给 Mason。
 - 涉及安全、权限、Prompt 注入、生产发布：升级给 Argus。

@@ -1,5 +1,35 @@
 # Release Notes
 
+## 1.7.0
+
+本版本新增 `aios-product` 建筑行业产品经理 Skill，并把一把手、产品经理和总架构师之间的协作从隐含约定升级为明确契约。AIOS 现在可以在不混淆战略、版本与技术决策权的前提下，完成 CEO + Arch 联合评审、CEO 到 Product 的版本交接，以及 Product 与 Arch 的迭代收口。
+
+### Highlights
+
+- 新增 `aios-product`，覆盖产品体检、下一版本范围与非目标、用户故事、验收指标、试点 / UAT、反馈闭环及设计 / 架构 / 交付交接。
+- 明确 `aios-ceo` 负责立项、定位、商业边界、阶段路线和停损，`aios-product` 负责既定战略边界内的版本产品契约，`aios-arch` 负责技术边界、可靠性、迁移代价和可验证性。
+- 将 `aios-ceo` + `aios-arch` 固化为战略与技术双视角联合评审；共享事实底稿、分别输出判断，再汇总一致项、冲突项和处理建议，不强制插入 Product。
+- 建立 Product <-> Arch 迭代握手：Product 提交用户结果和版本草案，Arch 逐项返回 `支持 / 需调整 / 技术阻断`，Product 回写范围、非目标和验收契约。
+- 区分 CEO 的扩大 / 保持 / 收缩 / 停止、Product 的版本 HOLD，以及 Arch 的 Accept / Reduce Implementation / Defer / Technical Hold，避免技术建议被误读为项目停损。
+- 同步更新 Janus、Atlas、AIOS 总路由、runtime manifest、CLI 自动识别、项目模板、Feature / Architecture Workflow、用户指南和公共发现元数据。
+- 版本号同步升级到 `1.7.0`，覆盖 npm package、Gemini extension、Claude plugin、runtime manifest 和 CLI / MCP clientInfo。
+
+### Compatibility
+
+- 本版本为向后兼容的新增能力；既有 `aios-ceo`、`aios-arch` 和其他 `aios-*` 调用方式继续有效。
+- Product 不是所有评审的强制阶段。纯 CEO + Arch 联合评审不会自动增加 PRD 或 UAT 流程。
+- 当重大版本同时使用三者时，默认由 CEO 定战略门槛、Product 定版本契约、Arch 校验技术边界；只有核心价值、目标市场、投入或停损条件变化时才回到 CEO。
+
+### Verification
+
+- `npm run validate:skills`
+- `npm run validate:prompts`
+- `npm run validate:prompt-run-pack`
+- `npm run smoke:project`
+- `npm test`
+- `npm pack --dry-run --json`
+- `git diff --check`
+
 ## 1.6.0
 
 本版本新增两条可直接使用的能力主线：可复验的架构健康门禁，以及历史技术标 DOCX 母版保真改写。前者把架构扫描事实、基线差分、证据可信度和受保护约束纳入统一契约；后者让成熟 Word 母版可以在保留页眉页脚、表格、图片、编号和版式的前提下完成受控改写。

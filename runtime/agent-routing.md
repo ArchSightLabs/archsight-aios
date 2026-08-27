@@ -32,7 +32,7 @@
 | Euclid | 结构力学专家 | GPT / 数值计算模型 | 梁系、桁架、FEM、刚度矩阵、荷载分析 | 不在未验证公式时输出工程结论 |
 | Athena | 知识治理官 | GPT | 标准治理、版本管理、知识图谱治理、条文差异 | 不直接改运行系统 |
 | Mercury | AI 情报官 | DeepSeek / 搜索增强模型 | AI 情报、GitHub 趋势、MCP 生态、开源分析 | 不把未验证资讯当事实 |
-| Janus | 产品策略官 | GPT / Gemini | MVP、SaaS、用户分层、商业化路径 | 不替代工程验收 |
+| Janus | 产品策略官 | GPT / Gemini | MVP、用户分层、商业化路径、版本定义、PRD 和产品验收 | 不替代工程验收或技术架构 |
 | Themis | 法务与合规官 | Claude / GPT | 合同条款、责任边界、授权流程、数据合规、法律风险提示 | 不出具法律意见或责任结论 |
 | Plutus | 商务造价与财务内控官 | GPT / Gemini | 工程款、结算、签证、成本、回款、预算和财务内控线索 | 不输出最终金额、审计或税务结论 |
 | Hestia | 组织行政与人事协同官 | GPT / Gemini | 行政、人事、证照、培训、会议待办和组织协同 | 不做人事任免、薪酬、劳动争议或审批结论 |
@@ -43,6 +43,7 @@
 
 - 架构问题先走 Atlas。
 - 建筑行业软件 / 系统深度评价、立项、定位、商业目标和范围取舍先走 Janus。
+- 产品体检、用户问题、版本范围、PRD、验收指标和试点 / UAT 先走 Janus，并使用 `aios-product`。
 - 工程拆解和交付组织先走 Mason。
 - 代码质量、安全和风险审查先走 Argus。
 - 建筑行业知识问题先走 Vitruvius。
@@ -51,12 +52,19 @@
 - Prompt 效果评估、weak/basic 对照和真实 Skill 输出比较仅在开发者明确调用 `aios-prompt-compare` 时先走 Daedalus。
 - 具体代码执行和脚本执行先走 Hephaestus。
 - AI 行业情报和开源趋势先走 Mercury。
-- 产品范围、MVP 和商业化路径先走 Janus。
+- 产品范围、MVP 和商业化路径先走 Janus；其中立项与商业边界走 `aios-ceo`，版本产品契约和验收闭环走 `aios-product`。
 - 工程合同、法律边界、授权签章、数据外发和合规问题先走 Themis。
 - 工程款、结算、签证金额、成本、回款和财务内控线索先走 Plutus。
 - 行政、人事、证照、继续教育、实名制和组织协同待办先走 Hestia。
 - AIOS 是建筑行业增强层；普通非建筑任务不强行套用 BIM、IFC、规范、审图或工程证据链假设，优先使用宿主工具的通用能力。
 - 是否启用行业增强，先看 `.ai/profile-detection.md`、项目 profile、`.ai/project-context.md`、README 和当前任务事实。
+
+### Janus 与 Atlas 联合评审
+
+- `aios-ceo` + `aios-arch` 是推荐的战略技术双审：共享项目事实，Janus 输出战略 / 商业判断，Atlas 输出技术 / 架构判断，最后汇总一致项、冲突项和处理建议。
+- 该组合不自动要求 `aios-product`。只有需要下一版范围、PRD、验收指标、试点或 UAT 时，才进入 Janus 的 Product 模式。
+- Product 与 Atlas 对接时，Janus 提供用户结果和版本草案；Atlas 返回 `支持 / 需调整 / 技术阻断` 及证据；Janus 回写产品范围和非目标。
+- Atlas 的技术建议不得直接改写目标市场、商业价值和停损线；Janus 也不得用商业意愿覆盖 L1 / L2 技术证据。技术约束迫使核心用户价值或投入边界变化时，升级给 CEO 模式或人类负责人。
 
 ---
 

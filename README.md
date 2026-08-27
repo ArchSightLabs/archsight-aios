@@ -5,7 +5,7 @@ ArchSight AIOS 是面向建筑行业的开源 AI 技能包与工程知识治理�
 AIOS 不是从研发工具转成业务资料工具，而是在保留建筑 AI / 软件研发治理能力的基础上，扩展到建筑行业知识工作从业者。现在它同时覆盖两套并列能力：
 
 - **建筑工程资料与知识工作技能包**：处理工程资料、技术标、合同履约、施工日报、工程会议、变更签证、专项施工方案、规范摘录和知识包治理。
-- **建筑 AI / 软件研发治理技能包**：支持一把手评审、架构评审、产品与界面方案评审、交付规划、代码审查、Runtime 设计、RAG / GraphRAG、MCP / Tool Calling、Capability 证据仲裁和受控执行。
+- **建筑 AI / 软件研发治理技能包**：支持一把手评审、产品经理评审、架构评审、产品与界面方案评审、交付规划、代码审查、Runtime 设计、RAG / GraphRAG、MCP / Tool Calling、Capability 证据仲裁和受控执行。
 
 AIOS 的目标不是让 AI 替代专业人员做最终判断，而是帮助使用者把工程资料和行业知识整理成可复核的清单、台账、初稿、证据链、Knowledge Pack 和人工复核事项。它强调资料来源、版本、页码、章节、适用条件、风险提示和人工复核岗位，避免把模型推断误当成工程结论。
 
@@ -15,7 +15,7 @@ v1.5.0 开始，AIOS 的主线从“能写工程文档”推进到“能治理�
 
 AIOS 的设计目标有五个：
 
-1. 让建筑 AI / 软件研发更有边界：把产品定位、架构、界面方案、交付计划、代码审查和 Runtime 设计放进可复核的工作流。
+1. 让建筑 AI / 软件研发更有边界：把产品定位、版本产品契约、架构、界面方案、交付计划、代码审查和 Runtime 设计放进可复核的工作流。
 2. 让研发团队有可验证的 Runtime 路径：涉及规范、结构计算、RAG / GraphRAG、Tool Calling 和多 Agent 协作时，优先回到项目事实、结构化知识和确定性工具证据。
 3. 让建筑行业资料工作更可复核：把标书、合同、日报、会议、变更签证和施工方案整理成有来源、有缺口、有风险、有复核岗位的工作底稿。
 4. 让工程知识可以治理：把规范摘录、企业标准、审查口径和项目经验沉淀为 Knowledge Pack，而不是散落在聊天记录和临时 Prompt 中。
@@ -31,7 +31,7 @@ AIOS 现在面向两类用户。第一类是建筑 AI / 软件研发团队，负
 
 | 角色 | 可以用它做什么 |
 | --- | --- |
-| 建筑行业软件 / AI 产品负责人 | 用 `aios-ceo`、`aios-design` 和 `aios-plan` 评估产品定位、行业专业性、工作台体验、交付路线和停损信号。 |
+| 建筑行业软件 / AI 产品负责人 | 用 `aios-ceo` 判断定位和阶段边界，用 `aios-product` 形成版本范围、PRD、指标和试点闭环，再交给 `aios-design`、`aios-arch` 和 `aios-plan`。 |
 | 架构师 / 后端 / AI 工程师 | 用 `aios-arch-health` 核验复杂度、依赖、测试证据来源和受保护约束，再用 `aios-arch`、`aios-runtime`、`aios-structural` 和 `aios-exec` 评估服务边界、数据链路、Runtime、RAG / GraphRAG、结构计算工具链和受控执行。 |
 | 代码审查 / 质量负责人 | 用 `aios-review` 审查 diff、PR、AI 生成代码、安全敏感改动、Prompt / Tool / Runtime 变更、测试缺口和发布准备度。 |
 | 建筑数字化 / AI 应用团队 | 把行业知识、评估样例、RAG / GraphRAG、Tool Calling 和多 Agent 流程纳入可验证的工程链路。 |
@@ -81,8 +81,20 @@ $aios-ceo 请从一把手视角评估这个建筑行业 AI 产品的定位、行
 ```
 
 ```text
+$aios-product 请从产品经理视角体检当前项目，把已确认方向转成下一版用户问题、版本范围、非目标、用户故事、验收指标、试点 / UAT 和研发交接。
+```
+
+```text
 $aios-arch 请评审以下建筑 AI 系统方案的服务边界、数据链路、模型 / Runtime 边界、GraphRAG 架构、Agent 工作流治理和长期复杂度风险。
 ```
+
+`aios-ceo` 与 `aios-arch` 可以直接联合使用，不必为了凑齐流程强制加入产品经理：
+
+```text
+$aios-ceo $aios-arch 请共同评审这个项目。CEO 判断定位、商业证据、阶段路线和停损边界；架构师独立判断技术可信度、服务边界、失败模式和长期代价；最后汇总一致项、冲突项和处理建议。只有结论需要进入下一版 PRD、验收或试点时，再调用 $aios-product。
+```
+
+重大版本需要三者同时参与时，默认顺序是 CEO 定战略门槛、Product 定版本契约、Arch 校验技术边界，再由 Product 回写范围和验收。
 
 ```text
 $aios-review 请审查以下 diff 或 PR，重点看 AI 生成代码风险、安全敏感改动、Prompt / Tool / Runtime 变更、测试缺口和发布准备度。
@@ -134,7 +146,7 @@ npx @archsight/aios@latest init
 | 工程文档写作工作台 | 用 Markdown 工作母版组织标书、技术标和施工方案的资料来源、历史素材、写作 brief、草稿、复核记录和人工定稿。 |
 | Knowledge Pack | 把规范摘录、企业标准、项目资料、审查口径和复核记录治理为可编译、可查询、可评估的工程知识资产。 |
 | 本地 Reference Runtime | 通过 `knowledge.norm_lookup` 查询编译后的 Knowledge Pack，返回引用、版本、适用性、冲突和仲裁状态。 |
-| 建筑 AI / 软件研发治理 | 覆盖 `aios-ceo`、`aios-arch-health`、`aios-arch`、`aios-design`、`aios-plan`、`aios-review`、`aios-runtime`、`aios-exec` 等研发评审和执行入口。 |
+| 建筑 AI / 软件研发治理 | 覆盖 `aios-ceo`、`aios-product`、`aios-arch-health`、`aios-arch`、`aios-design`、`aios-plan`、`aios-review`、`aios-runtime`、`aios-exec` 等研发评审和执行入口。 |
 | 多工具安装与公共发现 | 支持 WorkBuddy、Codex、Claude Code、OpenCode、Gemini、Antigravity、`npx skills` 等工具发现和安装。 |
 | Capability 证据仲裁 | 对规范、结构计算、工具调用和多 Agent 冲突保留 `Claim / Evidence / Tool Result / Decision`，避免无证据结论。 |
 | Git 提交治理 | 用同一校验器约束中文 Conventional + Lore Commit，并在 commit-msg、pre-push 与 CI 三层复核共享历史。 |
@@ -168,6 +180,7 @@ npx @archsight/aios@latest init
 | 场景 | 推荐入口 |
 | --- | --- |
 | 企业负责人 / 一把手深度评审 | `aios-ceo` |
+| 产品体检、用户问题、版本范围、PRD、产品优先级、验收指标和试点 / UAT | `aios-product` |
 | 复杂度、依赖方向、测试证据来源、受保护约束、架构债基线和棘轮门禁 | `aios-arch-health` |
 | 架构、服务边界、数据 / 模型 / Runtime 边界和长期复杂度 | `aios-arch` |
 | 建筑行业平台界面、审图工作台、BIM Viewer、规范检索和报告复核体验 | `aios-design` |

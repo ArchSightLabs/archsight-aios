@@ -21,7 +21,7 @@ const home = os.homedir();
 const managedStart = "<!-- ARCHSIGHT-AIOS:START -->";
 const managedEnd = "<!-- ARCHSIGHT-AIOS:END -->";
 const antigravityPluginName = "archsight-aios";
-const aiosVersion = "1.6.0";
+const aiosVersion = "1.7.0";
 
 const assetDirs = [
   "skills",
@@ -46,6 +46,7 @@ const assetFiles = ["README.md", "AI_CODING_RULES.md", "AGENTS.md", "CLAUDE.md",
 const skillSupportFiles = ["README.md", "engineering-business-starter-kit.md"];
 const topLevelSkillNames = new Set(["aios", "archsight-aios"]);
 const skillAliases = {
+  "aios-product": ["aios-product-management", "archsight-product-management"],
   "aios-arch": ["aios-architecture-review", "archsight-architecture-review"],
   "aios-arch-health": ["aios-architecture-health", "archsight-architecture-health"],
   "aios-plan": ["aios-delivery-planning", "archsight-delivery-planning"],
@@ -145,6 +146,8 @@ const profileDetectionRules = {
 };
 
 const skillDetectionRules = {
+  "aios-ceo": ["一把手", "立项", "产品定位", "商业目标", "商业化", "停损", "范围取舍"],
+  "aios-product": ["产品经理", "产品体检", "产品需求", "prd", "用户故事", "需求优先级", "验收指标", "用户访谈", "产品路线图", "试点", "uat"],
   "aios-arch-health": ["架构健康", "复杂度", "巨型文件", "巨型函数", "循环依赖", "依赖方向", "架构债", "棘轮", "sarif"],
   "aios-arch": ["架构", "服务边界", "技术选型", "系统设计"],
   "aios-design": ["界面", "ui", "ux", "工作台", "交互", "原型"],
@@ -1007,7 +1010,7 @@ function userInstructionBlock(contentRoot) {
     `- Runtime routing: ${p(path.join(contentRoot, "runtime"))}`,
     `- Project template: ${p(path.join(contentRoot, "templates", "project-ai"))}`,
     "",
-    "Use enabled `aios-*` skills for architecture review, design review, delivery planning, code review, runtime design, controlled execution, and building knowledge when project profile detection or the task requires it.",
+    "Use enabled `aios-*` skills for product management, architecture review, design review, delivery planning, code review, runtime design, controlled execution, and building knowledge when project profile detection or the task requires it.",
     "Keep Agent, Skill, Workflow, and Runtime boundaries separate.",
     "Hermes, Feishu, and other runtime adapters are optional; do not assume they are enabled unless the project says so.",
     "Do not claim code changes, tests, builds, or deployments were completed unless verified in the bound project workspace.",

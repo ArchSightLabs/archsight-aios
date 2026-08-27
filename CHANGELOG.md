@@ -1,5 +1,27 @@
 # 变更记录
 
+## 1.7.0
+
+### 新增
+
+- 新增 `aios-product` 建筑行业产品经理 Skill，把已确认的产品方向转成产品体检、版本范围、PRD、优先级、验收指标、试点 / UAT 和设计 / 架构 / 交付交接。
+
+### 调整
+
+- 明确 Janus 的三种任务模式：`aios-ceo` 负责立项、商业边界和停损，`aios-product` 负责版本产品契约与反馈闭环，`aios-design` 负责界面任务和交互状态。
+- 补齐 AIOS 总路由、runtime manifest、CLI 自动识别、项目模板、Feature 开发 Workflow 和公共发现元数据中的产品经理入口。
+- 将 `aios-ceo` + `aios-arch` 固化为不强制插入 Product 的战略技术联合评审，并明确 CEO -> Product 的顺序交接、Product <-> Arch 的迭代握手、技术 HOLD 与项目停损的裁决边界。
+- 版本同步到 1.7.0，覆盖 npm package、Gemini extension、Claude plugin、runtime manifest 和 CLI / MCP clientInfo。
+
+### 验证
+
+- `npm run validate:skills`
+- `python -X utf8 C:\Users\white\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\aios-product`
+- `npm run smoke:project`
+- `npm test`
+- `npm pack --dry-run --json`
+- `git diff --check`
+
 ## 1.6.0
 
 ### 发布说明

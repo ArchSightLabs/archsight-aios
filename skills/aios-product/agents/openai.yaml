@@ -1,0 +1,4 @@
+interface:
+  display_name: "AIOS Product"
+  short_description: "把建筑行业产品方向转成版本范围、PRD、指标和试点交接"
+  default_prompt: "使用 $aios-product 从产品经理视角审查当前建筑行业产品，把已确认的方向转成用户问题、版本范围、PRD、验收指标、试点 / UAT 和设计、架构、交付交接。"

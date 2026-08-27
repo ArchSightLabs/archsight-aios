@@ -92,6 +92,9 @@ async function testProductIdentity() {
   assert.ok(manifest.skills.every((skill) => skill.path.startsWith("skills/aios-") || topLevelSkillIds.has(skill.id)));
   assert.ok(manifest.skills.every((skill) => skill.id.split("-").length <= 3));
   assert.ok(manifest.skills.some((skill) => skill.id === "aios-arch-health"));
+  const productSkill = manifest.skills.find((skill) => skill.id === "aios-product");
+  assert.equal(productSkill?.primaryAgent, "janus");
+  assert.equal(productSkill?.defaultWorkflow, "feature-development");
   assert.ok(manifest.workflows.every((workflow) => workflow.id.split("-").length <= 3));
   assert.equal(manifest.installTargets.codexSkills, "~/.codex/skills");
   assert.equal(manifest.installTargets.codexWorkflows, "~/.codex/workflows/aios");
@@ -148,7 +151,7 @@ async function testPublicDiscoveryMetadata() {
   assert.ok(pkg.files.includes("gemini-extension.json"));
   assert.ok(pkg.files.includes("adapters/"));
   assert.ok(pkg.files.includes("OPENCODE.md"));
-  for (const keyword of ["agent-skills", "skills-sh", "gemini-cli", "claude-code", "workbuddy", "opencode", "construction-ai"]) {
+  for (const keyword of ["agent-skills", "skills-sh", "gemini-cli", "claude-code", "workbuddy", "opencode", "construction-ai", "product-management", "prd"]) {
     assert.ok(pkg.keywords.includes(keyword), keyword);
   }
 
@@ -762,6 +765,103 @@ async function testWritingIntentRoutesToWritingSkill() {
   }
 }
 
+async function testProductManagementIntentRoutesToProductSkill() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-product-route-"));
+  await fs.writeFile(
+    path.join(tempRoot, "README.md"),
+    [
+      "# 建筑行业产品经理工作台",
+      "",
+      "产品定位和商业目标已经确认，不重新讨论立项或停损。",
+      "当前需要完成产品体检、PRD、用户故事、需求优先级、验收指标和试点 UAT。"
+    ].join("\n"),
+    "utf8"
+  );
+
+  const result = run(["init", "--cwd", tempRoot, "--mode", "ai-only"]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  const detection = await fs.readFile(path.join(tempRoot, ".ai", "profile-detection.md"), "utf8");
+  const productIndex = detection.indexOf("`aios-product`");
+  const ceoIndex = detection.indexOf("`aios-ceo`");
+  assert.notEqual(productIndex, -1, "aios-product should be detected");
+  assert.notEqual(ceoIndex, -1, "aios-ceo should remain available for strategic escalation");
+  assert.ok(productIndex < ceoIndex, "aios-product should rank before aios-ceo for PRD and UAT intent");
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testCeoIntentKeepsStrategicRoute() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-ceo-route-"));
+  await fs.writeFile(
+    path.join(tempRoot, "README.md"),
+    [
+      "# 建筑行业 AI 产品立项",
+      "",
+      "请从一把手视角判断产品定位、商业目标、范围取舍和停损条件。"
+    ].join("\n"),
+    "utf8"
+  );
+
+  const result = run(["init", "--cwd", tempRoot, "--mode", "ai-only"]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  const detection = await fs.readFile(path.join(tempRoot, ".ai", "profile-detection.md"), "utf8");
+  const ceoIndex = detection.indexOf("`aios-ceo`");
+  const productIndex = detection.indexOf("`aios-product`");
+  assert.notEqual(ceoIndex, -1, "aios-ceo should be detected for strategic intent");
+  assert.ok(productIndex === -1 || ceoIndex < productIndex, "aios-ceo should remain the primary strategic route");
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testCeoAndArchitectureIntentKeepsBothRoutesWithoutForcingProduct() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-ceo-arch-route-"));
+  await fs.writeFile(
+    path.join(tempRoot, "README.md"),
+    [
+      "# 建筑行业 AI 系统联合评审",
+      "",
+      "请同时做一把手立项、商业目标和停损判断，以及架构、服务边界、技术选型和系统设计评审。"
+    ].join("\n"),
+    "utf8"
+  );
+
+  const result = run(["init", "--cwd", tempRoot, "--mode", "ai-only"]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  const detection = await fs.readFile(path.join(tempRoot, ".ai", "profile-detection.md"), "utf8");
+  assert.match(detection, /`aios-ceo`/, "aios-ceo should remain available for strategic review");
+  assert.match(detection, /`aios-arch`/, "aios-arch should remain available for architecture review");
+  assert.doesNotMatch(detection, /`aios-product`/, "pure CEO and architecture intent should not force product routing");
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
+async function testMajorVersionIntentCanDetectCeoProductAndArchitectureTogether() {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-three-lens-route-"));
+  await fs.writeFile(
+    path.join(tempRoot, "README.md"),
+    [
+      "# 建筑行业 AI 平台重大版本",
+      "",
+      "需要复核立项、商业目标和停损边界，由产品经理形成 PRD、用户故事、验收指标和 UAT，再评审架构、服务边界和技术选型。"
+    ].join("\n"),
+    "utf8"
+  );
+
+  const result = run(["init", "--cwd", tempRoot, "--mode", "ai-only"]);
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+
+  const detection = await fs.readFile(path.join(tempRoot, ".ai", "profile-detection.md"), "utf8");
+  for (const skillId of ["aios-ceo", "aios-product", "aios-arch"]) {
+    const quotedSkillId = ["`", skillId, "`"].join("");
+    assert.ok(detection.includes(quotedSkillId), `${skillId} should be available for a three-lens review`);
+  }
+
+  await fs.rm(tempRoot, { recursive: true, force: true });
+}
+
 async function testInstallAntigravityUsesPluginByDefault() {
   const tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "archsight-aios-antigravity-2-"));
   const manifest = await readJson(path.join(repoRoot, "runtime", "archsight-aios.manifest.json"));
@@ -1355,6 +1455,10 @@ const tests = [
   testWritingValidateRejectsIncompleteWorkbench,
   testKnowledgePackWorkbenchAndReferenceRuntime,
   testWritingIntentRoutesToWritingSkill,
+  testProductManagementIntentRoutesToProductSkill,
+  testCeoIntentKeepsStrategicRoute,
+  testCeoAndArchitectureIntentKeepsBothRoutesWithoutForcingProduct,
+  testMajorVersionIntentCanDetectCeoProductAndArchitectureTogether,
   testInstallAntigravityUsesPluginByDefault,
   testInstallGeminiWritesGeminiSupportAssets,
   testInstallWorkBuddyWritesPersonalSkills,

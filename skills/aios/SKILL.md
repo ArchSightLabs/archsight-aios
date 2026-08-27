@@ -1,6 +1,6 @@
 ---
 name: aios
-description: ArchSight AIOS 总路由入口。用户只说“请用 AIOS 技能包分析该文档”时，先识别资料类型，再路由到合同、招投标、日报、会议、变更签证、施工方案或其他对应 aios-* Skill。
+description: ArchSight AIOS 总路由入口。用户只说“请用 AIOS 技能包分析”时，先识别资料或软件研发任务类型，再路由到产品、架构、交付、合同、招投标、日报、会议、变更签证、施工方案或其他对应 aios-* Skill。
 ---
 
 # AIOS Router
@@ -55,6 +55,7 @@ description: ArchSight AIOS 总路由入口。用户只说“请用 AIOS 技能�
 | 开发者明确调用 `aios-prompt-compare`，并要求 weak / portable / skill-runtime 或提示词沉淀评测 | `aios-prompt-compare` | 运行记录、原始输出对照、评分卡、失败模式、沉淀建议 |
 | AI Runtime、RAG、GraphRAG、MCP、Tool Calling、Memory、多 Agent 编排、Knowledge Pack Reference Runtime | `aios-runtime` | Runtime 边界、工具权限、知识管线、Reference Runtime 和运行治理 |
 | 建筑行业软件 / 系统深度评价、产品定位、商业验证、范围取舍 | `aios-ceo` | 一把手视角评价、阶段路线、风险和停损信号 |
+| 产品经理视角、产品体检、用户问题、版本范围、PRD、用户故事、产品优先级、验收指标、试点 / UAT | `aios-product` | 产品事实与假设、版本产品契约、成功指标、试点和设计 / 架构 / 交付交接 |
 | 建筑行业平台界面、工作台、BIM Viewer、审图复核、数据看板 | `aios-design` | 界面任务路径、证据定位、复核追溯、实现交接 |
 | 架构健康、复杂度、巨型文件或函数、重复代码、循环依赖、依赖方向、架构债、基线棘轮、SARIF | `aios-arch-health` | 确定性扫描、基线差分、临时预算、门禁和机器可读产物 |
 | 架构、服务边界、技术选型、长期复杂度 | `aios-arch` | 架构边界、数据链路、治理风险 |

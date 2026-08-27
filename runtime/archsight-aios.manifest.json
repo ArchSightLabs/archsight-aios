@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "name": "archsight-aios",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "ArchSight AIOS 的 Agent、Skill、Workflow、Runtime 和项目模板注册表，面向建筑行业知识工作者与 AI 工程团队。",
   "agents": [
     {
@@ -117,6 +117,13 @@
       "defaultWorkflow": "review",
       "path": "skills/aios-ceo/SKILL.md",
       "openaiConfigPath": "skills/aios-ceo/agents/openai.yaml"
+    },
+    {
+      "id": "aios-product",
+      "primaryAgent": "janus",
+      "defaultWorkflow": "feature-development",
+      "path": "skills/aios-product/SKILL.md",
+      "openaiConfigPath": "skills/aios-product/agents/openai.yaml"
     },
     {
       "id": "aios-design",
@@ -390,6 +397,12 @@
       "skill": "aios-ceo",
       "agent": "janus",
       "workflow": "review"
+    },
+    {
+      "taskType": "建筑行业产品体检、用户问题、版本范围、PRD、产品优先级、验收指标和试点/UAT",
+      "skill": "aios-product",
+      "agent": "janus",
+      "workflow": "feature-development"
     },
     {
       "taskType": "建筑行业平台界面方案、工作台体验、复核追溯和前端实现交接",

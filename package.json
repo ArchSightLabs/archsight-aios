@@ -1,6 +1,6 @@
 {
   "name": "@archsight/aios",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "面向建筑行业知识工作从业者与 AI 研发团队的 Skills、Workflow 与多 Agent 工具包 / Building-industry AI agent skills for BIM, IFC, RAG, GraphRAG, project evidence work, code review, and runtime governance.",
   "type": "module",
   "homepage": "https://github.com/ArchSightLabs/archsight-aios#readme",
@@ -41,6 +41,9 @@
     "mcp",
     "runtime-governance",
     "architecture-review",
+    "product-management",
+    "product-review",
+    "prd",
     "architecture-health",
     "sarif",
     "technical-debt",

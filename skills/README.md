@@ -6,7 +6,7 @@
 
 AIOS Skill 的差异化目标是让通用 AI Coding 工具在建筑行业平台研发中获得更专业的默认判断。`aios` 和 `archsight-aios` 是总路由入口；其他 `aios-*` Skill 负责具体任务分工。Skill 名称只表示任务分工，不表示只有某一个 Skill 才面向建筑行业。
 
-当项目涉及 BIM / IFC、建筑规范、智能审图、图纸 / 模型处理、RAG / GraphRAG、任务编排、审计证据链、结构力学或长期平台演进时，`aios-ceo`、`aios-design`、`aios-plan`、`aios-exec`、`aios-review`、`aios-arch`、`aios-knowledge`、`aios-structural` 和 `aios-runtime` 都应把这些行业约束纳入判断。区别只是：`aios-ceo` 做建筑行业软件 / 系统的一把手深度评价，把产品定位、行业专业性、工程可信度、证据链和商业验证放到同一决策框架里；`aios-design` 判断界面方案能否支撑审查、定位、复核、追溯和交付，`aios-arch` 判断边界，`aios-knowledge` 判断行业语义，`aios-structural` 判断结构力学输入、求解链路和人工签审边界，`aios-runtime` 判断 AI / RAG 运行时，`aios-plan` 拆交付，`aios-review` 查风险，`aios-exec` 做受控实现。
+当项目涉及 BIM / IFC、建筑规范、智能审图、图纸 / 模型处理、RAG / GraphRAG、任务编排、审计证据链、结构力学或长期平台演进时，`aios-ceo`、`aios-product`、`aios-design`、`aios-plan`、`aios-exec`、`aios-review`、`aios-arch`、`aios-knowledge`、`aios-structural` 和 `aios-runtime` 都应把这些行业约束纳入判断。区别只是：`aios-ceo` 做建筑行业软件 / 系统的一把手深度评价，判断定位、商业验证、范围和停损；`aios-product` 把已确认方向转成版本范围、PRD、指标、试点和研发交接；`aios-design` 判断界面方案能否支撑审查、定位、复核、追溯和交付，`aios-arch` 判断边界，`aios-knowledge` 判断行业语义，`aios-structural` 判断结构力学输入、求解链路和人工签审边界，`aios-runtime` 判断 AI / RAG 运行时，`aios-plan` 拆交付，`aios-review` 查风险，`aios-exec` 做受控实现。
 
 ## 适用性门槛
 
@@ -54,6 +54,7 @@ Skill 可以继续用 `SKILL.md` 表达操作方法，但涉及确定性工具�
 | `aios` | AIOS 总路由入口：当用户只说“请用 AIOS 技能包分析该文档”时，先识别资料类型，再路由到合适的具体 Skill。 |
 | `archsight-aios` | `aios` 的品牌别名入口，用于 “ArchSight AIOS” 或 “AIOS 技能包” 这类自然调用。 |
 | `aios-ceo` | 建筑行业软件 / 系统深度评价：产品定位、行业专业性、工程可信度、证据链、商业验证、范围取舍和阶段路线。 |
+| `aios-product` | 建筑行业产品经理工作流：产品体检、用户问题、版本范围、PRD、优先级、验收指标、试点 / UAT 和研发交接。 |
 | `aios-design` | 建筑行业平台界面方案、工作台体验、证据定位、复核追溯和前端实现交接评审。 |
 | `aios-plan` | 交付计划、任务拆解、依赖和验证顺序。 |
 | `aios-exec` | 有边界地改代码、修 bug、更新文档、运行验证。 |

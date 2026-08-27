@@ -28,7 +28,7 @@ AIOS Design 参考设计计划评审方法，但面向建筑行业平台研发�
 - AI 生成 UI 前，需要先判断页面是否有明确任务、状态覆盖和验收标准。
 - 已有实现计划但缺少空状态、错误状态、移动端行为、可访问性或设计系统复用说明。
 
-如果任务没有 UI / UX 范围，直接说明本 Skill 不适用，并建议转给 `aios-arch`、`aios-plan`、`aios-review` 或 `aios-exec`。
+如果任务没有 UI / UX 范围，直接说明本 Skill 不适用，并建议按问题转给 `aios-product`、`aios-arch`、`aios-plan`、`aios-review` 或 `aios-exec`。
 
 ## 输入
 
@@ -53,7 +53,7 @@ AIOS Design 参考设计计划评审方法，但面向建筑行业平台研发�
 2. 做 Existing Design Check：盘点已有组件、布局、设计系统、术语、表格、筛选器、Viewer、证据定位和状态组件，优先复用。
 3. 给总体设计完整度打 0-10 分，并说明扣分来自哪些可验证缺口。
 4. 逐项评审设计维度，每项给 0-10 分；低于 8 分时说明“做到 10 分需要补什么”。
-5. 对显而易见的缺口给出具体修正建议；对真正影响产品方向或体验取舍的问题标为 Unresolved Decision。
+5. 对显而易见的缺口给出具体修正建议；对真正影响版本范围、用户故事或产品验收的问题标为 Unresolved Decision，并交回 `aios-product`。
 6. 把已澄清的界面决策交接给 `aios-exec` / `frontend-generation`；把技术边界、数据链路或证据链问题交给 `aios-arch`。
 7. 如果已有可运行界面或截图，需要后续做功能、布局和证据链验证，不要把文本评审当成最终 QA。
 
@@ -104,4 +104,5 @@ AIOS Design 参考设计计划评审方法，但面向建筑行业平台研发�
 - 不把截图或 mockup 当成已验证的可运行实现。
 - 不替代通用 `frontend-design` 的视觉风格和前端代码美化评审。
 - 不替代 `frontend-generation` 的 UI 实现、布局验证和交互验证。
+- 不替代 `aios-product` 定义用户问题、版本范围、产品优先级、验收指标或试点 / UAT。
 - 不替代 `aios-arch` 的系统架构评审，也不替代 `aios-review` 的代码审查。

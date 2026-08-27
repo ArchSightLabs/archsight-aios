@@ -56,6 +56,8 @@ claude-code
 gemini-cli-extension
 antigravity
 architecture-review
+product-management
+product-review
 code-review
 design-review
 runtime-design
@@ -67,7 +69,7 @@ construction-management
 Pinned README 搜索摘要可使用：
 
 ```text
-默认中文输出，保留英文检索能力：building-industry AI, project evidence work, BIM, IFC, building code, RAG, GraphRAG, MCP, architecture review, code review, runtime governance, structural review, construction management.
+默认中文输出，保留英文检索能力：building-industry AI, project evidence work, BIM, IFC, building code, product management, PRD, RAG, GraphRAG, MCP, architecture review, code review, runtime governance, structural review, construction management.
 ```
 
 ## 公共安装命令
@@ -152,6 +154,9 @@ building code review
 smart drawing review
 architecture review
 technical design review
+product management
+product review
+PRD
 code review
 runtime design
 runtime governance

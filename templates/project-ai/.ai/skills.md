@@ -54,6 +54,7 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 - `aios-arch`
 - `aios-arch-health`
 - `aios-ceo`
+- `aios-product`
 - `aios-design`
 - `aios-plan`
 - `aios-review`
@@ -86,6 +87,7 @@ AIOS 是建筑行业增强层，不是通用任务替代器。只有当前项目
 
 - 优先读取 `.ai/profile-detection.md` 和 `.ai/project-context.md`，再按任务类型选择 Skill。
 - 涉及建筑行业软件 / 系统评价、项目立项、产品定位、商业目标、范围取舍或阶段路线时，优先启用 `aios-ceo`。
+- 涉及产品体检、用户问题、版本范围、PRD、用户故事、产品优先级、验收指标、试点 / UAT 或研发交接时，启用 `aios-product`；立项、商业目标和停损判断仍交给 `aios-ceo`。
 - 涉及建筑行业平台 UI / UX 方案、工作台体验、交互状态、响应式或前端实现交接时，优先启用 `aios-design`。
 - 涉及复杂度、巨型文件或函数、重复代码、依赖方向、循环依赖、基线差分、架构债预算或 SARIF 门禁时，启用 `aios-arch-health`；确定性事实交给 `aios-arch` 做业务边界解释。
 - 只有启用建筑、BIM、IFC、规范知识库、GraphRAG 或智能审图 profile 时，才默认启用 `aios-knowledge`。
