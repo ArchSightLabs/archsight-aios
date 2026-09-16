@@ -154,3 +154,14 @@ node ./scripts/validate-prompt-model-outputs.mjs --init prompts/evaluations/<you
 真实输出文件需要填写可追溯的 `model`、可解析的 `ranAt`，且 `promptVersion` 必须匹配当前 fixture 版本。
 
 默认文件 `engineering-business-basic-model-output.example.json` 只是输出骨架样例，用于验证格式和检查器本身，不代表真实模型评测结果。
+
+## CEO / Arch 事实可靠性回归
+
+`ceo-arch-review-fixtures.json` 与 `ceo-arch-review-scorecard.json` 用于联合评审的事实适用性、权限边界和决策价值回归。所有 case 必须是合成或脱敏材料，每个 case 同时保留原始短指令、事实包、预期行为、禁止推断、决策依据和反事实。
+
+```bash
+npm run validate:ceo-arch-evals
+npm run test:ceo-arch-evals
+```
+
+检查器只验证结构、覆盖、脱敏边界和 Skill 契约锚点，不使用关键字匹配给模型输出判分。真实语义表现必须按 `ceo-arch-review-regression-guide.md` 在确认加载指定版本的宿主中运行，并保存原始输出后人工使用 scorecard 复核。开发用例和保留用例分批运行；预期答案不得随 fact pack 一起提供给被测模型。

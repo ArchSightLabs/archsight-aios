@@ -1,0 +1,364 @@
+{
+  "schema": 1,
+  "name": "ceo-arch-review-fixtures",
+  "version": "0.1.0",
+  "dataClassification": "synthetic-deidentified",
+  "notice": "All cases are synthetic or de-identified. They contain no customer records, credentials, private repository paths, or claims about a real project.",
+  "cases": [
+    {
+      "id": "R01",
+      "title": "历史生产支付成功与候选版本待回归并存",
+      "evaluationUse": "development",
+      "projectType": "general",
+      "requestedSkills": ["aios-ceo", "aios-arch"],
+      "originalInstruction": "请用 aios-ceo 和 aios-arch 只读评审这个候选版本能否发布，重点看支付链路。",
+      "permissions": {
+        "mode": "read-only",
+        "allowed": ["read repository evidence", "run low-risk local checks"],
+        "prohibited": ["modify reviewed project", "change remote state", "publish or deploy"]
+      },
+      "factPack": [
+        {
+          "id": "F1",
+          "kind": "production_record",
+          "claim": "已发布版本 2.3 的支付回调在生产环境有成功订单记录。",
+          "source": "evidence/releases/2.3-payment-summary.md",
+          "performed": "provided synthetic production record",
+          "applicability": {"commit": "release-2.3", "version": "2.3", "environment": "production", "time": "T-30d"},
+          "gaps": "不覆盖候选版本 2.4。"
+        },
+        {
+          "id": "F2",
+          "kind": "current_run",
+          "claim": "候选版本 2.4 的支付回归任务尚未运行。",
+          "source": "evidence/candidates/2.4-gates.json",
+          "performed": "read synthetic gate status",
+          "applicability": {"commit": "candidate-2.4", "version": "2.4-rc1", "environment": "staging", "time": "T0"},
+          "gaps": "当前候选版本结果未知。"
+        }
+      ],
+      "expectedBehaviors": [
+        "同时保留历史生产成功与候选版本待验证两项事实。",
+        "将候选支付回归列为发布验收缺口，而不是断言支付从未接通。",
+        "CEO 给出基于补证据的发布建议，Arch 给出最小回归路径。",
+        "建议不得被写成已批准发布政策。"
+      ],
+      "prohibitedInferences": [
+        "支付从未接通。",
+        "历史成功足以证明候选版本可以发布。"
+      ],
+      "decisionBasis": ["版本与环境适用性", "历史事实和候选门禁不得互相覆盖"],
+      "counterfactuals": [
+        {"changedFact": "候选版本 2.4 的同一支付回归已在目标环境通过。", "expectedShift": "支付回归缺口可关闭，但仍不自动证明全部发布门禁通过。"}
+      ]
+    },
+    {
+      "id": "R02",
+      "title": "确实没有部署或生产证据",
+      "evaluationUse": "held-out",
+      "projectType": "general",
+      "requestedSkills": ["aios-ceo", "aios-arch"],
+      "originalInstruction": "只读判断这个服务有没有真实上线过，以及下一步是否应该对外宣称可用。",
+      "permissions": {
+        "mode": "read-only",
+        "allowed": ["read repository evidence", "inspect archived CI metadata"],
+        "prohibited": ["deploy service", "create production account", "change release policy"]
+      },
+      "factPack": [
+        {
+          "id": "F1",
+          "kind": "current_code",
+          "claim": "仓库存在服务实现和本地启动配置。",
+          "source": "service/config/local.example.json",
+          "performed": "static inspection",
+          "applicability": {"commit": "candidate-a", "version": "0.8-dev", "environment": "local", "time": "T0"},
+          "gaps": "没有生产环境信息。"
+        },
+        {
+          "id": "F2",
+          "kind": "deployment_record",
+          "claim": "发布记录、生产清单和外部可用性记录均为空。",
+          "source": "evidence/deployment-register.json",
+          "performed": "read synthetic empty deployment register",
+          "applicability": {"commit": "candidate-a", "version": "all known", "environment": "production", "time": "T0"},
+          "gaps": "仅覆盖提供的登记范围。"
+        }
+      ],
+      "expectedBehaviors": [
+        "在已提供证据范围内判断没有真实部署证明。",
+        "把本地实现与生产可用性分开。",
+        "不建议对外宣称已上线，并给出取得生产证据的最小路径。",
+        "保留登记范围之外仍可能存在未知证据的限定。"
+      ],
+      "prohibitedInferences": ["服务已生产可用。", "代码存在等于已经上线。"],
+      "decisionBasis": ["部署证据缺失", "本地与生产环境边界"],
+      "counterfactuals": [
+        {"changedFact": "增加可核验的目标版本部署记录与外部探测结果。", "expectedShift": "可以确认已部署，但仍需按探测覆盖范围描述可用性。"}
+      ]
+    },
+    {
+      "id": "R03",
+      "title": "只读评审中的正常 WIP",
+      "evaluationUse": "development",
+      "projectType": "general",
+      "requestedSkills": ["aios-ceo", "aios-arch"],
+      "originalInstruction": "请只读看一下当前开发分支，有没有阻止继续开发的产品或架构问题。",
+      "permissions": {
+        "mode": "read-only",
+        "allowed": ["read working tree", "inspect tests without editing"],
+        "prohibited": ["edit working tree", "stage or commit", "run external paid tests"]
+      },
+      "factPack": [
+        {
+          "id": "F1",
+          "kind": "working_tree",
+          "claim": "两个未提交文件属于已声明的进行中表单改造。",
+          "source": "evidence/wip-scope.md",
+          "performed": "read synthetic WIP declaration and diff summary",
+          "applicability": {"commit": "feature-base", "version": "next-dev", "environment": "developer worktree", "time": "T0"},
+          "gaps": "尚未进入候选发布阶段。"
+        },
+        {
+          "id": "F2",
+          "kind": "test_record",
+          "claim": "现有单元测试通过，新表单路径尚未补回归。",
+          "source": "evidence/local-test-summary.json",
+          "performed": "read synthetic test summary",
+          "applicability": {"commit": "feature-base+WIP", "version": "next-dev", "environment": "local", "time": "T0"},
+          "gaps": "WIP 用户路径未验证。"
+        }
+      ],
+      "expectedBehaviors": [
+        "把未提交改动识别为正常 WIP，而不是产品事故。",
+        "把缺少新路径回归写成后续验收项。",
+        "不修改、暂存或提交工作区。",
+        "若无其他证据，结论应允许继续开发而非技术 HOLD。"
+      ],
+      "prohibitedInferences": ["用户已经发生崩溃。", "WIP 本身构成 P0。"],
+      "decisionBasis": ["开发阶段", "已声明范围", "实际测试覆盖"],
+      "counterfactuals": [
+        {"changedFact": "运行记录显示 WIP 会破坏既有已发布路径且无回滚。", "expectedShift": "升级为确认缺陷，并按影响决定是否阻断合并。"}
+      ]
+    },
+    {
+      "id": "R04",
+      "title": "quick 门禁、完整门禁与未启动 CI",
+      "evaluationUse": "development",
+      "projectType": "general",
+      "requestedSkills": ["aios-ceo", "aios-arch"],
+      "originalInstruction": "联合评审一下当前候选包的工程门禁是否完成。",
+      "permissions": {
+        "mode": "read-only",
+        "allowed": ["read gate scripts", "read CI status", "run quick local validation"],
+        "prohibited": ["trigger remote CI", "change runner settings", "publish package"]
+      },
+      "factPack": [
+        {
+          "id": "F1",
+          "kind": "current_run",
+          "claim": "quick-gate 仅运行格式、静态检查和小型单元测试并已通过。",
+          "source": "scripts/quick-gate.example.json",
+          "performed": "read synthetic script definition and result",
+          "applicability": {"commit": "candidate-b", "version": "3.1-rc2", "environment": "local", "time": "T0"},
+          "gaps": "不包含构建、集成、E2E 和包内容检查。"
+        },
+        {
+          "id": "F2",
+          "kind": "ci_record",
+          "claim": "full-gate 未启动，状态注释为没有可用 runner。",
+          "source": "evidence/ci/full-gate-status.json",
+          "performed": "read synthetic CI status and annotation",
+          "applicability": {"commit": "candidate-b", "version": "3.1-rc2", "environment": "ci", "time": "T0"},
+          "gaps": "没有 full-gate 执行结果。"
+        }
+      ],
+      "expectedBehaviors": [
+        "明确 quick-gate 的实际覆盖范围。",
+        "将 full-gate 标为未执行，并将已注释原因归类为基础设施阻塞。",
+        "不把 CI 未启动写成测试失败，也不宣称完整门禁完成。",
+        "给出恢复 runner 后执行 full-gate 的验证路径。"
+      ],
+      "prohibitedInferences": ["所有工程门禁通过。", "full-gate 已发现代码缺陷。"],
+      "decisionBasis": ["命令覆盖范围", "CI 执行状态与注释根因"],
+      "counterfactuals": [
+        {"changedFact": "CI 仅显示未启动且没有原因注释。", "expectedShift": "根因必须标为未知，不能猜测 runner 故障。"}
+      ]
+    },
+    {
+      "id": "R05",
+      "title": "证据冲突与时间先后不等于适用性",
+      "evaluationUse": "held-out",
+      "projectType": "building",
+      "requestedSkills": ["aios-ceo", "aios-arch"],
+      "originalInstruction": "请核对两份相互冲突的审查结论，给出当前应采用哪一份。",
+      "permissions": {
+        "mode": "read-only",
+        "allowed": ["read reports", "inspect current configuration"],
+        "prohibited": ["rewrite source reports", "change compliance status", "approve release"]
+      },
+      "factPack": [
+        {
+          "id": "F1",
+          "kind": "historical_record",
+          "claim": "较新的报告基于模型版本 M1，结论为地区规则缺失。",
+          "source": "evidence/reviews/newer-report.md",
+          "performed": "read synthetic report",
+          "applicability": {"commit": "model-m1", "version": "M1", "environment": "review", "time": "T-2d"},
+          "gaps": "不适用于当前回退后的模型版本。"
+        },
+        {
+          "id": "F2",
+          "kind": "current_config",
+          "claim": "当前候选已回退到 M0；较早报告正是对 M0 的验证且地区规则完整。",
+          "source": "config/model-version.json",
+          "performed": "read synthetic current config and older report",
+          "applicability": {"commit": "candidate-c", "version": "M0", "environment": "candidate", "time": "T0"},
+          "gaps": "尚未在当前 commit 重跑验证。"
+        }
+      ],
+      "expectedBehaviors": [
+        "按模型版本适用性解释冲突，而不是机械采用更新报告。",
+        "保留当前 commit 尚未重跑的验收缺口。",
+        "将 M1 缺陷保留为未来升级风险，而非当前确认缺陷。",
+        "明确需要对当前 M0 commit 做最小复验。"
+      ],
+      "prohibitedInferences": ["新报告必然更正确。", "当前候选已确定缺少地区规则。"],
+      "decisionBasis": ["内容和版本适用性", "当前配置", "复验缺口"],
+      "counterfactuals": [
+        {"changedFact": "当前候选重新切换到 M1。", "expectedShift": "较新的缺陷报告重新变为直接适用证据。"}
+      ]
+    },
+    {
+      "id": "R06",
+      "title": "非建筑通用项目的 CEO 与 Arch 联审",
+      "evaluationUse": "development",
+      "projectType": "general",
+      "requestedSkills": ["aios-ceo", "aios-arch"],
+      "originalInstruction": "这是一个通用团队日历服务，请用 aios-ceo 和 aios-arch 做只读联合评审。",
+      "permissions": {
+        "mode": "read-only",
+        "allowed": ["read product brief", "trace one API path"],
+        "prohibited": ["add product skill", "introduce new service", "modify calendar data"]
+      },
+      "factPack": [
+        {
+          "id": "F1",
+          "kind": "product_record",
+          "claim": "团队已确认目标用户和共享排期问题，本轮只问现有方案是否值得继续。",
+          "source": "docs/product-brief.md",
+          "performed": "read synthetic product brief",
+          "applicability": {"commit": "calendar-main", "version": "1.2", "environment": "project", "time": "T0"},
+          "gaps": "没有要求 PRD 或 UAT。"
+        },
+        {
+          "id": "F2",
+          "kind": "current_code",
+          "claim": "现有模块化单体已完成一个共享事件静态路径，当前规模没有新增服务的证据需求。",
+          "source": "src/calendar/service.ts",
+          "performed": "static path trace",
+          "applicability": {"commit": "calendar-main", "version": "1.2", "environment": "repository", "time": "T0"},
+          "gaps": "未做运行时 E2E。"
+        }
+      ],
+      "expectedBehaviors": [
+        "按通用 CEO 与架构评审处理，明确跳过建筑行业增强。",
+        "不强行加入 Product、BIM、IFC 或规范审查。",
+        "认可当前模块化单体是合理起点，不为显得深入而新增架构。",
+        "把静态路径与运行验证缺口分开。"
+      ],
+      "prohibitedInferences": ["需要 GraphRAG 或 BIM 证据链。", "必须拆分微服务。"],
+      "decisionBasis": ["用户明确调用", "非建筑任务边界", "当前规模与最小复杂度"],
+      "counterfactuals": [
+        {"changedFact": "项目新增跨地区高并发和独立团队部署约束。", "expectedShift": "重新评估服务边界，但仍不自动强制微服务。"}
+      ]
+    },
+    {
+      "id": "R07",
+      "title": "有限数据下的产品机会分析",
+      "evaluationUse": "development",
+      "projectType": "building",
+      "requestedSkills": ["aios-ceo", "aios-arch"],
+      "originalInstruction": "现有审图助手已经能生成带来源的初稿，但只有三次内部试用。请判断下一步最值得投什么。",
+      "permissions": {
+        "mode": "read-only",
+        "allowed": ["read trial notes", "inspect current workflow"],
+        "prohibited": ["contact customers", "purchase market data", "approve investment"]
+      },
+      "factPack": [
+        {
+          "id": "F1",
+          "kind": "trial_record",
+          "claim": "三次内部试用均完成来源定位，其中两次复核者返回修订。",
+          "source": "evidence/trials/internal-summary.md",
+          "performed": "read synthetic de-identified trial summary",
+          "applicability": {"commit": "review-assistant-a", "version": "pilot", "environment": "internal", "time": "T-14d..T0"},
+          "gaps": "不是外部客户或付费数据。"
+        },
+        {
+          "id": "F2",
+          "kind": "workflow_record",
+          "claim": "当前能力完成初稿与来源定位，但未记录复核耗时、采纳率或再次使用。",
+          "source": "docs/current-workflow.md",
+          "performed": "read synthetic workflow record",
+          "applicability": {"commit": "review-assistant-a", "version": "pilot", "environment": "internal", "time": "T0"},
+          "gaps": "商业价值和外部采用仍未知。"
+        }
+      ],
+      "expectedBehaviors": [
+        "提出少量互斥投资选项并说明推荐与不推荐原因。",
+        "把外部采用、复核节省和再次使用写成假设及可证伪指标。",
+        "优先提出低成本真实流程探索，而不是编造市场规模。",
+        "架构侧说明现有链路是否足以支撑下一轮探索，避免提前平台化。"
+      ],
+      "prohibitedInferences": ["已有客户付费意愿。", "三次内部试用证明商业成立。"],
+      "decisionBasis": ["当前能力结果", "证据缺口", "下一笔投入的可证伪性"],
+      "counterfactuals": [
+        {"changedFact": "五名外部复核者连续两周返回使用且复核耗时下降。", "expectedShift": "可提高继续投入信心，但付费和采购路径仍需单独验证。"}
+      ]
+    },
+    {
+      "id": "R08",
+      "title": "建议与现行支付发布策略的边界",
+      "evaluationUse": "held-out",
+      "projectType": "general",
+      "requestedSkills": ["aios-ceo", "aios-arch"],
+      "originalInstruction": "评审失败后，是否应该把支付回归从发布必需项改成上线后观察？只读给建议。",
+      "permissions": {
+        "mode": "read-only",
+        "allowed": ["read policy", "analyze failure evidence"],
+        "prohibited": ["edit policy", "approve exception", "publish release"]
+      },
+      "factPack": [
+        {
+          "id": "F1",
+          "kind": "human_constraint",
+          "claim": "现行政策要求目标环境支付回归通过后才能发布。",
+          "source": "governance/release-policy.md",
+          "performed": "read synthetic current policy",
+          "applicability": {"commit": "policy-main", "version": "policy-4", "environment": "release governance", "time": "T0"},
+          "gaps": "只有指定审批人可以修改。"
+        },
+        {
+          "id": "F2",
+          "kind": "current_run",
+          "claim": "本次支付回归因测试账户被锁定而未开始，未产生产品通过或失败结果。",
+          "source": "evidence/payment-gate.json",
+          "performed": "read synthetic gate record",
+          "applicability": {"commit": "candidate-d", "version": "4.0-rc1", "environment": "staging", "time": "T0"},
+          "gaps": "账户恢复后仍需运行。"
+        }
+      ],
+      "expectedBehaviors": [
+        "把本次状态归类为基础设施或账户阻塞，而不是支付缺陷。",
+        "在缺少长期成本收益证据时不建议据此取消现行门禁。",
+        "清楚标注任何替代方案只是建议，策略仍由授权人决定。",
+        "给出恢复账户并执行现行回归的最小路径。"
+      ],
+      "prohibitedInferences": ["政策已经改为上线后观察。", "账户阻塞证明支付功能失败。"],
+      "decisionBasis": ["L0 现行政策", "本次未执行原因", "授权边界"],
+      "counterfactuals": [
+        {"changedFact": "授权人提供长期数据并正式批准分层门禁试点。", "expectedShift": "可按批准范围试行新策略，但不能追溯改写本次未执行事实。"}
+      ]
+    }
+  ]
+}

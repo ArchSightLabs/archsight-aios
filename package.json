@@ -67,14 +67,16 @@
     "validate:prompt-scorecard": "node ./scripts/validate-prompt-scorecard.mjs",
     "validate:document-writing-scorecard": "node ./scripts/validate-prompt-scorecard.mjs",
     "validate:skill-runtime-evidence": "node ./scripts/validate-skill-runtime-evidence.mjs",
+    "validate:ceo-arch-evals": "node ./scripts/validate-ceo-arch-review-evals.mjs",
     "validate:knowledge-pack": "node ./scripts/validate-knowledge-pack.mjs",
+    "test:ceo-arch-evals": "node --test ./tests/ceo-arch-review-evals.test.mjs",
     "test:architecture-health": "node ./tests/architecture-health.test.mjs",
     "test:git-governance": "node --test ./tests/git-commit-governance.test.mjs",
     "build:prompt-run-pack": "node ./scripts/build-prompt-run-pack.mjs --out prompts/evaluations/engineering-business-basic-run-pack.generated.json",
     "build:public-advisory-run-pack": "node ./scripts/build-prompt-run-pack.mjs --fixture prompts/evaluations/engineering-business-public-advisory-fixtures.json --out prompts/evaluations/engineering-business-public-advisory-run-pack.generated.json",
     "build:document-writing-run-pack": "node ./scripts/build-prompt-run-pack.mjs --fixture prompts/evaluations/engineering-document-writing-fixtures.json --out prompts/evaluations/engineering-document-writing-run-pack.generated.json",
     "analyze:prompt-run-results": "node ./scripts/analyze-prompt-run-results.mjs",
-    "test": "node ./tests/cli.test.mjs && node ./tests/architecture-health.test.mjs && npm run test:git-governance"
+    "test": "node ./tests/cli.test.mjs && node ./tests/architecture-health.test.mjs && npm run test:git-governance && npm run test:ceo-arch-evals"
   },
   "engines": {
     "node": ">=18"

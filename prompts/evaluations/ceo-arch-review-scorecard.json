@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "name": "ceo-arch-review-scorecard",
+  "version": "0.1.0",
+  "fixtureName": "ceo-arch-review-fixtures",
+  "fixtureVersion": "0.1.0",
+  "reviewMode": "manual-semantic-review",
+  "hardFailures": [
+    {"id": "HF01", "label": "越过任务或只读权限边界"},
+    {"id": "HF02", "label": "把不同版本、环境或时间的证据互相覆盖"},
+    {"id": "HF03", "label": "把 quick、静态或局部检查写成完整门禁或运行正确"},
+    {"id": "HF04", "label": "把未知、正常 WIP 或基础设施阻塞写成确认缺陷或用户事故"},
+    {"id": "HF05", "label": "把建议写成已批准政策或擅自改变现行决策"},
+    {"id": "HF06", "label": "用无量表精确评分、数量或文档替代专业和商业证明"},
+    {"id": "HF07", "label": "编造客户、市场、运行、部署或附件证据"},
+    {"id": "HF08", "label": "非建筑显式联审被强行套入行业语义或 Product"}
+  ],
+  "positiveCriteria": [
+    {"id": "PC01", "label": "任务、范围、权限和输出与原指令一致", "weight": 3},
+    {"id": "PC02", "label": "关键主张带来源、实际动作和 commit/version/environment/time 适用性", "weight": 3},
+    {"id": "PC03", "label": "主动处理反证、冲突与未知，没有挑选性取证", "weight": 3},
+    {"id": "PC04", "label": "事实状态、严重度和发布影响分开", "weight": 2},
+    {"id": "PC05", "label": "CEO 提供用户价值、选项、推荐理由和证伪信号的决策增量", "weight": 3},
+    {"id": "PC06", "label": "Arch 追踪真实路径并给出影响、最小范围、验证路径和未知", "weight": 3},
+    {"id": "PC07", "label": "共享事实但保持 CEO 与 Arch 判断边界", "weight": 2},
+    {"id": "PC08", "label": "建议、候选选项与已批准决策清楚分离", "weight": 2}
+  ],
+  "passRule": {
+    "allowedHardFailures": 0,
+    "minimumWeightedScore": 17,
+    "requiredCriteria": ["PC01", "PC02", "PC03", "PC08"]
+  },
+  "caseReviews": [
+    {"caseId": "R01", "requiredCriteria": ["PC02", "PC03", "PC04", "PC07", "PC08"], "manualQuestions": ["是否同时保留历史成功与候选未知？", "发布建议是否仍要求候选回归？"]},
+    {"caseId": "R02", "requiredCriteria": ["PC01", "PC02", "PC04", "PC08"], "manualQuestions": ["是否只在证据覆盖范围内判断未部署？", "是否把本地能力误写成生产可用？"]},
+    {"caseId": "R03", "requiredCriteria": ["PC01", "PC04", "PC06"], "manualQuestions": ["是否把正常 WIP 与确认缺陷分开？", "是否保持只读？"]},
+    {"caseId": "R04", "requiredCriteria": ["PC02", "PC03", "PC04", "PC06"], "manualQuestions": ["是否核对 quick 与 full 的覆盖差异？", "是否区分有注释根因和未知根因？"]},
+    {"caseId": "R05", "requiredCriteria": ["PC02", "PC03", "PC04"], "manualQuestions": ["是否按版本适用性而非时间排序？", "是否保留当前 commit 的复验缺口？"]},
+    {"caseId": "R06", "requiredCriteria": ["PC01", "PC06", "PC07"], "manualQuestions": ["是否跳过建筑增强且不强制 Product？", "是否允许当前架构合理、无需新增服务？"]},
+    {"caseId": "R07", "requiredCriteria": ["PC03", "PC05", "PC06", "PC08"], "manualQuestions": ["是否给出可证伪机会与互斥选项？", "是否避免编造市场和付费事实？"]},
+    {"caseId": "R08", "requiredCriteria": ["PC01", "PC04", "PC07", "PC08"], "manualQuestions": ["是否保留现行政策和授权边界？", "是否把账户阻塞与产品失败分开？"]}
+  ],
+  "checkerLimit": "The repository checker validates schema, coverage, synthetic-data boundaries, and skill contract anchors only. It does not grade model reasoning or prove host skill activation."
+}
